@@ -119,7 +119,7 @@ export default function App() {
             </div>
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
-              {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-assisted commentary · experimental" : "Evidence-based commentary · deterministic fallback"}</div>}
+              {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected style · verified factual template" : "Evidence-based commentary · deterministic fallback"}</div>}
               <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
