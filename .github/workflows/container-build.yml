@@ -1,0 +1,36 @@
+name: Container build
+
+on:
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "apps/api/**"
+      - "apps/web/**"
+      - ".github/workflows/container-build.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "apps/api/**"
+      - "apps/web/**"
+      - ".github/workflows/container-build.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build combined VYBE container
+        run: docker build --tag vybe:ci .
+      - name: Smoke test API and UI
+        run: |
+          docker run -d --rm --name vybe-smoke -p 8000:8000 vybe:ci
+          trap 'docker stop vybe-smoke || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:8000/health >/dev/null; then break; fi
+            sleep 2
+          done
+          curl --fail http://localhost:8000/health
+          curl --fail http://localhost:8000/ | grep -q "VYBE"
