@@ -3,6 +3,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from .models import MatchDefinition
 from .engine import replay, explain_goal, state_dict
+from .ai import narrate_goal
 
 app = FastAPI(title="VYBE Synthetic Match API", version="0.1.0")
 
@@ -25,5 +26,13 @@ def explain_match_event(
 ):
     try:
         return explain_goal(match, event_id, persona)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/v1/matches/narrate/{event_id}")
+def narrate_match_goal(event_id: str, match: MatchDefinition, persona: str = Query(default="young")):
+    try:
+        return narrate_goal(match, event_id, persona)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
