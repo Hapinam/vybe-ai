@@ -47,7 +47,7 @@ export default function App() {
     let active = true;
     setExplanation(null);
     if (!latestGoal) return;
-    postJson<Explanation>(`/v1/matches/explain/${latestGoal.id}?persona=${persona}`, demoMatch)
+    postJson<Explanation>(`/v1/matches/narrate/${latestGoal.id}?persona=${persona}`, demoMatch)
       .then((result) => { if (active) setExplanation(result); })
       .catch((err: unknown) => { if (active) setError(String(err)); });
     return () => { active = false; };
@@ -119,11 +119,12 @@ export default function App() {
             </div>
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
+              {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-assisted commentary · experimental" : "Evidence-based commentary · deterministic fallback"}</div>}
               <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
             {persona === "accessible" && <button className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : setAudioEnabled(true)} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>}
-            <div className="trust-note"><CircleHelp size={16} /><span>AI-generated tactical claims are not enabled yet. Commentary is generated from verified match facts.</span></div>
+            <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
           </div>
         </section>
 
