@@ -80,7 +80,15 @@ def _verified_style(response: str, persona: str) -> str:
     """Accept only an exact schema and an allowlisted style for the persona."""
     if len(response) > 100:
         raise ValueError("Oversized model response")
-    parsed = json.loads(response)
+    def unique_keys(pairs):
+        obj = {}
+        for key, value in pairs:
+            if key in obj:
+                raise ValueError("Duplicate model response key")
+            obj[key] = value
+        return obj
+
+    parsed = json.loads(response, object_pairs_hook=unique_keys)
     if not isinstance(parsed, dict) or set(parsed) != {"style"}:
         raise ValueError("Unexpected model response schema")
     style = parsed["style"]
