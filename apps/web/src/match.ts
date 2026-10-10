@@ -32,6 +32,7 @@ export type Explanation = {
   evidence_event_ids: string[];
   score: { home: number; away: number };
   synthetic: true;
+  generation_mode?: "azure_ai" | "deterministic";
 };
 
 export const demoMatch: Match = {
