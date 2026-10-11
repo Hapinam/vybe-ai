@@ -14,7 +14,7 @@ class EventType(str, Enum):
 
 
 class MatchEvent(BaseModel):
-    id: str = Field(min_length=1, pattern=r"\\S")
+    id: str = Field(min_length=1, pattern=r"\S")
     minute: int = Field(ge=0, le=130)
     second: int = Field(default=0, ge=0, le=59)
     team: str | None = None
@@ -29,9 +29,9 @@ class MatchEvent(BaseModel):
 
 
 class MatchDefinition(BaseModel):
-    match_id: str = Field(min_length=1, pattern=r"\\S")
-    home_team: str = Field(min_length=1, pattern=r"\\S")
-    away_team: str = Field(min_length=1, pattern=r"\\S")
+    match_id: str = Field(min_length=1, pattern=r"\S")
+    home_team: str = Field(min_length=1, pattern=r"\S")
+    away_team: str = Field(min_length=1, pattern=r"\S")
     events: list[MatchEvent]
 
     @model_validator(mode="after")
