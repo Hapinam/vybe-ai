@@ -73,9 +73,9 @@ export default function App() {
     setPlaying(false);
     const stages:[Persona,number][]=[["young",4],["accessible",18],["analyst",29]];
     let index=0;
-    const show=()=>{const [p,s]=stages[index];setPersona(p);setStep(s);index++;if(index===stages.length)setDemoMode(false);};
+    const show=()=>{const [p,s]=stages[index];setPersona(p);setStep(s);index++;};
     show();
-    const timer=window.setInterval(()=>{if(index<stages.length)show();else window.clearInterval(timer);},7000);
+    const timer=window.setInterval(()=>{if(index<stages.length)show();else {window.clearInterval(timer);setDemoMode(false);}},7000);
     return ()=>window.clearInterval(timer);
   },[demoMode]);
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
