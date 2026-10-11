@@ -85,6 +85,18 @@ export default function App() {
     const timer=window.setInterval(()=>{if(index<stages.length)show();else {window.clearInterval(timer);setDemoMode(false);}},7000);
     return ()=>{demoModeRef.current=false;window.clearInterval(timer);};
   },[demoMode]);
+  useEffect(() => {
+    if (!demoMode || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    const utterance = new SpeechSynthesisUtterance(
+      language === "cs" ? "Vítejte ve VYBE. Aurora FC hraje proti Harbor United." :
+      language === "ar" ? "أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد." :
+      "Welcome to VYBE. Aurora FC faces Harbor United."
+    );
+    utterance.lang = language === "cs" ? "cs-CZ" : language === "ar" ? "ar-EG" : "en-US";
+    utterance.rate = speechRateRef.current;
+    window.speechSynthesis.speak(utterance);
+    return () => window.speechSynthesis.cancel();
+  }, [demoMode, persona, language]);
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
