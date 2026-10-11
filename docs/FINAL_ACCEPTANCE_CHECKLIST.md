@@ -24,6 +24,8 @@ This is the **single consolidated manual test pass** to run after all feature wo
 - [ ] Celebration does not appear on non-goal events or in other personas.
 - [ ] Glossary explains kickoff, passes, shots, goals, halftime and full time.
 - [ ] Celebration and glossary remain legible on a narrow mobile viewport.
+- [ ] Mini quiz asks about the latest goal, gives correct feedback, and resets on the next goal.
+- [ ] Timeline filter switches between highlights and all events without altering match statistics.
 
 ## Accessible
 
