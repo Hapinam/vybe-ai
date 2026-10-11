@@ -22,6 +22,8 @@ export default function App() {
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [expandedAudio, setExpandedAudio] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
+  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">("highlights");
   const [speechRate, setSpeechRate] = useState(1);
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
@@ -58,6 +60,8 @@ export default function App() {
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
+  const timelineEvents = timelineFilter === "highlights" ? visibleEvents.filter(event => event.type !== "pass_completed") : visibleEvents;
+  useEffect(() => { setQuizAnswer(null); }, [latestGoal?.id]);
   const celebratingGoal = persona === "young" && lastEvent.type === "goal" ? lastEvent : null;
   const glossary: Record<string,string> = {goal:"A goal means the ball went into the net!",shot:"A shot is an attempt to score.",pass_completed:"A completed pass reaches a teammate.",kickoff:"Kickoff begins the match.",halftime:"Half-time is the break.",fulltime:"Full-time ends the match."};
   const statsForHalf = (start:number,end:number) => {
@@ -232,7 +236,15 @@ export default function App() {
                 <span style={{ fontWeight: 700 }}>Minute {formatClock(celebratingGoal)} · What a moment!</span>
               </div>
             )}
-            {persona==="young" && <div className="persona-extra"><strong>Football words explained</strong><p>{glossary[lastEvent.type]}</p></div>}
+            {persona==="young" && <div className="persona-extra">
+              <strong>Football words explained</strong><p>{glossary[lastEvent.type]}</p>
+              {latestGoal && <div className="young-quiz" aria-label="Football mini quiz">
+                <h3>Mini football quiz</h3>
+                <p>Which team scored the goal at {formatClock(latestGoal)}?</p>
+                <div className="quiz-options">{[demoMatch.home_team, demoMatch.away_team].map(team => <button type="button" className="secondary" key={team} disabled={quizAnswer !== null} onClick={() => setQuizAnswer(team)}>{team}</button>)}</div>
+                {quizAnswer !== null && <p role="status">{quizAnswer === latestGoal.team ? "Correct! Great football knowledge!" : "Good try! It was " + latestGoal.team + "."}</p>}
+              </div>}
+            </div>}
             {persona==="analyst" && <div className="persona-extra">
               <h3>First half vs second half</h3>
               <table className="analysis-table"><thead><tr><th>Recorded events</th><th>First</th><th>Second</th></tr></thead><tbody>
@@ -279,8 +291,12 @@ export default function App() {
 
         <section className="timeline-section">
           <div className="timeline-title"><div><span className="section-label">THE STORY SO FAR</span><h2>Match timeline</h2></div><span className="muted">Only simulated events</span></div>
+          <div className="timeline-filter" role="group" aria-label="Filter match timeline">
+            <button type="button" className={timelineFilter === "highlights" ? "primary" : "secondary"} aria-pressed={timelineFilter === "highlights"} onClick={() => setTimelineFilter("highlights")}>Highlights</button>
+            <button type="button" className={timelineFilter === "all" ? "primary" : "secondary"} aria-pressed={timelineFilter === "all"} onClick={() => setTimelineFilter("all")}>All events ({visibleEvents.length})</button>
+          </div>
           <ol className="timeline">
-            {[...visibleEvents].reverse().map((event) => <li key={event.id}><span className="event-time">{formatClock(event)}</span><span className={event.type === "goal" ? "event-icon goal-icon" : "event-icon"}>{event.type === "goal" ? "⚽" : event.type === "shot" ? "↗" : event.type === "pass_completed" ? "→" : "•"}</span><div><strong>{event.type === "goal" ? "GOAL!" : event.type.replace("_", " ").toUpperCase()}</strong><p>{event.team ?? "Match official"}{event.player ? ` · ${event.player}` : ""}</p></div>{event.type === "goal" && <span className="goal-label">KEY MOMENT</span>}</li>)}
+            {[...timelineEvents].reverse().map((event) => <li key={event.id}><span className="event-time">{formatClock(event)}</span><span className={event.type === "goal" ? "event-icon goal-icon" : "event-icon"}>{event.type === "goal" ? "⚽" : event.type === "shot" ? "↗" : event.type === "pass_completed" ? "→" : "•"}</span><div><strong>{event.type === "goal" ? "GOAL!" : event.type.replace("_", " ").toUpperCase()}</strong><p>{event.team ?? "Match official"}{event.player ? ` · ${event.player}` : ""}</p></div>{event.type === "goal" && <span className="goal-label">KEY MOMENT</span>}</li>)}
           </ol>
         </section>
         {error && <div className="error" role="alert">Backend connection issue: {error}. Start the FastAPI server on port 8000.</div>}
