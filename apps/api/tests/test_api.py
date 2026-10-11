@@ -59,3 +59,57 @@ def test_reject_duplicate_event_ids():
 
 def test_reject_non_goal_explanation():
     assert client.post("/v1/matches/explain/e6", json=MATCH).status_code == 422
+
+
+def test_replay_sorts_out_of_order_events():
+    """Replay processes events chronologically even when input is unsorted."""
+    unsorted_match = {
+        **MATCH,
+        "events": [MATCH["events"][3], MATCH["events"][1], MATCH["events"][0], MATCH["events"][2]],
+    }
+    response = client.post("/v1/matches/replay?through_event=2", json=unsorted_match)
+    assert response.status_code == 200
+    state = response.json()["state"]
+    assert (state["home_score"], state["away_score"]) == (1, 0)
+    assert state["events_processed"] == 2
+
+
+def test_replay_rejects_negative_through_event():
+    response = client.post("/v1/matches/replay?through_event=-1", json=MATCH)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_invalid_event_time():
+    broken = {**MATCH, "events": [{"id": "bad", "minute": 5, "second": 60, "type": "kickoff"}]}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_missing_team_for_goal():
+    broken = {**MATCH, "events": [{"id": "bad", "minute": 5, "type": "goal"}]}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_blank_team_name():
+    broken = {**MATCH, "home_team": ""}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_unknown_event_type():
+    broken = {**MATCH, "events": [{"id": "bad", "minute": 5, "type": "penalty"}]}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_whitespace_only_team_name():
+    broken = {**MATCH, "home_team": "   "}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
+
+
+def test_replay_rejects_whitespace_only_event_id():
+    broken = {**MATCH, "events": [{"id": "   ", "minute": 5, "type": "kickoff"}]}
+    response = client.post("/v1/matches/replay", json=broken)
+    assert response.status_code == 422
