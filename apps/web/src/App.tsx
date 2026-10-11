@@ -325,10 +325,11 @@ export default function App() {
             </div>}
             <div className="persona-extra" aria-label="Match story recap"><h3>Match story recap</h3><p dir={language==="ar"?"rtl":"ltr"}>{recap}</p><p className="muted">Based on played synthetic events.</p></div>
             <div className="insight-card" aria-live="polite" aria-atomic="true">
-              <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
+              <div className="insight-heading"><span><Sparkles size={16} /> LATEST GOAL INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
+              {latestGoal && <p className="muted">Goal at {formatClock(latestGoal)} · {latestGoal.team} · This insight updates when another goal is scored.</p>}
               {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected style · verified factual template" : "Evidence-based commentary · deterministic fallback"}</div>}
-              <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
-              {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
+              <p className="insight-text">{(explanation && explanation.event_id === latestGoal?.id ? explanation.narrative : undefined) ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
+              {explanation && explanation.event_id === latestGoal?.id && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
             {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><label className="access-choice"><input type="checkbox" checked={expandedAudio} onChange={e=>setExpandedAudio(e.target.checked)}/> Describe shots and passes too</label><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
             {persona === "accessible" && <div role="group" aria-label="Spoken commentary controls">
