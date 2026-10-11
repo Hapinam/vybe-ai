@@ -212,7 +212,7 @@ export default function App() {
                 preview.onerror = () => { previewSpeech.current = null; };
                 window.speechSynthesis.speak(preview);
               }} disabled={narrating} title="Preview is available when commentary is not speaking">Test voice speed</button>
-              <span className="progress-label">Speed changes apply to the next spoken sentence.</span>
+              <span className="progress-label">Speed changes apply to the next commentary.</span>
             </div>}
             <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
           </div>
