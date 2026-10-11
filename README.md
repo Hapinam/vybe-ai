@@ -10,9 +10,9 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 
 | Persona | Features |
 | --- | --- |
-| **Young Fan** | Goal celebration, plain-language football glossary, approachable match commentary |
+| **Young Fan** | Goal celebration, plain-language football glossary, interactive goal quiz, approachable match commentary |
 | **Accessible** | Optional browser spoken commentary, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes |
-| **Analyst** | Recorded shots/passes, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
+| **Analyst** | Recorded shots/passes, highlights/full timeline filter, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
 
 **Interpreting analytics:** Momentum is a custom weighted event-activity score (goal = 3, shot = 2, completed pass = 1) in 15-minute windows. It is **not** possession, expected goals (xG), or a professional tactical model. Half comparisons use recorded synthetic events only; missing events must not be interpreted as real-world zero activity.
 
