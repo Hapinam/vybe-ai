@@ -65,7 +65,7 @@ def explain_goal(match: MatchDefinition, event_id: str, persona: str = "young") 
     elif persona == "accessible":
         narrative = f"Goal for {target.team} at minute {target.minute}, {target.second} seconds. Current score: {match.home_team} {state.home_score}, {match.away_team} {state.away_score}."
     else:
-        narrative = f"Confirmed goal by {target.team} at {when}; match score is {score}. No tactical cause can be established from this event alone."
+        narrative = f"Confirmed goal by {target.team} at {when}; match score is {score}. The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created."
     return {
         "event_id": target.id,
         "persona": persona,

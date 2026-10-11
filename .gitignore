@@ -24,3 +24,8 @@ Thumbs.db
 *.tfstate
 *.tfstate.*
 crash.log
+
+
+# Build metadata
+*.tsbuildinfo
+*.egg-info/
