@@ -15,7 +15,7 @@ export default function App() {
   const [step, setStep] = useState(1);
   const [persona, setPersona] = useState<Persona>(() => { const v=localStorage.getItem("vybe.persona"); return v==="young"||v==="accessible"||v==="analyst"?v:"young"; });
   const [language, setLanguage] = useState<FanLanguage>(() => { const v=localStorage.getItem("vybe.language"); return v==="ar"||v==="cs"?v:"en"; });
-  const [captionsEnabled, setCaptionsEnabled] = useState(true);
+  const [captionsEnabled, setCaptionsEnabled] = useState(() => localStorage.getItem("vybe.captions")!=="false");
   const [demoMode, setDemoMode] = useState(false);
   const [selectedWindow, setSelectedWindow] = useState<number|null>(null);
   const [playing, setPlaying] = useState(false);
@@ -28,9 +28,9 @@ export default function App() {
   const [largeText, setLargeText] = useState(() => localStorage.getItem("vybe.largeText")==="true");
   const [expandedAudio, setExpandedAudio] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">("highlights");
-  const [showEventDetails, setShowEventDetails] = useState(true);
-  const [speechRate, setSpeechRate] = useState(1);
+  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">(() => localStorage.getItem("vybe.timeline")==="all"?"all":"highlights");
+  const [showEventDetails, setShowEventDetails] = useState(() => localStorage.getItem("vybe.details")!=="false");
+  const [speechRate, setSpeechRate] = useState(() => { const n=Number(localStorage.getItem("vybe.speechRate")); return [0.5,1,1.5,2].includes(n)?n:1; });
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
@@ -68,6 +68,10 @@ export default function App() {
   useEffect(() => { localStorage.setItem("vybe.language",language); },[language]);
   useEffect(() => { localStorage.setItem("vybe.contrast",String(highContrast)); },[highContrast]);
   useEffect(() => { localStorage.setItem("vybe.largeText",String(largeText)); },[largeText]);
+  useEffect(() => { localStorage.setItem("vybe.captions",String(captionsEnabled)); },[captionsEnabled]);
+  useEffect(() => { localStorage.setItem("vybe.timeline",timelineFilter); },[timelineFilter]);
+  useEffect(() => { localStorage.setItem("vybe.details",String(showEventDetails)); },[showEventDetails]);
+  useEffect(() => { localStorage.setItem("vybe.speechRate",String(speechRate)); },[speechRate]);
   useEffect(() => {
     if(!demoMode) return;
     setPlaying(false);
