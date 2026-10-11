@@ -71,7 +71,7 @@ export default function App() {
     const points=(team:string)=>events.filter(e=>e.team===team).reduce((sum,e)=>sum+(e.type==="goal"?3:e.type==="shot"?2:e.type==="pass_completed"?1:0),0);
     return {label:String(i*15)+"–"+String((i+1)*15),home:points(demoMatch.home_team),away:points(demoMatch.away_team)};
   });
-  const turningPoints=visibleEvents.filter(e=>e.type==="goal");
+  const turningPoints=visibleEvents.filter(e=>e.type==="goal").map(e=>{ const prior=visibleEvents.filter(x=>x.type==="goal" && (x.minute<e.minute || (x.minute===e.minute && (x.second??0)<(e.second??0)))); const home=prior.filter(x=>x.team===demoMatch.home_team).length; const away=prior.filter(x=>x.team===demoMatch.away_team).length; const nextHome=home+(e.team===demoMatch.home_team?1:0); const nextAway=away+(e.team===demoMatch.away_team?1:0); const change=nextHome===nextAway?"Equalizer":(home===away?"Took the lead":(Math.sign(home-away)!==Math.sign(nextHome-nextAway)?"Lead changed":"Extended the lead")); return {event:e,change,score:String(nextHome)+"–"+String(nextAway)}; });
 
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
@@ -90,7 +90,7 @@ export default function App() {
   }, [playing, audioEnabled, persona, step, state]);
 
   useEffect(() => {
-    if (!playing || (audioEnabled && persona === "accessible" && (narrating || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
+    if (!playing || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -241,7 +241,7 @@ export default function App() {
               <h3>Match momentum</h3><p className="muted">Weighted event activity: goal 3, shot 2, pass 1. Not possession or xG.</p>
               {momentum.map(p=><div className="momentum-row" key={p.label}><span>{p.label}</span><div className="momentum-bars" aria-label={"Aurora "+p.home+", Harbor "+p.away}><div style={{width:(p.home*100/Math.max(1,p.home+p.away))+"%",background:"#65d5ff"}}/><div style={{width:(p.away*100/Math.max(1,p.home+p.away))+"%",background:"#ffb86b"}}/></div><span>{p.home}:{p.away}</span></div>)}
               <p className="muted">Blue: Aurora FC · Orange: Harbor United</p>
-              <h3>Key turning points</h3>{turningPoints.length?<ul>{turningPoints.map(e=><li key={e.id}>{formatClock(e)} — {e.player} scored for {e.team}.</li>)}</ul>:<p>No goals recorded yet.</p>}
+              <h3>Key turning points</h3>{turningPoints.length?<ul>{turningPoints.map(({event:e,change,score})=><li key={e.id}>{formatClock(e)} — {change}: {e.player} scored for {e.team}. Score {score}.</li>)}</ul>:<p>No goals recorded yet.</p>}
             </div>}
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
