@@ -18,3 +18,10 @@
 .large-text{font-size:120%}
 .large-text button,.large-text input,.large-text select{font-size:1.1rem}
 @media(prefers-reduced-motion:reduce){.shell *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Young fan quiz and match timeline filtering */
+.young-quiz{margin-top:1rem;padding-top:.75rem;border-top:1px solid #8171bc}
+.quiz-options,.timeline-filter{display:flex;gap:.65rem;flex-wrap:wrap;margin:.75rem 0}
+.quiz-options button:disabled{opacity:.7;cursor:default}
+.timeline-filter{margin:1rem 0}
+.timeline-filter button{min-height:2.5rem}
