@@ -118,10 +118,11 @@ export default function App() {
     return {label:String(i*15)+"–"+String((i+1)*15),home:points(demoMatch.home_team),away:points(demoMatch.away_team)};
   });
   const keyMoments = visibleEvents
-    .filter(e => ["goal", "shot", "halftime"].includes(e.type))
-    .filter(e => selectedWindow === null || (e.type === "halftime" ? selectedWindow === 2 : (e.minute >= selectedWindow * 15 && e.minute < (selectedWindow + 1) * 15)))
+    .filter(e => ["goal", "shot", "halftime", "fulltime"].includes(e.type))
+    .filter(e => selectedWindow === null || (e.type === "halftime" ? selectedWindow === 2 : e.type === "fulltime" ? selectedWindow === 5 : (e.minute >= selectedWindow * 15 && e.minute < (selectedWindow + 1) * 15)))
     .map(e => {
       if (e.type === "halftime") return { event: e, description: "Half-time break. Teams regroup for the second half." };
+      if (e.type === "fulltime") return { event: e, description: "Full-time whistle. The match is over." };
       if (e.type === "shot") return { event: e, description: `Shot by ${e.player} for ${e.team}. Outcome not specified in the synthetic data.` };
       const prior = visibleEvents.filter(x => x.type === "goal" && (x.minute < e.minute || (x.minute === e.minute && (x.second ?? 0) < (e.second ?? 0))));
       const home = prior.filter(x => x.team === demoMatch.home_team).length;
@@ -320,7 +321,7 @@ export default function App() {
               <p className="muted">Select a 15-minute window to filter the timeline.</p>
               {momentum.map((p,i)=><button type="button" className={"momentum-row momentum-select"+(selectedWindow===i?" selected":"")} key={p.label} aria-pressed={selectedWindow===i} onClick={()=>{setSelectedWindow(v=>v===i?null:i);setTimelineFilter("all");}}><span>{p.label}</span><div className="momentum-bars" aria-label={"Aurora "+p.home+", Harbor "+p.away}><div style={{width:(p.home*100/Math.max(1,p.home+p.away))+"%",background:"#65d5ff"}}/><div style={{width:(p.away*100/Math.max(1,p.home+p.away))+"%",background:"#ffb86b"}}/></div><span>{p.home}:{p.away}</span></button>)}
               <p className="muted"><strong style={{color:"#65d5ff"}}>● Aurora FC (blue)</strong> · <strong style={{color:"#ffb86b"}}>● Harbor United (orange)</strong></p><p className="muted">{selectedWindow===null ? "Showing all match events." : `Timeline filtered to minutes ${selectedWindow*15}–${(selectedWindow+1)*15}. Select the same window again to clear.`}</p>
-              <h3>Key Match Moments</h3><p className="muted">Goals, recorded shots, and half-time from synthetic match events.</p>{keyMoments.length?<ul>{keyMoments.map(({event:e,description})=><li key={e.id}>{formatClock(e)} — {description}</li>)}</ul>:<p>No key match moments recorded in this window.</p>}
+              <h3>Key Match Moments</h3><p className="muted">Goals, recorded shots, half-time, and full-time from synthetic match events.</p>{keyMoments.length?<ul>{keyMoments.map(({event:e,description})=><li key={e.id}>{formatClock(e)} — {description}</li>)}</ul>:<p>No key match moments recorded in this window.</p>}
             </div>}
             <div className="persona-extra" aria-label="Match story recap"><h3>Match story recap</h3><p dir={language==="ar"?"rtl":"ltr"}>{recap}</p><p className="muted">Based on played synthetic events.</p></div>
             <div className="insight-card" aria-live="polite" aria-atomic="true">
