@@ -306,7 +306,7 @@ export default function App() {
               <h3>Match momentum</h3><p className="muted">Weighted event activity: goal 3, shot 2, pass 1. Not possession or xG.</p>
               <p className="muted">Select a 15-minute window to filter the timeline.</p>
               {momentum.map((p,i)=><button type="button" className={"momentum-row momentum-select"+(selectedWindow===i?" selected":"")} key={p.label} aria-pressed={selectedWindow===i} onClick={()=>{setSelectedWindow(v=>v===i?null:i);setTimelineFilter("all");}}><span>{p.label}</span><div className="momentum-bars" aria-label={"Aurora "+p.home+", Harbor "+p.away}><div style={{width:(p.home*100/Math.max(1,p.home+p.away))+"%",background:"#65d5ff"}}/><div style={{width:(p.away*100/Math.max(1,p.home+p.away))+"%",background:"#ffb86b"}}/></div><span>{p.home}:{p.away}</span></button>)}
-              <p className="muted">Blue: Aurora FC · Orange: Harbor United</p>
+              <p className="muted"><strong style={{color:"#65d5ff"}}>● Aurora FC (blue)</strong> · <strong style={{color:"#ffb86b"}}>● Harbor United (orange)</strong></p><p className="muted">{selectedWindow===null ? "Showing all match events." : `Timeline filtered to minutes ${selectedWindow*15}–${(selectedWindow+1)*15}. Select the same window again to clear.`}</p>
               <h3>Key turning points</h3>{turningPoints.length?<ul>{turningPoints.map(({event:e,change,score})=><li key={e.id}>{formatClock(e)} — {change}: {e.player} scored for {e.team}. Score {score}.</li>)}</ul>:<p>No goals recorded yet.</p>}
             </div>}
             <div className="persona-extra" aria-label="Match story recap"><h3>Match story recap</h3><p dir={language==="ar"?"rtl":"ltr"}>{recap}</p><p className="muted">Based on played synthetic events.</p></div>
