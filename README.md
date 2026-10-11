@@ -62,6 +62,15 @@ cd apps/api
 
 Then check all three personas in the browser, play/restart/scrub, score and event progression, goal celebration, glossary, speech pause/resume and voice rates, keyboard shortcuts, high contrast and text scaling, analyst charts, mobile viewport, and reduced-motion preference. **Passing CI is not equivalent to passing this manual end-to-end check.**
 
+## New fan experiences
+
+- **Multilingual commentary:** English, Arabic and Czech event captions, summaries and browser speech narration in Accessible mode. These are deterministic translations of synthetic events, **not Azure AI translations**. Browser voices for Arabic and Czech may not be installed.
+- **Live captions:** optional text for the current match event, updated as playback progresses. Captions are event-synchronized rather than word-by-word speech transcription.
+- **Match story recap:** evolving event-grounded score and goal narrative for all personas.
+- **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
+- **Fan preferences:** language, persona, high contrast and large text saved in the current browser using localStorage. No account or cloud sync.
+- **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
+
 ## Accessible controls
 
 In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
