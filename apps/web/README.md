@@ -33,6 +33,15 @@ Keyboard shortcuts in Accessible mode, outside focused interactive controls: **S
 
 The match timeline defaults to highlights and can be switched to all events.
 
+## Additional experiences
+
+- Choose **English / العربية / Čeština** for localized event captions, match recap and optional browser speech. Browser voice installation and pronunciation vary.
+- Toggle **Live captions** for event-based subtitles (not speech-to-text).
+- The **Match story recap** is recalculated from played events.
+- In Analyst mode, select a **momentum window** to filter timeline events; clear it to see the whole timeline.
+- Persona, language, contrast and font-size preferences persist locally in the browser.
+- **Guided demo** cycles through three persona highlights automatically; stop it from the same control.
+
 ## Build
 
 ```powershell
