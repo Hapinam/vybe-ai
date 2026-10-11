@@ -21,6 +21,7 @@ export default function App() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [speechRate, setSpeechRate] = useState(0.9);
   const [audioPaused, setAudioPaused] = useState(false);
+  const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
   const speechActive = useRef(false);
   const speechRateRef = useRef(speechRate);
@@ -32,9 +33,10 @@ export default function App() {
     const narrative = speechQueue.current.shift();
     if (!narrative) return;
     speechActive.current = true;
+    setNarrating(true);
     const utterance = new SpeechSynthesisUtterance(narrative);
     utterance.rate = speechRateRef.current;
-    const finish = () => { speechActive.current = false; speakNext(); };
+    const finish = () => { speechActive.current = false; setNarrating(false); speakNext(); };
     utterance.onend = finish;
     utterance.onerror = finish;
     window.speechSynthesis.speak(utterance);
@@ -44,7 +46,7 @@ export default function App() {
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
 
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || (audioEnabled && persona === "accessible" && (narrating || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -55,7 +57,7 @@ export default function App() {
       });
     }, 1900 / playbackSpeed);
     return () => window.clearInterval(timer);
-  }, [playing, playbackSpeed]);
+  }, [playing, playbackSpeed, audioEnabled, persona, narrating, step]);
 
   useEffect(() => {
     let active = true;
@@ -89,6 +91,7 @@ export default function App() {
     setAudioPaused(false);
     speechQueue.current = [];
     speechActive.current = false;
+    setNarrating(false);
     spokenGoalIds.current.clear();
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   };
@@ -118,8 +121,8 @@ export default function App() {
               <div className="club"><div className="crest harbor">H</div><strong>Harbor United</strong><span>AWAY</span></div>
             </div>
             <div className="controls">
-              <button className="primary" onClick={() => { if (playing) { setPlaying(false); } else { if (step === demoMatch.events.length) setStep(1); setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
-              <button className="secondary" onClick={() => { setPlaying(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
+              <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window) { window.speechSynthesis.pause(); setAudioPaused(true); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { window.speechSynthesis.resume(); setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
+              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
             <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
@@ -129,7 +132,7 @@ export default function App() {
                 <option value={2}>2× · Default</option>
                 <option value={4}>4× · Fast</option>
               </select>
-              <button type="button" className="secondary" onClick={() => { setPlaying(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
+              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
             <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); setStep(Number(e.target.value)); }} />
