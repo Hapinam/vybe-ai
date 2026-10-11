@@ -25,3 +25,15 @@
 .quiz-options button:disabled{opacity:.7;cursor:default}
 .timeline-filter{margin:1rem 0}
 .timeline-filter button{min-height:2.5rem}
+
+/* Multilingual fan settings, event captions, and selectable analytics */
+.fan-settings{display:flex;align-items:center;flex-wrap:wrap;gap:.8rem;margin:1rem 0}
+.fan-settings select{color:#fff;background:#25243e;border:1px solid #8171bc;border-radius:.5rem;padding:.5rem;font:inherit;min-height:2.5rem}
+.live-caption{background:#191b31;border:1px solid #a5b4fc;border-radius:.8rem;padding:.85rem 1rem;margin:.8rem 0;color:#fff}
+.live-caption strong{font-size:.75rem;letter-spacing:.08em}
+.live-caption p{margin:.35rem 0 0;font-size:1.05rem;line-height:1.55}
+.momentum-select{width:100%;background:transparent;color:inherit;border:1px solid transparent;border-radius:.4rem;text-align:left;cursor:pointer;font:inherit;padding:.35rem}
+.momentum-select:hover,.momentum-select.selected{border-color:#a5b4fc;background:rgba(165,180,252,.12)}
+.momentum-select:focus-visible{outline:3px solid #ffdf00;outline-offset:2px}
+.high-contrast .live-caption,.high-contrast .fan-settings select{background:#000!important;color:#fff!important;border:2px solid #fff!important}
+@media(max-width:640px){.fan-settings{align-items:stretch}.fan-settings select{max-width:100%}.live-caption{overflow-wrap:anywhere}}
