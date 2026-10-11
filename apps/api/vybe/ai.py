@@ -119,7 +119,7 @@ def _render(match: MatchDefinition, event_id: str, persona: str, style: str) -> 
     return (
         f"{opening} {event.team} at {when}. "
         f"Score: {match.home_team} {score['home']}, {match.away_team} {score['away']}. "
-        "No tactical cause is established by this event."
+        "The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created."
     )
 
 
