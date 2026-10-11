@@ -79,12 +79,13 @@ export default function App() {
   }, [latestGoal?.id, persona]);
 
   useEffect(() => {
-    if (!audioEnabled || persona !== "accessible" || !explanation || !latestGoal || !("speechSynthesis" in window)) return;
+    if (!audioEnabled || !playing || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
     speechQueue.current.push(explanation.narrative);
     speakNext();
-  }, [audioEnabled, persona, explanation, latestGoal?.id]);
+  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step]);
 
   const stopAudio = () => {
     setAudioEnabled(false);
