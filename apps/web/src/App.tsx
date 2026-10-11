@@ -17,6 +17,7 @@ export default function App() {
   const [language, setLanguage] = useState<FanLanguage>(() => { const v=localStorage.getItem("vybe.language"); return v==="ar"||v==="cs"?v:"en"; });
   const [captionsEnabled, setCaptionsEnabled] = useState(() => localStorage.getItem("vybe.captions")!=="false");
   const [demoMode, setDemoMode] = useState(false);
+  const demoModeRef = useRef(false);
   const [selectedWindow, setSelectedWindow] = useState<number|null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(2);
@@ -73,14 +74,15 @@ export default function App() {
   useEffect(() => { localStorage.setItem("vybe.details",String(showEventDetails)); },[showEventDetails]);
   useEffect(() => { localStorage.setItem("vybe.speechRate",String(speechRate)); },[speechRate]);
   useEffect(() => {
+    demoModeRef.current=demoMode;
     if(!demoMode) return;
     setPlaying(false);
     const stages:[Persona,number][]=[["young",4],["accessible",18],["analyst",29]];
     let index=0;
-    const show=()=>{const [p,s]=stages[index];setPersona(p);setStep(s);index++;};
+    const show=()=>{if(!demoModeRef.current)return;const [p,s]=stages[index];setPersona(p);setStep(s);index++;};
     show();
     const timer=window.setInterval(()=>{if(index<stages.length)show();else {window.clearInterval(timer);setDemoMode(false);}},7000);
-    return ()=>window.clearInterval(timer);
+    return ()=>{demoModeRef.current=false;window.clearInterval(timer);};
   },[demoMode]);
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
