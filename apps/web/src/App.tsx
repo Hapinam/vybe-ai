@@ -26,6 +26,8 @@ export default function App() {
   const speechActive = useRef(false);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
+  const introStarted = useRef(false);
+  const outroStarted = useRef(false);
   speechRateRef.current = speechRate;
 
   const speakNext = () => {
@@ -46,7 +48,23 @@ export default function App() {
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
 
   useEffect(() => {
-    if (!playing || (audioEnabled && persona === "accessible" && (narrating || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
+    if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
+    introStarted.current = true;
+    speechQueue.current.push("Welcome to VYBE! It's Aurora FC against Harbor United. The match is about to begin. Let's experience every moment together!");
+    speakNext();
+  }, [playing, audioEnabled, persona, step]);
+
+  useEffect(() => {
+    if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
+    outroStarted.current = true;
+    const score = state ? `${state.home_score} to ${state.away_score}` : "two to two";
+    speechQueue.current.push(`That's full-time! Aurora FC and Harbor United finish ${score}. Four goals, one exciting match. Thank you for experiencing the game with VYBE, where every fan belongs!`);
+    speakNext();
+    setPlaying(false);
+  }, [playing, audioEnabled, persona, step, state]);
+
+  useEffect(() => {
+    if (!playing || (audioEnabled && persona === "accessible" && (narrating || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -94,6 +112,8 @@ export default function App() {
     speechActive.current = false;
     setNarrating(false);
     spokenGoalIds.current.clear();
+    introStarted.current = false;
+    outroStarted.current = false;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   };
 
