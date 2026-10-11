@@ -33,7 +33,8 @@ def replay(match: MatchDefinition, through_event: int | None = None) -> MatchSta
                 state.home_score += 1
             else:
                 state.away_score += 1
-        if event.type == EventType.shot:
+        # A goal is a successful shot; each event is counted exactly once.
+        if event.type in (EventType.shot, EventType.goal):
             if is_home:
                 state.shots_home += 1
             else:
