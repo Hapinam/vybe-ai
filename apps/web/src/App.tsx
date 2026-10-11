@@ -19,6 +19,8 @@ export default function App() {
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [speechRate, setSpeechRate] = useState(0.9);
+  const [audioPaused, setAudioPaused] = useState(false);
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
@@ -60,13 +62,15 @@ export default function App() {
     if (!audioEnabled || persona !== "accessible" || !explanation || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     const speech = new SpeechSynthesisUtterance(explanation.narrative);
-    speech.rate = 0.9;
+    speech.rate = speechRate;
+    setAudioPaused(false);
     window.speechSynthesis.speak(speech);
     return () => window.speechSynthesis.cancel();
-  }, [audioEnabled, persona, explanation]);
+  }, [audioEnabled, persona, explanation, speechRate]);
 
   const stopAudio = () => {
     setAudioEnabled(false);
+    setAudioPaused(false);
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   };
 
@@ -135,7 +139,17 @@ export default function App() {
               <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
-            {persona === "accessible" && <button className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : setAudioEnabled(true)} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>}
+            {persona === "accessible" && <div role="group" aria-label="Spoken commentary controls">
+              <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : setAudioEnabled(true)} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
+              {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
+              <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
+              <select id="speech-rate" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", margin: "0.5rem", font: "inherit" }}>
+                <option value={0.75}>0.75× · Slower</option>
+                <option value={0.9}>0.9× · Default</option>
+                <option value={1}>1× · Normal</option>
+                <option value={1.25}>1.25× · Faster</option>
+              </select>
+            </div>}
             <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
           </div>
         </section>
