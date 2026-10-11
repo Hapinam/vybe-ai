@@ -37,12 +37,24 @@ export default function App() {
     if (!narrative) return;
     speechActive.current = true;
     setNarrating(true);
-    const utterance = new SpeechSynthesisUtterance(narrative);
-    utterance.rate = speechRateRef.current;
-    const finish = () => { speechActive.current = false; setNarrating(false); speakNext(); };
-    utterance.onend = finish;
-    utterance.onerror = finish;
-    window.speechSynthesis.speak(utterance);
+    // Speak sentence by sentence so rate changes apply without restarting commentary.
+    const sentences = narrative.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map((part) => part.trim()).filter(Boolean) ?? [narrative];
+    let index = 0;
+    const speakSentence = () => {
+      if (!speechActive.current) return;
+      if (index >= sentences.length) {
+        speechActive.current = false;
+        setNarrating(false);
+        speakNext();
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(sentences[index++]);
+      utterance.rate = speechRateRef.current;
+      utterance.onend = speakSentence;
+      utterance.onerror = speakSentence;
+      window.speechSynthesis.speak(utterance);
+    };
+    speakSentence();
   };
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
