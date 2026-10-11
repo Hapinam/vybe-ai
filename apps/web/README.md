@@ -25,11 +25,13 @@ Open the localhost URL printed by Vite (normally http://localhost:5173). The dev
 
 ## Personas
 
-- **Young Fan:** goal celebrations, football vocabulary, friendly event explanations.
+- **Young Fan:** goal celebrations, football vocabulary, interactive goal quiz, friendly event explanations.
 - **Accessible:** optional browser speech synthesis, voice speeds, expanded shot/pass descriptions, contrast and font controls, keyboard shortcuts.
 - **Analyst:** recorded event totals, half comparisons, weighted 15-minute momentum and goal-based turning points.
 
 Keyboard shortcuts in Accessible mode, outside focused interactive controls: **Space** play/pause; **Left/Right** previous/next event. **Tab** navigates interactive elements. Voice availability varies by browser and operating system.
+
+The match timeline defaults to highlights and can be switched to all events.
 
 ## Build
 
