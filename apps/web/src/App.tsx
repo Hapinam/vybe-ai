@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 
@@ -19,12 +19,60 @@ export default function App() {
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [speechRate, setSpeechRate] = useState(1);
+  const [audioPaused, setAudioPaused] = useState(false);
+  const [narrating, setNarrating] = useState(false);
+  const speechQueue = useRef<string[]>([]);
+  const speechActive = useRef(false);
+  const speechRateRef = useRef(speechRate);
+  const spokenGoalIds = useRef<Set<string>>(new Set());
+  const previewSpeech = useRef<SpeechSynthesisUtterance | null>(null);
+  const introStarted = useRef(false);
+  const outroStarted = useRef(false);
+  speechRateRef.current = speechRate;
+
+  const speakNext = () => {
+    if (speechActive.current || speechQueue.current.length === 0 || !("speechSynthesis" in window)) return;
+    const narrative = speechQueue.current.shift();
+    if (!narrative) return;
+    speechActive.current = true;
+    setNarrating(true);
+    // A single utterance avoids dropped words at sentence boundaries.
+    // Browser speech engines apply rate when an utterance starts.
+    const utterance = new SpeechSynthesisUtterance(narrative);
+    utterance.rate = speechRateRef.current;
+    const finish = () => {
+      if (!speechActive.current) return;
+      speechActive.current = false;
+      setNarrating(false);
+      speakNext();
+    };
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    window.speechSynthesis.speak(utterance);
+  };
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
 
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
+    introStarted.current = true;
+    speechQueue.current.push("Welcome to VYBE! It's Aurora FC against Harbor United. The match is about to begin. Let's experience every moment together!");
+    speakNext();
+  }, [playing, audioEnabled, persona, step]);
+
+  useEffect(() => {
+    if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
+    outroStarted.current = true;
+    const score = state ? `${state.home_score} to ${state.away_score}` : "two to two";
+    speechQueue.current.push(`That's full-time! Aurora FC and Harbor United finish ${score}. Four goals, one exciting match. Thank you for experiencing the game with VYBE, where every fan belongs!`);
+    speakNext();
+    setPlaying(false);
+  }, [playing, audioEnabled, persona, step, state]);
+
+  useEffect(() => {
+    if (!playing || (audioEnabled && persona === "accessible" && (narrating || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -33,9 +81,9 @@ export default function App() {
         }
         return current + 1;
       });
-    }, 1900 / playbackSpeed);
+    }, (1900 * 9) / (demoMatch.events.length * playbackSpeed));
     return () => window.clearInterval(timer);
-  }, [playing, playbackSpeed]);
+  }, [playing, playbackSpeed, audioEnabled, persona, narrating, step]);
 
   useEffect(() => {
     let active = true;
@@ -57,17 +105,25 @@ export default function App() {
   }, [latestGoal?.id, persona]);
 
   useEffect(() => {
-    if (!audioEnabled || persona !== "accessible" || !explanation || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const speech = new SpeechSynthesisUtterance(explanation.narrative);
-    speech.rate = 0.9;
-    window.speechSynthesis.speak(speech);
-    return () => window.speechSynthesis.cancel();
-  }, [audioEnabled, persona, explanation]);
+    if (!audioEnabled || !playing || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
+    if (spokenGoalIds.current.has(latestGoal.id)) return;
+    spokenGoalIds.current.add(latestGoal.id);
+    speechQueue.current.push(explanation.narrative);
+    speakNext();
+  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step]);
 
   const stopAudio = () => {
     setAudioEnabled(false);
+    setAudioPaused(false);
+    speechQueue.current = [];
+    speechActive.current = false;
+    setNarrating(false);
+    spokenGoalIds.current.clear();
+    introStarted.current = false;
+    outroStarted.current = false;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    previewSpeech.current = null;
   };
 
   return (
@@ -95,8 +151,8 @@ export default function App() {
               <div className="club"><div className="crest harbor">H</div><strong>Harbor United</strong><span>AWAY</span></div>
             </div>
             <div className="controls">
-              <button className="primary" onClick={() => { if (playing) { setPlaying(false); } else { if (step === demoMatch.events.length) setStep(1); setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
-              <button className="secondary" onClick={() => { setPlaying(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
+              <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window) { window.speechSynthesis.pause(); setAudioPaused(true); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { window.speechSynthesis.resume(); setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
+              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
             <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
@@ -106,7 +162,7 @@ export default function App() {
                 <option value={2}>2× · Default</option>
                 <option value={4}>4× · Fast</option>
               </select>
-              <button type="button" className="secondary" onClick={() => { setPlaying(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
+              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
             <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); setStep(Number(e.target.value)); }} />
@@ -135,7 +191,29 @@ export default function App() {
               <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
-            {persona === "accessible" && <button className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : setAudioEnabled(true)} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>}
+            {persona === "accessible" && <div role="group" aria-label="Spoken commentary controls">
+              <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
+              {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
+              <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
+              <select id="speech-rate" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", margin: "0.5rem", font: "inherit" }}>
+                <option value={0.5}>0.5× · Very slow</option>
+                <option value={1}>1× · Normal</option>
+                <option value={1.5}>1.5× · Fast</option>
+                <option value={2}>2× · Very fast</option>
+              </select>
+              <button type="button" className="audio-toggle" onClick={() => {
+                if (!("speechSynthesis" in window)) return;
+                // Keep the match commentary intact: do not cancel an active narration.
+                if (speechActive.current || window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
+                const preview = new SpeechSynthesisUtterance("Welcome to VYBE. This is a preview of your selected commentary speed.");
+                preview.rate = speechRateRef.current;
+                previewSpeech.current = preview;
+                preview.onend = () => { previewSpeech.current = null; };
+                preview.onerror = () => { previewSpeech.current = null; };
+                window.speechSynthesis.speak(preview);
+              }} disabled={narrating} title="Preview is available when commentary is not speaking">Test voice speed</button>
+              <span className="progress-label">Speed changes apply to the next commentary.</span>
+            </div>}
             <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
           </div>
         </section>
