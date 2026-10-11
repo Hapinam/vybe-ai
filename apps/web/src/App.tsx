@@ -54,6 +54,7 @@ export default function App() {
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
+  const celebratingGoal = persona === "young" && lastEvent.type === "goal" ? lastEvent : null;
 
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
@@ -185,6 +186,14 @@ export default function App() {
                 </button>
               ))}
             </div>
+            {celebratingGoal && (
+              <div role="status" aria-live="polite" aria-label="Goal celebration" style={{ margin: "1rem 0", padding: "1.25rem", borderRadius: "1rem", border: "2px solid #fbbf24", background: "linear-gradient(135deg, #403068, #2a2348)", textAlign: "center" }}>
+                <div aria-hidden="true" style={{ fontSize: "2rem" }}>⚽ 🎉 ⭐</div>
+                <strong style={{ display: "block", fontSize: "1.65rem", margin: "0.4rem 0" }}>GOOOAL!</strong>
+                <p style={{ margin: "0.25rem 0" }}>{celebratingGoal.player ?? "A player"} scores for {celebratingGoal.team ?? "their team"}!</p>
+                <span style={{ fontWeight: 700 }}>Minute {formatClock(celebratingGoal)} · What a moment!</span>
+              </div>
+            )}
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
               {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected style · verified factual template" : "Evidence-based commentary · deterministic fallback"}</div>}
