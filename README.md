@@ -68,7 +68,7 @@ Then check all three personas in the browser, play/restart/scrub, score and even
 - **Live captions:** optional text for the current match event, updated as playback progresses. Captions are event-synchronized rather than word-by-word speech transcription.
 - **Match story recap:** evolving event-grounded score and goal narrative for all personas.
 - **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
-- **Fan preferences:** language, persona, high contrast and large text saved in the current browser using localStorage. No account or cloud sync.
+- **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage. No account or cloud sync.
 - **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
 
 ## Accessible controls
