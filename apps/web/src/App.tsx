@@ -24,6 +24,7 @@ export default function App() {
   const [expandedAudio, setExpandedAudio] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">("highlights");
+  const [showEventDetails, setShowEventDetails] = useState(true);
   const [speechRate, setSpeechRate] = useState(1);
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
@@ -295,8 +296,9 @@ export default function App() {
             <button type="button" className={timelineFilter === "highlights" ? "primary" : "secondary"} aria-pressed={timelineFilter === "highlights"} onClick={() => setTimelineFilter("highlights")}>Highlights</button>
             <button type="button" className={timelineFilter === "all" ? "primary" : "secondary"} aria-pressed={timelineFilter === "all"} onClick={() => setTimelineFilter("all")}>All events ({visibleEvents.length})</button>
           </div>
+          <label className="access-choice"><input type="checkbox" checked={showEventDetails} onChange={e=>setShowEventDetails(e.target.checked)} /> Show event details</label>
           <ol className="timeline">
-            {[...timelineEvents].reverse().map((event) => <li key={event.id}><span className="event-time">{formatClock(event)}</span><span className={event.type === "goal" ? "event-icon goal-icon" : "event-icon"}>{event.type === "goal" ? "⚽" : event.type === "shot" ? "↗" : event.type === "pass_completed" ? "→" : "•"}</span><div><strong>{event.type === "goal" ? "GOAL!" : event.type.replace("_", " ").toUpperCase()}</strong><p>{event.team ?? "Match official"}{event.player ? ` · ${event.player}` : ""}</p></div>{event.type === "goal" && <span className="goal-label">KEY MOMENT</span>}</li>)}
+            {[...timelineEvents].reverse().map((event) => <li key={event.id}><span className="event-time">{formatClock(event)}</span><span className={event.type === "goal" ? "event-icon goal-icon" : "event-icon"}>{event.type === "goal" ? "⚽" : event.type === "shot" ? "↗" : event.type === "pass_completed" ? "→" : "•"}</span><div><strong>{event.type === "goal" ? "GOAL!" : event.type.replace("_", " ").toUpperCase()}</strong>{showEventDetails && <p>{event.team ?? "Match official"}{event.player ? ` · ${event.player}` : ""}</p>}</div>{event.type === "goal" && <span className="goal-label">KEY MOMENT</span>}</li>)}
           </ol>
         </section>
         {error && <div className="error" role="alert">Backend connection issue: {error}. Start the FastAPI server on port 8000.</div>}
