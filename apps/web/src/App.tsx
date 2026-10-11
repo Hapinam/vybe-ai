@@ -103,15 +103,15 @@ export default function App() {
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
     introStarted.current = true;
-    speechQueue.current.push("Welcome to VYBE! It's Aurora FC against Harbor United. The match is about to begin. Let's experience every moment together!");
+    speechQueue.current.push(language==="en" ? "Welcome to VYBE! Aurora FC against Harbor United." : eventCaption(lastEvent,language,persona));
     speakNext();
-  }, [playing, audioEnabled, persona, step]);
+  }, [playing, audioEnabled, persona, step, language]);
 
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
     outroStarted.current = true;
     const score = state ? `${state.home_score} to ${state.away_score}` : "two to two";
-    speechQueue.current.push(`That's full-time! Aurora FC and Harbor United finish ${score}. Four goals, one exciting match. Thank you for experiencing the game with VYBE, where every fan belongs!`);
+    speechQueue.current.push(language==="en" ? "Full-time! Aurora FC and Harbor United finish "+score+"." : eventCaption(lastEvent,language,persona)+" "+score);
     speakNext();
     setPlaying(false);
   }, [playing, audioEnabled, persona, step, state]);
@@ -156,7 +156,7 @@ export default function App() {
     spokenGoalIds.current.add(latestGoal.id);
     speechQueue.current.push(language==="en"?explanation.narrative:eventCaption(latestGoal,language,persona));
     speakNext();
-  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step]);
+  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step, language]);
 
   useEffect(() => {
     if (!expandedAudio || !audioEnabled || !playing || persona !== "accessible" || !("speechSynthesis" in window)) return;
