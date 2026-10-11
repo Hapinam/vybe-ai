@@ -19,13 +19,14 @@ export default function App() {
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [speechRate, setSpeechRate] = useState(0.9);
+  const [speechRate, setSpeechRate] = useState(1);
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
   const speechActive = useRef(false);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
+  const previewSpeech = useRef<SpeechSynthesisUtterance | null>(null);
   const introStarted = useRef(false);
   const outroStarted = useRef(false);
   speechRateRef.current = speechRate;
@@ -115,6 +116,7 @@ export default function App() {
     introStarted.current = false;
     outroStarted.current = false;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    previewSpeech.current = null;
   };
 
   return (
@@ -187,11 +189,23 @@ export default function App() {
               {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
               <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
               <select id="speech-rate" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", margin: "0.5rem", font: "inherit" }}>
-                <option value={0.75}>0.75× · Slower</option>
-                <option value={0.9}>0.9× · Default</option>
+                <option value={0.5}>0.5× · Very slow</option>
                 <option value={1}>1× · Normal</option>
-                <option value={1.25}>1.25× · Faster</option>
+                <option value={1.5}>1.5× · Fast</option>
+                <option value={2}>2× · Very fast</option>
               </select>
+              <button type="button" className="audio-toggle" onClick={() => {
+                if (!("speechSynthesis" in window)) return;
+                // Keep the match commentary intact: do not cancel an active narration.
+                if (speechActive.current || window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
+                const preview = new SpeechSynthesisUtterance("Welcome to VYBE. This is a preview of your selected commentary speed.");
+                preview.rate = speechRateRef.current;
+                previewSpeech.current = preview;
+                preview.onend = () => { previewSpeech.current = null; };
+                preview.onerror = () => { previewSpeech.current = null; };
+                window.speechSynthesis.speak(preview);
+              }} disabled={narrating} title="Preview is available when commentary is not speaking">Test voice speed</button>
+              <span className="progress-label">Speed changes apply to the next spoken sentence.</span>
             </div>}
             <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
           </div>
