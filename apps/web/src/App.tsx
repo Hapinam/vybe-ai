@@ -37,33 +37,19 @@ export default function App() {
     if (!narrative) return;
     speechActive.current = true;
     setNarrating(true);
-    // Keep one utterance per sentence, but enqueue the next before the current
-    // one finishes. This avoids gaps introduced by waiting for onend to call speak().
-    const sentences = narrative.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map((part) => part.trim()).filter(Boolean) ?? [narrative];
-    let index = 0;
-    let finished = 0;
-    const enqueue = () => {
-      if (!speechActive.current || index >= sentences.length) return;
-      const utterance = new SpeechSynthesisUtterance(sentences[index++]);
-      utterance.onstart = () => {
-        // Queue the following sentence with the most recently selected speed.
-        enqueue();
-      };
-      utterance.rate = speechRateRef.current;
-      const done = () => {
-        if (!speechActive.current) return;
-        finished++;
-        if (finished === sentences.length) {
-          speechActive.current = false;
-          setNarrating(false);
-          speakNext();
-        }
-      };
-      utterance.onend = done;
-      utterance.onerror = done;
-      window.speechSynthesis.speak(utterance);
+    // A single utterance avoids dropped words at sentence boundaries.
+    // Browser speech engines apply rate when an utterance starts.
+    const utterance = new SpeechSynthesisUtterance(narrative);
+    utterance.rate = speechRateRef.current;
+    const finish = () => {
+      if (!speechActive.current) return;
+      speechActive.current = false;
+      setNarrating(false);
+      speakNext();
     };
-    enqueue();
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    window.speechSynthesis.speak(utterance);
   };
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
