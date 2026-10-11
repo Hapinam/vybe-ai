@@ -144,13 +144,13 @@ export default function App() {
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
       const target=event.target as HTMLElement|null;
       if(target?.closest("button,input,select,textarea,a,[contenteditable]"))return;
-      if(event.code==="Space"){event.preventDefault();setPlaying(v=>!v);}
-      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);setStep(v=>Math.min(demoMatch.events.length,v+1));}
-      if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);setStep(v=>Math.max(1,v-1));}
+      if(event.code==="Space"){event.preventDefault();if(audioEnabled && "speechSynthesis" in window){if(playing){window.speechSynthesis.pause();setAudioPaused(true);}else if(audioPaused){window.speechSynthesis.resume();setAudioPaused(false);}}setPlaying(v=>!v);}
+      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
+      if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.max(1,v-1));}
     };
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
-  },[persona]);
+  },[persona,playing,audioEnabled,audioPaused]);
   const stopAudio = () => {
     setAudioEnabled(false);
     setAudioPaused(false);
@@ -204,7 +204,7 @@ export default function App() {
               <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
-            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); setStep(Number(e.target.value)); }} />
+            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); if(audioEnabled)stopAudio(); setStep(Number(e.target.value)); }} />
             <div className="stats">
               <div><span>Recorded shots</span><strong>{state ? `${state.shots_home} — ${state.shots_away}` : "—"}</strong></div>
               <div><span>Completed passes</span><strong>{state ? `${state.passes_home} — ${state.passes_away}` : "—"}</strong></div>
