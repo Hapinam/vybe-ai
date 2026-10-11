@@ -27,7 +27,7 @@ export default function App() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("vybe.contrast")==="true");
   const [largeText, setLargeText] = useState(() => localStorage.getItem("vybe.largeText")==="true");
-  const [expandedAudio, setExpandedAudio] = useState(false);
+  const [expandedAudio, setExpandedAudio] = useState(() => localStorage.getItem("vybe.expandedAudio")==="true");
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">(() => localStorage.getItem("vybe.timeline")==="all"?"all":"highlights");
   const [showEventDetails, setShowEventDetails] = useState(() => localStorage.getItem("vybe.details")!=="false");
@@ -73,6 +73,7 @@ export default function App() {
   useEffect(() => { localStorage.setItem("vybe.timeline",timelineFilter); },[timelineFilter]);
   useEffect(() => { localStorage.setItem("vybe.details",String(showEventDetails)); },[showEventDetails]);
   useEffect(() => { localStorage.setItem("vybe.speechRate",String(speechRate)); },[speechRate]);
+  useEffect(() => { localStorage.setItem("vybe.expandedAudio",String(expandedAudio)); },[expandedAudio]);
   useEffect(() => {
     demoModeRef.current=demoMode;
     if(!demoMode) return;
