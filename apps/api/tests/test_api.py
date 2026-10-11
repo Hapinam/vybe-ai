@@ -29,12 +29,13 @@ def test_replay_score():
     assert response.status_code == 200
     state = response.json()["state"]
     assert (state["home_score"], state["away_score"]) == (2, 2)
-    assert state["shots_home"] == 1
+    assert (state["shots_home"], state["shots_away"]) == (3, 2)
 
 
 def test_partial_replay():
     state = client.post("/v1/matches/replay?through_event=3", json=MATCH).json()["state"]
     assert (state["home_score"], state["away_score"]) == (1, 1)
+    assert (state["shots_home"], state["shots_away"]) == (1, 1)
 
 
 def test_personas_same_facts():
@@ -137,3 +138,20 @@ def test_narrate_unsupported_persona_returns_clear_422():
     response = client.post("/v1/matches/narrate/e2?persona=invalid", json=MATCH)
     assert response.status_code == 422
     assert response.json()["detail"] == "unsupported persona"
+
+
+def test_shots_include_goals_without_double_counting():
+    """Goals count as shots once, alongside explicit non-goal shots."""
+    response = client.post("/v1/matches/replay", json=MATCH)
+    assert response.status_code == 200
+    state = response.json()["state"]
+    assert (state["shots_home"], state["shots_away"]) == (3, 2)
+    assert state["shots_home"] >= state["home_score"]
+    assert state["shots_away"] >= state["away_score"]
+
+
+def test_replay_goal_only_counts_one_shot():
+    goal_only = {**MATCH, "events": [{"id": "g1", "minute": 1, "team": "Team B", "type": "goal"}]}
+    state = client.post("/v1/matches/replay", json=goal_only).json()["state"]
+    assert (state["shots_home"], state["shots_away"]) == (0, 1)
+    assert (state["home_score"], state["away_score"]) == (0, 1)
