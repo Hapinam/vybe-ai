@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 
-type PlaybackSpeed = 1 | 2 | 4 | "instant";
+type PlaybackSpeed = 1 | 2 | 4;
 
 const personaInfo: Record<Persona, { label: string; subtitle: string }> = {
   young: { label: "Young Fan", subtitle: "Every moment, made simple." },
@@ -24,7 +24,7 @@ export default function App() {
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
 
   useEffect(() => {
-    if (!playing || playbackSpeed === "instant") return;
+    if (!playing) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -95,27 +95,18 @@ export default function App() {
               <div className="club"><div className="crest harbor">H</div><strong>Harbor United</strong><span>AWAY</span></div>
             </div>
             <div className="controls">
-              <button className="primary" onClick={() => { if (step === demoMatch.events.length) setStep(1); if (playbackSpeed === "instant") { setPlaying(false); setStep(demoMatch.events.length); } else { setPlaying((v) => !v); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
+              <button className="primary" onClick={() => { if (playing) { setPlaying(false); } else { if (step === demoMatch.events.length) setStep(1); setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
               <button className="secondary" onClick={() => { setPlaying(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
             <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
               <label htmlFor="playback-speed" className="progress-label">Playback speed</label>
-              <select id="playback-speed" value={playbackSpeed} onChange={(event) => {
-                const selected = event.target.value;
-                if (selected === "instant") {
-                  setPlaying(false);
-                  setStep(demoMatch.events.length);
-                  setPlaybackSpeed("instant");
-                } else {
-                  setPlaybackSpeed(Number(selected) as 1 | 2 | 4);
-                }
-              }} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", font: "inherit" }}>
+              <select id="playback-speed" value={playbackSpeed} onChange={(event) => setPlaybackSpeed(Number(event.target.value) as PlaybackSpeed)} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", font: "inherit" }}>
                 <option value={1}>1× · Relaxed</option>
                 <option value={2}>2× · Default</option>
                 <option value={4}>4× · Fast</option>
-                <option value="instant">Instant · Full time</option>
               </select>
+              <button type="button" className="secondary" onClick={() => { setPlaying(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
             <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); setStep(Number(e.target.value)); }} />
