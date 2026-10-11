@@ -38,3 +38,26 @@ def test_provider_failure_falls_back():
     with patch.dict("os.environ", env, clear=True), patch("vybe.ai._generate", side_effect=OSError("offline")):
         result = narrate_goal(match(), "goal-1")
     assert result["generation_mode"] == "deterministic"
+
+
+def test_provider_timeout_preserves_verified_facts():
+    env = {"VYBE_AZURE_OPENAI_ENDPOINT": "https://test.openai.azure.com",
+           "VYBE_AZURE_OPENAI_KEY": "fake",
+           "VYBE_AZURE_OPENAI_DEPLOYMENT": "demo"}
+    with patch.dict("os.environ", env, clear=True), patch("vybe.ai._generate", side_effect=TimeoutError("timed out")):
+        result = narrate_goal(match(), "goal-1", "accessible")
+    assert result["generation_mode"] == "deterministic"
+    assert result["score"] == {"home": 1, "away": 0}
+    assert result["evidence_event_ids"] == ["goal-1"]
+    assert result["synthetic"] is True
+
+
+def test_invalid_provider_style_preserves_verified_facts():
+    env = {"VYBE_AZURE_OPENAI_ENDPOINT": "https://test.openai.azure.com",
+           "VYBE_AZURE_OPENAI_KEY": "fake",
+           "VYBE_AZURE_OPENAI_DEPLOYMENT": "demo"}
+    with patch.dict("os.environ", env, clear=True), patch("vybe.ai._generate", return_value='{"style":"invented"}'):
+        result = narrate_goal(match(), "goal-1", "young")
+    assert result["generation_mode"] == "deterministic"
+    assert result["score"] == {"home": 1, "away": 0}
+    assert result["evidence_event_ids"] == ["goal-1"]

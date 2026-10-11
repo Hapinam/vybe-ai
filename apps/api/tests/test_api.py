@@ -113,3 +113,27 @@ def test_replay_rejects_whitespace_only_event_id():
     broken = {**MATCH, "events": [{"id": "   ", "minute": 5, "type": "kickoff"}]}
     response = client.post("/v1/matches/replay", json=broken)
     assert response.status_code == 422
+
+
+def test_explain_unknown_event_returns_clear_422():
+    response = client.post("/v1/matches/explain/does-not-exist", json=MATCH)
+    assert response.status_code == 422
+    assert response.json()["detail"] == "event_id must refer to a goal"
+
+
+def test_explain_unsupported_persona_returns_clear_422():
+    response = client.post("/v1/matches/explain/e2?persona=invalid", json=MATCH)
+    assert response.status_code == 422
+    assert response.json()["detail"] == "unsupported persona"
+
+
+def test_narrate_unknown_event_returns_clear_422():
+    response = client.post("/v1/matches/narrate/does-not-exist", json=MATCH)
+    assert response.status_code == 422
+    assert response.json()["detail"] == "event_id must refer to a goal"
+
+
+def test_narrate_unsupported_persona_returns_clear_422():
+    response = client.post("/v1/matches/narrate/e2?persona=invalid", json=MATCH)
+    assert response.status_code == 422
+    assert response.json()["detail"] == "unsupported persona"
