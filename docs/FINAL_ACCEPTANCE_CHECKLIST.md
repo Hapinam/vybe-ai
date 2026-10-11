@@ -54,7 +54,7 @@ This is the **single consolidated manual test pass** to run after all feature wo
 - [ ] Verify event-based captions update at kickoff, goal, pass, shot, halftime and fulltime; toggle captions off/on.
 - [ ] Verify recap never reveals goals that have not been played; check 2–2 at fulltime.
 - [ ] Select and clear all six Analyst momentum windows; timeline must filter without changing score or totals.
-- [ ] Reload the page; persona, language, contrast and font-size settings should persist in the same browser.
+- [ ] Reload the page; persona, language, contrast, font-size, captions, timeline view, event details and voice settings should persist in the same browser.
 - [ ] Start Guided demo; confirm persona transitions and stopping behavior; verify no stale audio.
 - [ ] Confirm translated templates are not represented as live Azure AI translation or word-level speech captions.
 
