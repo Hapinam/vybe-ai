@@ -39,7 +39,7 @@ The match timeline defaults to highlights and can be switched to all events.
 - Toggle **Live captions** for event-based subtitles (not speech-to-text).
 - The **Match story recap** is recalculated from played events.
 - In Analyst mode, select a **momentum window** to filter timeline events; clear it to see the whole timeline.
-- Persona, language, contrast and font-size preferences persist locally in the browser.
+- Persona, language, contrast, font-size, captions, timeline view, event details, expanded narration and speech speed persist locally in the browser.
 - **Guided demo** cycles through three persona highlights automatically; stop it from the same control.
 
 ## Build
