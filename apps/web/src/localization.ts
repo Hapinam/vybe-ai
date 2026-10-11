@@ -8,6 +8,16 @@ const messages: Record<FanLanguage, Messages> = {
   ar: { kickoff:"بدأت المباراة.",halftime:"انتهى الشوط الأول.",fulltime:"انتهت المباراة.",goal:"هدف",shot:"تسديدة",pass:"تمريرة ناجحة",intro:"أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد.",final:"النتيجة النهائية",recap:"قصة المباراة",noGoals:"لم تُسجَّل أهداف بعد." },
   cs: { kickoff:"Zápas začíná.",halftime:"Je poločas.",fulltime:"Zápas skončil.",goal:"Gól",shot:"Střela",pass:"Úspěšná přihrávka",intro:"Vítejte ve VYBE. Aurora FC hraje proti Harbor United.",final:"Konečné skóre",recap:"Příběh zápasu",noGoals:"Zatím nepadl žádný gól." }
 };
+export function spokenMatchIntro(lang: FanLanguage): string {
+  return messages[lang].intro;
+}
+
+export function spokenMatchOutro(lang: FanLanguage, home: number, away: number): string {
+  if (lang === "ar") return `انتهت المباراة! النتيجة النهائية: أورورا إف سي ${home}، هاربور يونايتد ${away}.`;
+  if (lang === "cs") return `Konec zápasu! Konečné skóre: Aurora FC ${home}, Harbor United ${away}.`;
+  return `Full-time! Final score: Aurora FC ${home}, Harbor United ${away}.`;
+}
+
 export const languageText = (lang:FanLanguage) => messages[lang];
 export function eventCaption(event:MatchEvent, lang:FanLanguage, persona:Persona="accessible"):string {
   const m=messages[lang], who=event.player ? event.player+" · " : "", team=event.team??"";
