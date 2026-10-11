@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
-import { eventCaption, languageNames, matchRecap, type FanLanguage } from "./localization";
+import { eventCaption, languageNames, matchRecap, spokenMatchIntro, spokenMatchOutro, type FanLanguage } from "./localization";
 
 type PlaybackSpeed = 1 | 2 | 4;
 
@@ -122,7 +122,7 @@ export default function App() {
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
     introStarted.current = true;
-    speechQueue.current.push(language==="en" ? "Welcome to VYBE! Aurora FC against Harbor United." : eventCaption(lastEvent,language,persona));
+    speechQueue.current.push(spokenMatchIntro(language));
     speakNext();
   }, [playing, audioEnabled, persona, step, language]);
 
@@ -130,8 +130,9 @@ export default function App() {
     if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
     outroStarted.current = true;
     const goals = visibleEvents.filter(event => event.type === "goal");
-    const score = goals.filter(event => event.team === demoMatch.home_team).length + " to " + goals.filter(event => event.team === demoMatch.away_team).length;
-    speechQueue.current.push(language==="en" ? "Full-time! Aurora FC and Harbor United finish "+score+"." : eventCaption(lastEvent,language,persona)+" "+score);
+    const home = goals.filter(event => event.team === demoMatch.home_team).length;
+    const away = goals.filter(event => event.team === demoMatch.away_team).length;
+    speechQueue.current.push(spokenMatchOutro(language, home, away));
     speakNext();
     setPlaying(false);
   }, [playing, audioEnabled, persona, step, language]);
