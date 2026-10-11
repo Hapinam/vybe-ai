@@ -110,11 +110,12 @@ export default function App() {
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
     outroStarted.current = true;
-    const score = state ? `${state.home_score} to ${state.away_score}` : "two to two";
+    const goals = visibleEvents.filter(event => event.type === "goal");
+    const score = goals.filter(event => event.team === demoMatch.home_team).length + " to " + goals.filter(event => event.team === demoMatch.away_team).length;
     speechQueue.current.push(language==="en" ? "Full-time! Aurora FC and Harbor United finish "+score+"." : eventCaption(lastEvent,language,persona)+" "+score);
     speakNext();
     setPlaying(false);
-  }, [playing, audioEnabled, persona, step, state]);
+  }, [playing, audioEnabled, persona, step, language]);
 
   useEffect(() => {
     if (!playing || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
