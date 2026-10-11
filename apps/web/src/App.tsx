@@ -119,7 +119,7 @@ export default function App() {
   });
   const keyMoments = visibleEvents
     .filter(e => ["goal", "shot", "halftime"].includes(e.type))
-    .filter(e => selectedWindow === null || (e.minute >= selectedWindow * 15 && e.minute < (selectedWindow + 1) * 15))
+    .filter(e => selectedWindow === null || (e.type === "halftime" ? selectedWindow === 2 : (e.minute >= selectedWindow * 15 && e.minute < (selectedWindow + 1) * 15)))
     .map(e => {
       if (e.type === "halftime") return { event: e, description: "Half-time break. Teams regroup for the second half." };
       if (e.type === "shot") return { event: e, description: `Shot by ${e.player} for ${e.team}. Outcome not specified in the synthetic data.` };
