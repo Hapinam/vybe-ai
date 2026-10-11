@@ -47,6 +47,17 @@ This is the **single consolidated manual test pass** to run after all feature wo
 - [ ] Turning points correctly identify goals, equalizers and leads with accurate scores.
 - [ ] All analyst values update when scrubbing and reset when restarting.
 
+## Additional features — final acceptance
+
+- [ ] Switch between English, Arabic and Czech; verify captions and recap reflect the selected language and Arabic text reads right-to-left.
+- [ ] In Accessible mode, test speech in all three languages where voices exist; document unavailable OS/browser voices.
+- [ ] Verify event-based captions update at kickoff, goal, pass, shot, halftime and fulltime; toggle captions off/on.
+- [ ] Verify recap never reveals goals that have not been played; check 2–2 at fulltime.
+- [ ] Select and clear all six Analyst momentum windows; timeline must filter without changing score or totals.
+- [ ] Reload the page; persona, language, contrast and font-size settings should persist in the same browser.
+- [ ] Start Guided demo; confirm persona transitions and stopping behavior; verify no stale audio.
+- [ ] Confirm translated templates are not represented as live Azure AI translation or word-level speech captions.
+
 ## Quality, documentation and release gate
 
 - [ ] Check browser console and network requests for errors during a full replay.
