@@ -81,7 +81,7 @@ export default function App() {
         }
         return current + 1;
       });
-    }, 1900 / playbackSpeed);
+    }, (1900 * 9) / (demoMatch.events.length * playbackSpeed));
     return () => window.clearInterval(timer);
   }, [playing, playbackSpeed, audioEnabled, persona, narrating, step]);
 
