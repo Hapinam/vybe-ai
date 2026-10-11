@@ -67,7 +67,7 @@ export default function App() {
   const statsForHalf = (start:number,end:number) => {
     const events=visibleEvents.filter(e=>e.minute>=start&&e.minute<end);
     const count=(type:string,team:string)=>events.filter(e=>e.type===type&&e.team===team).length;
-    return {goals:[count("goal",demoMatch.home_team),count("goal",demoMatch.away_team)],shots:[count("shot",demoMatch.home_team),count("shot",demoMatch.away_team)],passes:[count("pass_completed",demoMatch.home_team),count("pass_completed",demoMatch.away_team)]};
+    return {goals:[count("goal",demoMatch.home_team),count("goal",demoMatch.away_team)],shots:[count("shot",demoMatch.home_team)+count("goal",demoMatch.home_team),count("shot",demoMatch.away_team)+count("goal",demoMatch.away_team)],passes:[count("pass_completed",demoMatch.home_team),count("pass_completed",demoMatch.away_team)]};
   };
   const firstHalf=statsForHalf(0,45), secondHalf=statsForHalf(45,91);
   const momentum=Array.from({length:6},(_,i)=>{
@@ -105,7 +105,7 @@ export default function App() {
       });
     }, (1900 * 9) / (demoMatch.events.length * playbackSpeed));
     return () => window.clearInterval(timer);
-  }, [playing, playbackSpeed, audioEnabled, persona, narrating, step]);
+  }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step]);
 
   useEffect(() => {
     let active = true;
@@ -246,7 +246,7 @@ export default function App() {
               </div>}
             </div>}
             {persona==="analyst" && <div className="persona-extra">
-              <h3>First half vs second half</h3>
+              <h3>First half vs second half</h3><p className="muted">Home–Away counts; recorded shots include goals.</p>
               <table className="analysis-table"><thead><tr><th>Recorded events</th><th>First</th><th>Second</th></tr></thead><tbody>
                 {(["goals","shots","passes"] as const).map(key=><tr key={key}><th>{key}</th><td>{firstHalf[key].join("–")}</td><td>{secondHalf[key].join("–")}</td></tr>)}
               </tbody></table>
