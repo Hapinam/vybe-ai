@@ -19,6 +19,9 @@ export default function App() {
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [largeText, setLargeText] = useState(false);
+  const [expandedAudio, setExpandedAudio] = useState(false);
   const [speechRate, setSpeechRate] = useState(1);
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
@@ -26,6 +29,7 @@ export default function App() {
   const speechActive = useRef(false);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
+  const spokenEventIds = useRef<Set<string>>(new Set());
   const previewSpeech = useRef<SpeechSynthesisUtterance | null>(null);
   const introStarted = useRef(false);
   const outroStarted = useRef(false);
@@ -55,6 +59,19 @@ export default function App() {
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
   const celebratingGoal = persona === "young" && lastEvent.type === "goal" ? lastEvent : null;
+  const glossary: Record<string,string> = {goal:"A goal means the ball went into the net!",shot:"A shot is an attempt to score.",pass_completed:"A completed pass reaches a teammate.",kickoff:"Kickoff begins the match.",halftime:"Half-time is the break.",fulltime:"Full-time ends the match."};
+  const statsForHalf = (start:number,end:number) => {
+    const events=visibleEvents.filter(e=>e.minute>=start&&e.minute<end);
+    const count=(type:string,team:string)=>events.filter(e=>e.type===type&&e.team===team).length;
+    return {goals:[count("goal",demoMatch.home_team),count("goal",demoMatch.away_team)],shots:[count("shot",demoMatch.home_team),count("shot",demoMatch.away_team)],passes:[count("pass_completed",demoMatch.home_team),count("pass_completed",demoMatch.away_team)]};
+  };
+  const firstHalf=statsForHalf(0,45), secondHalf=statsForHalf(45,91);
+  const momentum=Array.from({length:6},(_,i)=>{
+    const events=visibleEvents.filter(e=>e.minute>=i*15&&e.minute<(i+1)*15);
+    const points=(team:string)=>events.filter(e=>e.team===team).reduce((sum,e)=>sum+(e.type==="goal"?3:e.type==="shot"?2:e.type==="pass_completed"?1:0),0);
+    return {label:String(i*15)+"–"+String((i+1)*15),home:points(demoMatch.home_team),away:points(demoMatch.away_team)};
+  });
+  const turningPoints=visibleEvents.filter(e=>e.type==="goal");
 
   useEffect(() => {
     if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
@@ -114,6 +131,26 @@ export default function App() {
     speakNext();
   }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step]);
 
+  useEffect(() => {
+    if (!expandedAudio || !audioEnabled || !playing || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
+    if (spokenEventIds.current.has(lastEvent.id)) return;
+    spokenEventIds.current.add(lastEvent.id);
+    speechQueue.current.push(formatClock(lastEvent)+". "+(lastEvent.type==="shot"?"Shot":"Completed pass")+" by "+(lastEvent.player??"a player")+" for "+(lastEvent.team??"a team")+".");
+    speakNext();
+  }, [expandedAudio,audioEnabled,playing,persona,step]);
+  useEffect(() => {
+    const onKey=(event:KeyboardEvent)=>{
+      if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
+      const target=event.target as HTMLElement|null;
+      if(target?.closest("button,input,select,textarea,a,[contenteditable]"))return;
+      if(event.code==="Space"){event.preventDefault();setPlaying(v=>!v);}
+      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);setStep(v=>Math.min(demoMatch.events.length,v+1));}
+      if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);setStep(v=>Math.max(1,v-1));}
+    };
+    window.addEventListener("keydown",onKey);
+    return ()=>window.removeEventListener("keydown",onKey);
+  },[persona]);
   const stopAudio = () => {
     setAudioEnabled(false);
     setAudioPaused(false);
@@ -121,6 +158,7 @@ export default function App() {
     speechActive.current = false;
     setNarrating(false);
     spokenGoalIds.current.clear();
+    spokenEventIds.current.clear();
     introStarted.current = false;
     outroStarted.current = false;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
@@ -128,7 +166,7 @@ export default function App() {
   };
 
   return (
-    <div className="shell">
+    <div className={"shell"+(highContrast&&persona==="accessible"?" high-contrast":"")+(largeText&&persona==="accessible"?" large-text":"")}>
       <a href="#main" className="skip-link">Skip to match content</a>
       <header className="topbar">
         <div className="brand"><span className="brand-mark"><Activity size={21} /></span><span>VYBE<span className="brand-dot">.</span></span></div>
@@ -194,12 +232,24 @@ export default function App() {
                 <span style={{ fontWeight: 700 }}>Minute {formatClock(celebratingGoal)} · What a moment!</span>
               </div>
             )}
+            {persona==="young" && <div className="persona-extra"><strong>Football words explained</strong><p>{glossary[lastEvent.type]}</p></div>}
+            {persona==="analyst" && <div className="persona-extra">
+              <h3>First half vs second half</h3>
+              <table className="analysis-table"><thead><tr><th>Recorded events</th><th>First</th><th>Second</th></tr></thead><tbody>
+                {(["goals","shots","passes"] as const).map(key=><tr key={key}><th>{key}</th><td>{firstHalf[key].join("–")}</td><td>{secondHalf[key].join("–")}</td></tr>)}
+              </tbody></table>
+              <h3>Match momentum</h3><p className="muted">Weighted event activity: goal 3, shot 2, pass 1. Not possession or xG.</p>
+              {momentum.map(p=><div className="momentum-row" key={p.label}><span>{p.label}</span><div className="momentum-bars" aria-label={"Aurora "+p.home+", Harbor "+p.away}><div style={{width:(p.home*100/Math.max(1,p.home+p.away))+"%",background:"#65d5ff"}}/><div style={{width:(p.away*100/Math.max(1,p.home+p.away))+"%",background:"#ffb86b"}}/></div><span>{p.home}:{p.away}</span></div>)}
+              <p className="muted">Blue: Aurora FC · Orange: Harbor United</p>
+              <h3>Key turning points</h3>{turningPoints.length?<ul>{turningPoints.map(e=><li key={e.id}>{formatClock(e)} — {e.player} scored for {e.team}.</li>)}</ul>:<p>No goals recorded yet.</p>}
+            </div>}
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> VYBE INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
               {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected style · verified factual template" : "Evidence-based commentary · deterministic fallback"}</div>}
               <p className="insight-text">{explanation?.narrative ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
+            {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><label className="access-choice"><input type="checkbox" checked={expandedAudio} onChange={e=>setExpandedAudio(e.target.checked)}/> Describe shots and passes too</label><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
             {persona === "accessible" && <div role="group" aria-label="Spoken commentary controls">
               <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
               {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
