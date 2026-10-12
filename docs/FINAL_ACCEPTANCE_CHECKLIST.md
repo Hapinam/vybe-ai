@@ -1,6 +1,6 @@
 # VYBE — Final Acceptance Checklist
 
-This checklist tracks the remaining **manual acceptance pass** after feature integration. PR #15 was squash-merged into `main`; the full manual acceptance pass is still outstanding. Do not interpret the merged PR or passing CI as full acceptance.
+This checklist tracks verified targeted checks and the remaining **manual acceptance pass** after feature integration through PR #18. The full manual acceptance pass is still outstanding. Do not interpret the merged PR or passing CI as full acceptance.
 
 ## Verified progress (October 12, 2026)
 
@@ -12,9 +12,9 @@ This checklist tracks the remaining **manual acceptance pass** after feature int
 - [x] Windows Arabic (`ar-EG`) text-to-speech capability installed; Chrome exposed Microsoft Hoda and successfully spoke Arabic test text.
 - [x] User confirmed the Arabic Accessible/Guided Demo narration and Play/Pause worked in the locally running VYBE app.
 
-**Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. The full desktop/mobile, keyboard, screen-reader and cross-language manual pass remains open.
+**Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. The complete cross-persona and cross-language manual pass remains open, although targeted mobile, keyboard and screen-reader checks have now been performed.
 
-## Prerequisites
+## Additional verified accessibility checks (October 12, 2026)\n\n- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.\n\n## Prerequisites
 
 - [ ] Fetch the latest `main` without overwriting uncommitted local changes (`git status --short` first).
 - [ ] Install backend dependencies, run `python -m pytest tests -q` from `apps/api`.
@@ -43,14 +43,14 @@ This checklist tracks the remaining **manual acceptance pass** after feature int
 
 - [ ] High contrast toggles correctly; text, controls and focus rings remain readable.
 - [ ] Large text does not clip labels or controls on desktop/mobile.
-- [ ] Tab/Shift+Tab and skip link work; focused controls retain native keyboard behavior.
+- [x] Targeted Tab/skip-link/keyboard navigation smoke checks passed; full Shift+Tab and focus/scroll audit remains open.
 - [ ] Space pauses/resumes replay; Left/Right arrows step events outside interactive controls.
 - [ ] Enable/stop spoken commentary, pause/resume, and preview 0.5×/1×/1.5×/2× speeds.
 - [ ] Kickoff, goal and full-time narration work; no clipped sentences or overlapping voices.
 - [ ] Expanded audio narrates shots and passes without interrupting goal commentary.
 - [ ] Switching personas, scrubbing, restarting and full-time jump do not leave stale speech.
 - [ ] Reduced-motion preference disables unnecessary movement.
-- [ ] Run at least one screen-reader smoke check if a screen reader is available.
+- [x] Windows Narrator smoke checks completed; manual step-by-step playback addresses caption timing, not automatic screen-reader voice synchronization.
 
 ## Analyst
 
@@ -79,4 +79,4 @@ This checklist tracks the remaining **manual acceptance pass** after feature int
 - [ ] Verify optional Azure integration is described accurately; do not claim a live Azure service unless actually deployed and verified.
 - [ ] Review the final release diff and complete remaining acceptance checks before declaring the demo submission-ready. (PR #15 has already been merged.)
 
-**Status: PARTIALLY VERIFIED — FULL MANUAL ACCEPTANCE PENDING.** The verified progress above records targeted tests only. Unchecked items remain unverified.
+**Status: PARTIALLY VERIFIED THROUGH PR #18 — FULL MANUAL ACCEPTANCE PENDING.** The verified progress above records targeted tests only. Unchecked items remain unverified.
