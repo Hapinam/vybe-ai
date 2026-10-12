@@ -11,7 +11,7 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 | Persona | Features |
 | --- | --- |
 | **Young Fan** | Goal celebration, plain-language football glossary, interactive goal quiz, approachable match commentary |
-| **Accessible** | Optional browser spoken commentary, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes |
+| **Accessible** | Optional browser spoken commentary, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes, screen-reader-friendly step-by-step event navigation |
 | **Analyst** | Recorded shots/passes, highlights/full timeline filter, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
 
 **Interpreting analytics:** Momentum is a custom weighted event-activity score (goal = 3, shot = 2, completed pass = 1) in 15-minute windows. It is **not** possession, expected goals (xG), or a professional tactical model. Half comparisons use recorded synthetic events only; missing events must not be interpreted as real-world zero activity.
@@ -48,7 +48,7 @@ npm.cmd run dev
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Validation (automated checks passed; final manual pass pending)
+## Validation (automated checks passed; targeted manual accessibility checks passed; full acceptance pending)
 
 ```powershell
 cd apps/web
@@ -62,7 +62,7 @@ cd apps/api
 
 **Verified October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
 
-**Still pending:** Check all three personas end-to-end, play/restart/scrub, score and event progression, goal celebration, glossary, speech rates and cross-language voices, keyboard shortcuts, high contrast and text scaling, analyst charts, mobile viewport, and reduced-motion preference. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md). **Passing CI is not equivalent to passing this manual end-to-end check.**
+**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.\n\n**Still pending:** Complete all three personas end-to-end, play/restart/scrub, score and event progression, goal celebration, glossary, speech rates and cross-language voices, analyst charts, reduced-motion preference and the remaining acceptance cases. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md). **Passing CI is not equivalent to passing this manual end-to-end check.**
 
 ## New fan experiences
 
@@ -75,7 +75,7 @@ cd apps/api
 
 ## Accessible controls
 
-In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
+In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to pause automatic event progression and move between events with **Previous event** and **Next event**. This allows an external screen reader to finish reading captions before the next event; the app cannot detect when Narrator finishes speaking. The setting persists in the current browser.\n\nIn Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
 
 ## Azure readiness
 

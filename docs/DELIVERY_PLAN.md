@@ -4,9 +4,9 @@
 
 ## Current status (October 12, 2026)
 
-- Feature PR #15 has been squash-merged into `main`; automated backend tests (43), frontend build, and GitHub API/Web/Container CI checks passed.
+- Feature PR #15 and mobile/accessibility PRs #17 and #18 have been merged into `main`; 43 backend tests were previously verified, and Web/Container CI passed on the PR #18 merge commit.
 - Local Arabic Accessible narration and Guided Demo playback were verified in Chrome after installing the Windows `ar-EG` speech capability.
-- The complete manual acceptance pass, mobile and accessibility checks, demo video, submission and live Azure integration/deployment remain outstanding.
+- Targeted mobile, keyboard and Windows Narrator checks passed; the full cross-persona manual acceptance pass, demo video, submission and live Azure integration/deployment remain outstanding.
 - **Execution priority:** documentation and acceptance review → UI/mobile/accessibility → demo/submission materials → optional Azure AI integration and Azure deployment **last**, after the local experience is stable.
 - Dates below are planning targets, not proof that each milestone was completed. Verify the official deadline/timezone in the event portal.
 
