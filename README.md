@@ -42,13 +42,13 @@ python -m venv .venv
 
 ```powershell
 cd apps/web
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Validation (planned final end-to-end pass)
+## Validation (automated checks passed; final manual pass pending)
 
 ```powershell
 cd apps/web
@@ -60,7 +60,9 @@ cd apps/api
 .\.venv\Scripts\python.exe -m pytest tests -q
 ```
 
-Then check all three personas in the browser, play/restart/scrub, score and event progression, goal celebration, glossary, speech pause/resume and voice rates, keyboard shortcuts, high contrast and text scaling, analyst charts, mobile viewport, and reduced-motion preference. **Passing CI is not equivalent to passing this manual end-to-end check.**
+**Verified October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
+
+**Still pending:** Check all three personas end-to-end, play/restart/scrub, score and event progression, goal celebration, glossary, speech rates and cross-language voices, keyboard shortcuts, high contrast and text scaling, analyst charts, mobile viewport, and reduced-motion preference. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md). **Passing CI is not equivalent to passing this manual end-to-end check.**
 
 ## New fan experiences
 
