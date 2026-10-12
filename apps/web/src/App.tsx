@@ -21,6 +21,7 @@ export default function App() {
   const [selectedWindow, setSelectedWindow] = useState<number|null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(2);
+  const [stepByStep, setStepByStep] = useState(() => localStorage.getItem("vybe.stepByStep")==="true");
   const [state, setState] = useState<MatchState | null>(null);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
@@ -74,6 +75,7 @@ export default function App() {
   useEffect(() => { localStorage.setItem("vybe.details",String(showEventDetails)); },[showEventDetails]);
   useEffect(() => { localStorage.setItem("vybe.speechRate",String(speechRate)); },[speechRate]);
   useEffect(() => { localStorage.setItem("vybe.expandedAudio",String(expandedAudio)); },[expandedAudio]);
+  useEffect(() => { localStorage.setItem("vybe.stepByStep",String(stepByStep)); },[stepByStep]);
   useEffect(() => {
     demoModeRef.current=demoMode;
     if(!demoMode) return;
@@ -152,7 +154,7 @@ export default function App() {
   }, [playing, audioEnabled, persona, step, language]);
 
   useEffect(() => {
-    if (!playing || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
+    if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -163,7 +165,7 @@ export default function App() {
       });
     }, (1900 * 9) / (demoMatch.events.length * playbackSpeed));
     return () => window.clearInterval(timer);
-  }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step]);
+  }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step, stepByStep]);
 
   useEffect(() => {
     let active = true;
@@ -213,6 +215,11 @@ export default function App() {
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
   },[persona,playing,audioEnabled,audioPaused]);
+  const moveManualEvent = (direction: -1 | 1) => {
+    setPlaying(false);
+    if (audioEnabled) stopAudio();
+    setStep(current => Math.max(1, Math.min(demoMatch.events.length, current + direction)));
+  };
   const stopAudio = () => {
     setAudioEnabled(false);
     setAudioPaused(false);
@@ -260,12 +267,21 @@ export default function App() {
               <button type="button" className="secondary" onClick={()=>{stopAudio();setDemoMode(v=>!v);}}>{demoMode?"Stop demo":"Guided demo · 21 sec"}</button>
             </div>
             {captionsEnabled && <div className="live-caption" role="status" aria-live="polite" dir={language==="ar"?"rtl":"ltr"}><strong>LIVE CAPTIONS · {languageNames[language]}</strong><p>{currentCaption}</p></div>}
+            {persona === "accessible" && <div className="manual-playback">
+              <label className="access-choice"><input type="checkbox" checked={stepByStep} onChange={e => { setPlaying(false); if (audioEnabled) stopAudio(); setStepByStep(e.target.checked); }} /> Step-by-step playback (screen reader friendly)</label>
+              {stepByStep && <><p className="muted">Read or listen to each event at your own pace. Automatic playback is paused.</p>
+                <div className="manual-event-controls" role="group" aria-label="Step-by-step event navigation">
+                  <button type="button" className="secondary" onClick={() => moveManualEvent(-1)} disabled={step <= 1}>Previous event</button>
+                  <button type="button" className="primary" onClick={() => moveManualEvent(1)} disabled={step >= demoMatch.events.length}>Next event</button>
+                </div>
+              </>}
+            </div>}
             <div className="controls">
-              <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>
+              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
               <button className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
-            <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
+            {!(persona === "accessible" && stepByStep) && <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
               <label htmlFor="playback-speed" className="progress-label">Playback speed</label>
               <select id="playback-speed" value={playbackSpeed} onChange={(event) => setPlaybackSpeed(Number(event.target.value) as PlaybackSpeed)} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", font: "inherit" }}>
                 <option value={1}>1× · Relaxed</option>
@@ -273,7 +289,7 @@ export default function App() {
                 <option value={4}>4× · Fast</option>
               </select>
               <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
-            </div>
+            </div>}
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
             <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); if(audioEnabled)stopAudio(); setStep(Number(e.target.value)); }} />
             <div className="stats">

@@ -60,3 +60,13 @@
   .large-text .controls .playback-info{font-size:1rem}
   .large-text .stats span{font-size:.9rem}
 }
+
+/* Accessible, reader-paced event navigation. */
+.manual-playback{margin:1rem 0;padding:.85rem 1rem;border:1px solid #8171bc;border-radius:12px}
+.manual-playback .access-choice{font-weight:700}
+.manual-playback .muted{margin:.5rem 0 .85rem}
+.manual-event-controls{display:flex;gap:.75rem;flex-wrap:wrap}
+.manual-event-controls button{min-height:44px}
+.manual-event-controls button:disabled{opacity:.5;cursor:not-allowed}
+.high-contrast .manual-playback{border:2px solid #fff}
+@media(max-width:540px){.manual-event-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.manual-event-controls button{min-width:0;padding:12px 8px}}
