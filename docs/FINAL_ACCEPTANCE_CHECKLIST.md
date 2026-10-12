@@ -1,10 +1,22 @@
 # VYBE — Final Acceptance Checklist
 
-This is the **single consolidated manual test pass** to run after all feature work and documentation is complete. Keep PR #15 in draft until this checklist has been executed and any failures resolved.
+This checklist tracks the remaining **manual acceptance pass** after feature integration. PR #15 was squash-merged into `main`; the full manual acceptance pass is still outstanding. Do not interpret the merged PR or passing CI as full acceptance.
+
+## Verified progress (October 12, 2026)
+
+- [x] PR #15 merged into `main` (squash merge commit `3d13cedbee1c732737039bfd47d72922132e9803`).
+- [x] Backend automated tests: **43 passed** in the local test run before merge.
+- [x] Frontend TypeScript/Vite production build succeeded before merge.
+- [x] GitHub CI: API tests, Web build and Container build succeeded for PR #15.
+- [x] Local FastAPI server started successfully on `127.0.0.1:8000` and Vite started on `localhost:5173`.
+- [x] Windows Arabic (`ar-EG`) text-to-speech capability installed; Chrome exposed Microsoft Hoda and successfully spoke Arabic test text.
+- [x] User confirmed the Arabic Accessible/Guided Demo narration and Play/Pause worked in the locally running VYBE app.
+
+**Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. The full desktop/mobile, keyboard, screen-reader and cross-language manual pass remains open.
 
 ## Prerequisites
 
-- [ ] Fetch the PR branch without overwriting uncommitted local changes (`git status --short` first).
+- [ ] Fetch the latest `main` without overwriting uncommitted local changes (`git status --short` first).
 - [ ] Install backend dependencies, run `python -m pytest tests -q` from `apps/api`.
 - [ ] Install frontend dependencies, run `npm run build` from `apps/web`.
 - [ ] Start FastAPI on 8000 and Vite on its printed local port.
@@ -65,6 +77,6 @@ This is the **single consolidated manual test pass** to run after all feature wo
 - [ ] Confirm root, API and web READMEs match the implemented code and commands.
 - [ ] Verify synthetic-data disclosure and no secrets or Azure keys are committed.
 - [ ] Verify optional Azure integration is described accurately; do not claim a live Azure service unless actually deployed and verified.
-- [ ] Only after all checks pass: mark PR ready for review, review diff, then merge.
+- [ ] Review the final release diff and complete remaining acceptance checks before declaring the demo submission-ready. (PR #15 has already been merged.)
 
-**Status: NOT YET EXECUTED.** This document is a plan, not evidence of passing tests.
+**Status: PARTIALLY VERIFIED — FULL MANUAL ACCEPTANCE PENDING.** The verified progress above records targeted tests only. Unchecked items remain unverified.
