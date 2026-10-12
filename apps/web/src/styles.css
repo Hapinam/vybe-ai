@@ -37,3 +37,26 @@
 .momentum-select:focus-visible{outline:3px solid #ffdf00;outline-offset:2px}
 .high-contrast .live-caption,.high-contrast .fan-settings select{background:#000!important;color:#fff!important;border:2px solid #fff!important}
 @media(max-width:640px){.fan-settings{align-items:stretch}.fan-settings select{max-width:100%}.live-caption{overflow-wrap:anywhere}}
+
+
+/* Mobile playback accessibility: readable progress and predictable wrapping. */
+.controls{flex-wrap:wrap}
+.playback-info{font-size:.8rem;letter-spacing:0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.playback-speed{gap:.75rem}
+.playback-speed .progress-label{margin-top:0}
+.large-text .playback-info,.large-text .progress-label,.large-text .stats span,.large-text .evidence,.large-text .insight-heading,.large-text .grounded{font-size:1rem}
+.large-text .live-caption strong{font-size:.95rem}
+.large-text .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:540px){
+  .hero{padding:32px 0 36px}
+  .scoreline{margin:28px 0}
+  .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+  .controls .primary,.controls .secondary{min-height:44px;min-width:0;padding:12px 10px}
+  .controls .playback-info{grid-column:1/-1;justify-self:start;margin:0;font-size:.8rem}
+  .playback-speed{margin:.75rem 0!important}
+  .playback-speed select,.playback-speed button{min-height:44px;max-width:100%}
+  .stats span{font-size:.75rem}
+  .large-text .controls .primary,.large-text .controls .secondary{font-size:1rem}
+  .large-text .controls .playback-info{font-size:1rem}
+  .large-text .stats span{font-size:.9rem}
+}
