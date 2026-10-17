@@ -12,7 +12,7 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 | --- | --- |
 | **Young Fan** | Goal celebration, plain-language football glossary, interactive goal quiz, approachable match commentary |
 | **Accessible** | Optional browser spoken commentary, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes, screen-reader-friendly step-by-step event navigation |
-| **Analyst** | Recorded shots/passes, highlights/full timeline filter, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
+| **Analyst** | Recorded shots/passes, highlights/goals/all-events timeline filters, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
 
 **Interpreting analytics:** Momentum is a custom weighted event-activity score (goal = 3, shot = 2, completed pass = 1) in 15-minute windows. It is **not** possession, expected goals (xG), or a professional tactical model. Half comparisons use recorded synthetic events only; missing events must not be interpreted as real-world zero activity.
 
@@ -48,7 +48,7 @@ npm.cmd run dev
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Validation (automated checks passed; targeted manual accessibility checks passed; full acceptance pending)
+## Validation (automated builds and tests passed; 24/24 manual E2E checks passed)
 
 ```powershell
 cd apps/web
@@ -62,13 +62,14 @@ cd apps/api
 
 **Verified October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
 
-**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.\n\n**Still pending:** Complete all three personas end-to-end, play/restart/scrub, score and event progression, goal celebration, glossary, speech rates and cross-language voices, analyst charts, reduced-motion preference and the remaining acceptance cases. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md). **Passing CI is not equivalent to passing this manual end-to-end check.**
+**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.\n\n**Final manual E2E update (October 2026):** The project owner completed **24/24** manual end-to-end checks across Young Fan (8/8), Accessible Fan (6/6), Analyst Fan (5/5), General (4/4), and Final Smoke (1/1). The Goals timeline filter was separately verified in the UI, showing the four synthetic goals. Backend tests were rerun locally on Python 3.13.14 (**43 passed, 1 dependency deprecation warning**), and the TypeScript/Vite production build passed. `npm audit` reported **0 known vulnerabilities** including development dependencies; `pip-audit` reported **no known vulnerabilities** in installed external Python packages, while the local `vybe-api` project itself was not audited by that tool. These checks do not establish full WCAG compliance, application source-code security, or cloud production readiness. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
 
 ## New fan experiences
 
 - **Multilingual commentary:** English, Arabic and Czech event captions, summaries and browser speech narration in Accessible mode. These are deterministic translations of synthetic events, **not Azure AI translations**. Browser voices for Arabic and Czech may not be installed.
 - **Live captions:** optional text for the current match event, updated as playback progresses. Captions are event-synchronized rather than word-by-word speech transcription.
 - **Match story recap:** evolving event-grounded score and goal narrative for all personas.
+- **Timeline views:** Highlights, Goals-only, and All events; the Goals view shows goal events without changing the underlying match statistics.
 - **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
 - **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage. No account or cloud sync.
 - **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
