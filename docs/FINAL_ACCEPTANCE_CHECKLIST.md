@@ -1,6 +1,6 @@
 # VYBE — Final Acceptance Checklist
 
-This checklist tracks verified targeted checks and the remaining **manual acceptance pass** after feature integration through PR #18. The full manual acceptance pass is still outstanding. Do not interpret the merged PR or passing CI as full acceptance.
+This checklist records historical targeted checks plus the **completed 24/24 manual E2E acceptance run** and later local validation. The older unchecked item-level template below remains a reference for regression coverage, **not a claim that those items failed or were individually re-run on this audit date**. Passing CI and manual acceptance do not establish WCAG compliance or production security.
 
 ## Verified progress (October 12, 2026)
 
@@ -14,7 +14,18 @@ This checklist tracks verified targeted checks and the remaining **manual accept
 
 **Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. The complete cross-persona and cross-language manual pass remains open, although targeted mobile, keyboard and screen-reader checks have now been performed.
 
-## Additional verified accessibility checks (October 12, 2026)\n\n- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.\n\n## Prerequisites
+## Additional verified accessibility checks (October 12, 2026)\n\n- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.\n\n## Final release readiness evidence (October 2026)
+
+- [x] Manual E2E acceptance: **24/24 passed** (Young Fan 8/8, Accessible 6/6, Analyst 5/5, General 4/4, Final Smoke 1/1).
+- [x] Goals-only timeline filter manually verified: four synthetic goals displayed; PR #21 merged by project owner.
+- [x] Backend unit tests rerun locally using Python 3.13.14: **43 passed, 1 Starlette/httpx deprecation warning**.
+- [x] Frontend TypeScript/Vite production build passed locally.
+- [x] `npm audit --omit=dev` and full `npm audit`: **0 known vulnerabilities**.
+- [x] `pip-audit`: **no known vulnerabilities** in installed external Python packages; local editable `vybe-api` is not on PyPI and was skipped.
+- [x] Local `git status -sb`: `## main...origin/main`, no local changes reported.
+- [ ] Final source-code security/secrets review, browser regression after release changes, and live Azure deployment validation are separate gates.
+
+## Prerequisites
 
 - [ ] Fetch the latest `main` without overwriting uncommitted local changes (`git status --short` first).
 - [ ] Install backend dependencies, run `python -m pytest tests -q` from `apps/api`.
@@ -79,4 +90,4 @@ This checklist tracks verified targeted checks and the remaining **manual accept
 - [ ] Verify optional Azure integration is described accurately; do not claim a live Azure service unless actually deployed and verified.
 - [ ] Review the final release diff and complete remaining acceptance checks before declaring the demo submission-ready. (PR #15 has already been merged.)
 
-**Status: PARTIALLY VERIFIED THROUGH PR #18 — FULL MANUAL ACCEPTANCE PENDING.** The verified progress above records targeted tests only. Unchecked items remain unverified.
+**Status: 24/24 MANUAL E2E ACCEPTANCE PASSED; LOCAL BACKEND/FRONTEND BUILDS AND DEPENDENCY AUDITS PASSED.** The older unchecked template above is retained for future targeted regression testing. No full WCAG certification, comprehensive source-code security audit, or live Azure validation is claimed.
