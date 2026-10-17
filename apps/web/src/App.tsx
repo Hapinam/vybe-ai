@@ -187,22 +187,22 @@ export default function App() {
   }, [latestGoal?.id, persona]);
 
   useEffect(() => {
-    if (!audioEnabled || !playing || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
     if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
     speechQueue.current.push(language==="en"?explanation.narrative:eventCaption(latestGoal,language,persona));
     speakNext();
-  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step, language]);
+  }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
 
   useEffect(() => {
-    if (!expandedAudio || !audioEnabled || !playing || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    if (!expandedAudio || !audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !("speechSynthesis" in window)) return;
     if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
     if (spokenEventIds.current.has(lastEvent.id)) return;
     spokenEventIds.current.add(lastEvent.id);
     speechQueue.current.push(eventCaption(lastEvent,language,persona));
     speakNext();
-  }, [expandedAudio,audioEnabled,playing,persona,step,language]);
+  }, [expandedAudio,audioEnabled,playing,stepByStep,persona,step,language]);
   useEffect(() => {
     const onKey=(event:KeyboardEvent)=>{
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
@@ -217,11 +217,11 @@ export default function App() {
   },[persona,playing,audioEnabled,audioPaused]);
   const moveManualEvent = (direction: -1 | 1) => {
     setPlaying(false);
-    if (audioEnabled) stopAudio();
+    if (audioEnabled) stopAudio(false);
     setStep(current => Math.max(1, Math.min(demoMatch.events.length, current + direction)));
   };
-  const stopAudio = () => {
-    setAudioEnabled(false);
+  const stopAudio = (disable = true) => {
+    if (disable) setAudioEnabled(false);
     setAudioPaused(false);
     speechQueue.current = [];
     speechActive.current = false;
@@ -278,7 +278,7 @@ export default function App() {
             </div>}
             <div className="controls">
               {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
-              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(1); }}><RotateCcw size={15} /> Restart</button>
+              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
             {!(persona === "accessible" && stepByStep) && <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
@@ -288,10 +288,10 @@ export default function App() {
                 <option value={2}>2× · Default</option>
                 <option value={4}>4× · Fast</option>
               </select>
-              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
+              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>}
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
-            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); if(audioEnabled)stopAudio(); setStep(Number(e.target.value)); }} />
+            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { if (persona === "accessible" && stepByStep) setPlaying(false); if(audioEnabled)stopAudio(false); setStep(Number(e.target.value)); }} />
             <div className="stats">
               <div><span>Recorded shots</span><strong>{state ? `${state.shots_home} — ${state.shots_away}` : "—"}</strong></div>
               <div><span>Completed passes</span><strong>{state ? `${state.passes_home} — ${state.passes_away}` : "—"}</strong></div>
