@@ -191,6 +191,7 @@ export default function App() {
     if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
+    // The narration API currently returns English only; localized speech uses verified event captions.
     speechQueue.current.push(language==="en"?explanation.narrative:eventCaption(latestGoal,language,persona));
     speakNext();
   }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
@@ -343,7 +344,7 @@ export default function App() {
             <div className="insight-card" aria-live="polite" aria-atomic="true">
               <div className="insight-heading"><span><Sparkles size={16} /> LATEST GOAL INSIGHT</span><span className="grounded"><ShieldCheck size={14} /> EVIDENCE-BASED</span></div>
               {latestGoal && <p className="muted">Goal at {formatClock(latestGoal)} · {latestGoal.team} · This insight updates when another goal is scored.</p>}
-              {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected style · verified factual template" : "Evidence-based commentary · deterministic fallback"}</div>}
+              {explanation && <div className="evidence">{explanation.generation_mode === "azure_ai" ? "Azure AI-selected verified facts · evidence-validated narration" : "Evidence-based commentary · deterministic fallback"}</div>}
               <p className="insight-text">{(explanation && explanation.event_id === latestGoal?.id ? explanation.narrative : undefined) ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && explanation.event_id === latestGoal?.id && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
@@ -371,7 +372,7 @@ export default function App() {
               }} disabled={narrating} title="Preview is available when commentary is not speaking">Test voice speed</button>
               <span className="progress-label">Speed changes apply to the next commentary.</span>
             </div>}
-            <div className="trust-note"><CircleHelp size={16} /><span>AI commentary is optional and experimental; automated fact checks are limited. Synthetic match scores come from the deterministic engine.</span></div>
+            <div className="trust-note"><CircleHelp size={16} /><span>Azure AI optionally selects and orders verified English facts; Arabic and Czech use localized event captions. AI checks are limited, and synthetic scores come from the deterministic engine.</span></div>
           </div>
         </section>
 
