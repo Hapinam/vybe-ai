@@ -80,9 +80,23 @@ npx playwright test
 
 Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
 
-**Verified October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
+**Historical validation — October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
 
-**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.\n\n**Final manual E2E update (October 2026):** The project owner completed **24/24** manual end-to-end checks across Young Fan (8/8), Accessible Fan (6/6), Analyst Fan (5/5), General (4/4), and Final Smoke (1/1). The Goals timeline filter was separately verified in the UI, showing the four synthetic goals. Backend tests were rerun locally on Python 3.13.14 (**43 passed, 1 dependency deprecation warning**), and the TypeScript/Vite production build passed. `npm audit` reported **0 known vulnerabilities** including development dependencies; `pip-audit` reported **no known vulnerabilities** in installed external Python packages, while the local `vybe-api` project itself was not audited by that tool. These checks do not establish full WCAG compliance, application source-code security, or cloud production readiness. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.
+
+**Final manual E2E update (October 2026):** The project owner completed **24/24** manual end-to-end checks across Young Fan (8/8), Accessible Fan (6/6), Analyst Fan (5/5), General (4/4), and Final Smoke (1/1). The Goals timeline filter was separately verified in the UI, showing the four synthetic goals. Backend tests were rerun locally on Python 3.13.14 (**43 passed, 1 dependency deprecation warning**), and the TypeScript/Vite production build passed. `npm audit` reported **0 known vulnerabilities** including development dependencies; `pip-audit` reported **no known vulnerabilities** in installed external Python packages, while the local `vybe-api` project itself was not audited by that tool. These checks do not establish full WCAG compliance, application source-code security, or cloud production readiness. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+
+## Latest validation — October 18, 2026
+
+- **54/54** backend tests passed locally.
+- **4/4** Playwright browser tests passed, including retry recovery with a mocked API response.
+- TypeScript/Vite production build and Docker image build passed; container health endpoint returned `ok`.
+- GitHub Actions checks passed on PR #39 before merge into `main`.
+- Frontend production dependency audit found **0 known vulnerabilities**; Python dependency audit found none in audited external packages (local unpublished project excluded).
+- **24/24** manual end-to-end acceptance checks were completed in the earlier release validation.
+- Azure OpenAI and Container Apps deployment, live-cloud checks, comprehensive security review, and full WCAG audit **remain pending**.
+
+For evidence, scope and remaining gates, see [Final Acceptance Checklist](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
 
 ## New fan experiences
 
@@ -96,7 +110,9 @@ Playwright browser setup (first time): `npx.cmd playwright install chromium` in 
 
 ## Accessible controls
 
-In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to pause automatic event progression and move between events with **Previous event** and **Next event**. This allows an external screen reader to finish reading captions before the next event; the app cannot detect when Narrator finishes speaking. The setting persists in the current browser.\n\nIn Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
+In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to pause automatic event progression and move between events with **Previous event** and **Next event**. This allows an external screen reader to finish reading captions before the next event; the app cannot detect when Narrator finishes speaking. The setting persists in the current browser.
+
+In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
 
 ## Azure readiness
 
@@ -115,6 +131,12 @@ The prototype can run locally without paid Azure resources. The Azure integratio
 - `apps/api/` — FastAPI routes, match engine and tests
 - `apps/web/` — React replay dashboard and personas
 - `apps/web/src/match.ts` — synthetic match fixture and frontend types
+
+## Project showcase
+
+VYBE demonstrates how one fictional football match can be experienced in three distinct ways: playful learning, accessible navigation and narration, and event-grounded analysis. All experiences use the same underlying synthetic events.
+
+**Demo media:** Screenshots and a short walkthrough video will be added after the final deployment and demo capture. No live Azure demo URL is claimed yet.
 
 ## Hackathon demo outline
 
