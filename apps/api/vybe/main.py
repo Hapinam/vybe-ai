@@ -4,8 +4,10 @@ from fastapi import FastAPI, HTTPException, Query
 from .models import MatchDefinition
 from .engine import replay, explain_goal, state_dict
 from .ai import narrate_goal
+from .security import MatchRequestGuard
 
 app = FastAPI(title="VYBE Synthetic Match API", version="0.1.0")
+app.add_middleware(MatchRequestGuard)
 
 
 @app.get("/health")
