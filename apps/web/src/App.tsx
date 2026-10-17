@@ -261,7 +261,7 @@ export default function App() {
             </div>
             <div className="fan-settings" role="group" aria-label="Fan preferences">
               <label htmlFor="fan-language">Commentary language</label>
-              <select id="fan-language" value={language} onChange={e=>{stopAudio();setLanguage(e.target.value as FanLanguage);}}>
+              <select id="fan-language" value={language} onChange={e=>{stopAudio(false);setLanguage(e.target.value as FanLanguage);}}>
                 {(Object.keys(languageNames) as FanLanguage[]).map(key=><option key={key} value={key}>{languageNames[key]}</option>)}
               </select>
               <label className="access-choice"><input type="checkbox" checked={captionsEnabled} onChange={e=>setCaptionsEnabled(e.target.checked)}/> Live captions</label>
