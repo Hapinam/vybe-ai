@@ -17,8 +17,8 @@ Start Vite in a second terminal:
 
 ```powershell
 cd apps/web
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
 Open the localhost URL printed by Vite (normally http://localhost:5173). The development proxy forwards `/v1` and `/health` to the API.
@@ -45,8 +45,22 @@ The match timeline defaults to highlights and can be switched to all events.
 ## Build
 
 ```powershell
-npm run build
+npm.cmd run build
 ```
+
+## Windows PowerShell: `npm.cmd` and `npx.cmd`
+
+PowerShell may reject `npm` or `npx` with an error about `npm.ps1` / `npx.ps1` and the execution policy. In PowerShell, use the Windows `.cmd` entry points instead:
+
+```powershell
+npm.cmd ci
+npm.cmd run dev
+npm.cmd run build
+npx.cmd playwright install chromium
+npx.cmd playwright test
+```
+
+In Windows **CMD**, **Git Bash**, **Linux**, and **macOS**, use `npm` and `npx` without `.cmd` (for example, `npx playwright test`). You do **not** need to change the PowerShell execution policy or run as administrator. Playwright starts the Vite development server automatically when running tests. The automated spoken-commentary test mocks browser speech; it does not verify audible output.
 
 ## Important caveats
 
