@@ -37,6 +37,9 @@ export default function App() {
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
   const speechActive = useRef(false);
+  const speechWatchdog = useRef<number | null>(null);
+  const speechGeneration = useRef(0);
+  const retriedNarrative = useRef<string | null>(null);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
   const spokenEventIds = useRef<Set<string>>(new Set());
@@ -51,20 +54,44 @@ export default function App() {
     if (!narrative) return;
     speechActive.current = true;
     setNarrating(true);
-    // A single utterance avoids dropped words at sentence boundaries.
-    // Browser speech engines apply rate when an utterance starts.
+    const generation = ++speechGeneration.current;
     const utterance = new SpeechSynthesisUtterance(narrative);
     utterance.rate = speechRateRef.current;
-    utterance.lang = language==="ar"?"ar":language==="cs"?"cs-CZ":"en-US";
+    utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
+    let lastProgress = Date.now();
+    const clearWatchdog = () => {
+      if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
+      speechWatchdog.current = null;
+    };
     const finish = () => {
-      if (!speechActive.current) return;
+      if (generation !== speechGeneration.current) return;
+      clearWatchdog();
       speechActive.current = false;
+      retriedNarrative.current = null;
       setNarrating(false);
       speakNext();
     };
+    utterance.onstart = () => { lastProgress = Date.now(); };
+    utterance.onboundary = () => { lastProgress = Date.now(); };
     utterance.onend = finish;
     utterance.onerror = finish;
     window.speechSynthesis.speak(utterance);
+    // Chrome can report speaking=true even when speech has silently stalled.
+    // Recover once after 12 seconds without a speech boundary; never override a user pause.
+    speechWatchdog.current = window.setInterval(() => {
+      if (generation !== speechGeneration.current) { clearWatchdog(); return; }
+      if (window.speechSynthesis.paused) { lastProgress = Date.now(); return; }
+      if (Date.now() - lastProgress < 12000 || retriedNarrative.current === narrative) return;
+      retriedNarrative.current = narrative;
+      clearWatchdog();
+      // Cancel the stuck utterance, then replay it once; stale callbacks are ignored.
+      ++speechGeneration.current;
+      window.speechSynthesis.cancel();
+      speechActive.current = false;
+      speechQueue.current.unshift(narrative);
+      setNarrating(false);
+      speakNext();
+    }, 2000);
   };
   useEffect(() => { localStorage.setItem("vybe.persona",persona); },[persona]);
   useEffect(() => { localStorage.setItem("vybe.language",language); },[language]);
@@ -153,6 +180,20 @@ export default function App() {
     setPlaying(false);
   }, [playing, audioEnabled, persona, step, language]);
 
+  // At full time playback is stopped. A language change must still replay the
+  // final score in the newly selected language when commentary remains enabled.
+  useEffect(() => {
+    if (!audioEnabled || persona !== "accessible" || playing ||
+        lastEvent.type !== "fulltime" || !("speechSynthesis" in window)) return;
+    if (outroStarted.current) return;
+    outroStarted.current = true;
+    const goals = visibleEvents.filter(event => event.type === "goal");
+    const home = goals.filter(event => event.team === demoMatch.home_team).length;
+    const away = goals.filter(event => event.team === demoMatch.away_team).length;
+    speechQueue.current.push(spokenMatchOutro(language, home, away));
+    speakNext();
+  }, [audioEnabled, persona, playing, step, language]);
+
   useEffect(() => {
     if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
@@ -225,6 +266,10 @@ export default function App() {
     if (disable) setAudioEnabled(false);
     setAudioPaused(false);
     speechQueue.current = [];
+    ++speechGeneration.current;
+    retriedNarrative.current = null;
+    if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
+    speechWatchdog.current = null;
     speechActive.current = false;
     setNarrating(false);
     spokenGoalIds.current.clear();
@@ -261,7 +306,7 @@ export default function App() {
             </div>
             <div className="fan-settings" role="group" aria-label="Fan preferences">
               <label htmlFor="fan-language">Commentary language</label>
-              <select id="fan-language" value={language} onChange={e=>{stopAudio();setLanguage(e.target.value as FanLanguage);}}>
+              <select id="fan-language" value={language} onChange={e=>{stopAudio(false);setLanguage(e.target.value as FanLanguage);}}>
                 {(Object.keys(languageNames) as FanLanguage[]).map(key=><option key={key} value={key}>{languageNames[key]}</option>)}
               </select>
               <label className="access-choice"><input type="checkbox" checked={captionsEnabled} onChange={e=>setCaptionsEnabled(e.target.checked)}/> Live captions</label>
