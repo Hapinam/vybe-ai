@@ -48,17 +48,37 @@ npm.cmd run dev
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Validation (automated builds and tests passed; 24/24 manual E2E checks passed)
+## Validation (automated and manual checks)
 
 ```powershell
 cd apps/web
-npm run build
+npm.cmd run build
 ```
 
 ```powershell
 cd apps/api
 .\.venv\Scripts\python.exe -m pytest tests -q
 ```
+
+**Windows PowerShell vs Command Prompt (CMD):** PowerShell may block the `npm.ps1` or `npx.ps1` script with an execution-policy error. Use the `.cmd` launchers instead; no execution-policy change or administrator access is needed. In **CMD**, **Git Bash**, and **Linux/macOS** shells, use the normal `npm` and `npx` commands (on Git Bash, `.cmd` is generally unnecessary). The commands below assume you are inside `apps/web`:
+
+```powershell
+# Windows PowerShell
+npm.cmd ci
+npm.cmd run dev
+npm.cmd run build
+npx.cmd playwright test
+```
+
+```sh
+# Windows CMD, Git Bash, Linux or macOS
+npm ci
+npm run dev
+npm run build
+npx playwright test
+```
+
+Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
 
 **Verified October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
 
