@@ -25,6 +25,25 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 
 The Vite development server proxies `/v1` and `/health` to the FastAPI service on port **8000**.
 
+## Architecture diagram
+
+This diagram shows the **current local prototype**. The Azure AI endpoint is optional and **not yet deployed**.
+
+```mermaid
+flowchart TD
+    FAN["Fan in browser"] --> WEB["React / TypeScript / Vite\nYoung · Accessible · Analyst"]
+    WEB -->|"HTTP /v1"| API["FastAPI backend"]
+    WEB --> SPEECH["Optional browser speech synthesis"]
+    WEB --> PREFS["Browser localStorage preferences"]
+    API --> ENGINE["Deterministic replay engine"]
+    ENGINE --> EVENTS["Synthetic match events"]
+    API --> NARR["Event-grounded narration"]
+    NARR --> FALLBACK["Deterministic fallback"]
+    NARR -. "Optional; pending deployment" .-> AZURE["Azure AI model endpoint"]
+```
+
+**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The optional Azure integration is not evidence of a deployed service. Azure deployment topology will be documented after live validation.
+
 ## Run locally (Windows PowerShell)
 
 Use two terminals from the repository root.
