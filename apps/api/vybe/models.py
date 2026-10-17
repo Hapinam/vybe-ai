@@ -14,11 +14,11 @@ class EventType(str, Enum):
 
 
 class MatchEvent(BaseModel):
-    id: str = Field(min_length=1, pattern=r"\S")
+    id: str = Field(min_length=1, max_length=80, pattern=r"\S")
     minute: int = Field(ge=0, le=130)
     second: int = Field(default=0, ge=0, le=59)
-    team: str | None = None
-    player: str | None = None
+    team: str | None = Field(default=None, max_length=100)
+    player: str | None = Field(default=None, max_length=100)
     type: EventType
 
     @model_validator(mode="after")
@@ -29,10 +29,10 @@ class MatchEvent(BaseModel):
 
 
 class MatchDefinition(BaseModel):
-    match_id: str = Field(min_length=1, pattern=r"\S")
-    home_team: str = Field(min_length=1, pattern=r"\S")
-    away_team: str = Field(min_length=1, pattern=r"\S")
-    events: list[MatchEvent]
+    match_id: str = Field(min_length=1, max_length=80, pattern=r"\S")
+    home_team: str = Field(min_length=1, max_length=100, pattern=r"\S")
+    away_team: str = Field(min_length=1, max_length=100, pattern=r"\S")
+    events: list[MatchEvent] = Field(max_length=500)
 
     @model_validator(mode="after")
     def validate_events(self):
