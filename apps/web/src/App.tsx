@@ -180,6 +180,20 @@ export default function App() {
     setPlaying(false);
   }, [playing, audioEnabled, persona, step, language]);
 
+  // At full time playback is stopped. A language change must still replay the
+  // final score in the newly selected language when commentary remains enabled.
+  useEffect(() => {
+    if (!audioEnabled || persona !== "accessible" || playing ||
+        lastEvent.type !== "fulltime" || !("speechSynthesis" in window)) return;
+    if (outroStarted.current) return;
+    outroStarted.current = true;
+    const goals = visibleEvents.filter(event => event.type === "goal");
+    const home = goals.filter(event => event.team === demoMatch.home_team).length;
+    const away = goals.filter(event => event.team === demoMatch.away_team).length;
+    speechQueue.current.push(spokenMatchOutro(language, home, away));
+    speakNext();
+  }, [audioEnabled, persona, playing, step, language]);
+
   useEffect(() => {
     if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
