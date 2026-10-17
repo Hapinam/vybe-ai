@@ -38,3 +38,11 @@ The script provisions a resource group, Basic Azure Container Registry, Containe
 
 ## Validation
 Visit the deployed URL, `/health`, play the synthetic match, switch personas and verify the API calls work. The application is a prototype, not yet production hardened.
+
+## Pre-deployment security gates
+- API match endpoints reject bodies larger than **256 KiB** with HTTP 413, including streamed bodies, and limit requests to **60 per minute per ASGI peer IP** with HTTP 429. Health and static UI are exempt.
+- **Important:** The in-process limiter is per worker/replica, not a shared or durable quota. It does not replace an Azure edge/WAF/API gateway rate limit, authentication, or upstream body-size cap. Configure these controls before publicly exposing paid Azure AI functionality.
+- The app intentionally ignores `X-Forwarded-For` for rate-limit identity. Behind a reverse proxy, the ASGI peer may be the proxy, so many visitors could share one quota. Validate trusted proxy configuration and the observed peer IP in Azure before deciding on the production limit; never trust arbitrary client-provided forwarding headers.
+- Keep Azure AI API keys in Container Apps secrets or a managed secret store; never commit keys, `.env` files, or deployment credentials. Prefer managed identity where supported.
+- Before deployment, verify GitHub API tests (Python 3.11 and 3.13), web build, container smoke test, and dependency audits; review image dependencies and scan repository history for secrets. No automated full source-code security certification is claimed.
+- After deployment, test HTTPS, health, API 413/429 behavior, end-to-end UI, accessibility, Azure AI fallback, logs without secrets, cost alerts, and removal of the dedicated resource group after the demo.
