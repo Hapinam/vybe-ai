@@ -291,7 +291,7 @@ export default function App() {
               <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>}
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
-            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); if(audioEnabled)stopAudio(false); setStep(Number(e.target.value)); }} />
+            <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { if (persona === "accessible" && stepByStep) setPlaying(false); if(audioEnabled)stopAudio(false); setStep(Number(e.target.value)); }} />
             <div className="stats">
               <div><span>Recorded shots</span><strong>{state ? `${state.shots_home} — ${state.shots_away}` : "—"}</strong></div>
               <div><span>Completed passes</span><strong>{state ? `${state.passes_home} — ${state.passes_away}` : "—"}</strong></div>
