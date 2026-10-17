@@ -187,22 +187,22 @@ export default function App() {
   }, [latestGoal?.id, persona]);
 
   useEffect(() => {
-    if (!audioEnabled || !playing || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
     if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
     speechQueue.current.push(language==="en"?explanation.narrative:eventCaption(latestGoal,language,persona));
     speakNext();
-  }, [audioEnabled, playing, persona, explanation, latestGoal?.id, step, language]);
+  }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
 
   useEffect(() => {
-    if (!expandedAudio || !audioEnabled || !playing || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    if (!expandedAudio || !audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !("speechSynthesis" in window)) return;
     if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
     if (spokenEventIds.current.has(lastEvent.id)) return;
     spokenEventIds.current.add(lastEvent.id);
     speechQueue.current.push(eventCaption(lastEvent,language,persona));
     speakNext();
-  }, [expandedAudio,audioEnabled,playing,persona,step,language]);
+  }, [expandedAudio,audioEnabled,playing,stepByStep,persona,step,language]);
   useEffect(() => {
     const onKey=(event:KeyboardEvent)=>{
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
