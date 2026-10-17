@@ -155,3 +155,29 @@ def test_replay_goal_only_counts_one_shot():
     state = client.post("/v1/matches/replay", json=goal_only).json()["state"]
     assert (state["shots_home"], state["shots_away"]) == (0, 1)
     assert (state["home_score"], state["away_score"]) == (0, 1)
+
+
+def test_reject_too_many_events():
+    broken = {**MATCH, "events": [
+        {"id": f"event-{i}", "minute": i % 131, "type": "kickoff"}
+        for i in range(501)
+    ]}
+    assert client.post("/v1/matches/replay", json=broken).status_code == 422
+
+
+def test_reject_oversized_match_and_event_text():
+    for broken in (
+        {**MATCH, "match_id": "x" * 81},
+        {**MATCH, "home_team": "x" * 101},
+        {**MATCH, "events": [{"id": "x" * 81, "minute": 1, "type": "kickoff"}]},
+        {**MATCH, "events": [{"id": "e1", "minute": 1, "type": "goal", "team": "Team A", "player": "x" * 101}]},
+    ):
+        assert client.post("/v1/matches/replay", json=broken).status_code == 422
+
+
+def test_boundary_event_count_is_accepted():
+    match = {**MATCH, "events": [
+        {"id": f"event-{i}", "minute": i % 131, "type": "kickoff"}
+        for i in range(500)
+    ]}
+    assert client.post("/v1/matches/replay", json=match).status_code == 200
