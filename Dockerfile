@@ -2,7 +2,7 @@
 FROM node:22-alpine AS web
 WORKDIR /build
 COPY apps/web/package*.json ./
-RUN npm install --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 COPY apps/web/ ./
 RUN npm run build
 
