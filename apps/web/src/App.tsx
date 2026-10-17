@@ -37,6 +37,8 @@ export default function App() {
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
   const speechActive = useRef(false);
+  const speechWatchdog = useRef<number | null>(null);
+  const speechGeneration = useRef(0);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
   const spokenEventIds = useRef<Set<string>>(new Set());
@@ -51,20 +53,44 @@ export default function App() {
     if (!narrative) return;
     speechActive.current = true;
     setNarrating(true);
-    // A single utterance avoids dropped words at sentence boundaries.
-    // Browser speech engines apply rate when an utterance starts.
+    const generation = ++speechGeneration.current;
     const utterance = new SpeechSynthesisUtterance(narrative);
     utterance.rate = speechRateRef.current;
-    utterance.lang = language==="ar"?"ar":language==="cs"?"cs-CZ":"en-US";
+    utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
+    let lastProgress = Date.now();
+    let recoveryAttempted = false;
+    const clearWatchdog = () => {
+      if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
+      speechWatchdog.current = null;
+    };
     const finish = () => {
-      if (!speechActive.current) return;
+      if (generation !== speechGeneration.current) return;
+      clearWatchdog();
       speechActive.current = false;
       setNarrating(false);
       speakNext();
     };
+    utterance.onstart = () => { lastProgress = Date.now(); };
+    utterance.onboundary = () => { lastProgress = Date.now(); };
     utterance.onend = finish;
     utterance.onerror = finish;
     window.speechSynthesis.speak(utterance);
+    // Chrome can report speaking=true even when speech has silently stalled.
+    // Recover once after 12 seconds without a speech boundary; never override a user pause.
+    speechWatchdog.current = window.setInterval(() => {
+      if (generation !== speechGeneration.current) { clearWatchdog(); return; }
+      if (window.speechSynthesis.paused || audioPaused) { lastProgress = Date.now(); return; }
+      if (Date.now() - lastProgress < 12000 || recoveryAttempted) return;
+      recoveryAttempted = true;
+      clearWatchdog();
+      // Cancel the stuck utterance, then replay it once; stale callbacks are ignored.
+      ++speechGeneration.current;
+      window.speechSynthesis.cancel();
+      speechActive.current = false;
+      speechQueue.current.unshift(narrative);
+      setNarrating(false);
+      speakNext();
+    }, 2000);
   };
   useEffect(() => { localStorage.setItem("vybe.persona",persona); },[persona]);
   useEffect(() => { localStorage.setItem("vybe.language",language); },[language]);
@@ -225,6 +251,9 @@ export default function App() {
     if (disable) setAudioEnabled(false);
     setAudioPaused(false);
     speechQueue.current = [];
+    ++speechGeneration.current;
+    if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
+    speechWatchdog.current = null;
     speechActive.current = false;
     setNarrating(false);
     spokenGoalIds.current.clear();
