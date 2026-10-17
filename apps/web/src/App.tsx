@@ -39,6 +39,7 @@ export default function App() {
   const speechActive = useRef(false);
   const speechWatchdog = useRef<number | null>(null);
   const speechGeneration = useRef(0);
+  const retriedNarrative = useRef<string | null>(null);
   const speechRateRef = useRef(speechRate);
   const spokenGoalIds = useRef<Set<string>>(new Set());
   const spokenEventIds = useRef<Set<string>>(new Set());
@@ -58,7 +59,6 @@ export default function App() {
     utterance.rate = speechRateRef.current;
     utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
     let lastProgress = Date.now();
-    let recoveryAttempted = false;
     const clearWatchdog = () => {
       if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
       speechWatchdog.current = null;
@@ -67,6 +67,7 @@ export default function App() {
       if (generation !== speechGeneration.current) return;
       clearWatchdog();
       speechActive.current = false;
+      retriedNarrative.current = null;
       setNarrating(false);
       speakNext();
     };
@@ -79,9 +80,9 @@ export default function App() {
     // Recover once after 12 seconds without a speech boundary; never override a user pause.
     speechWatchdog.current = window.setInterval(() => {
       if (generation !== speechGeneration.current) { clearWatchdog(); return; }
-      if (window.speechSynthesis.paused || audioPaused) { lastProgress = Date.now(); return; }
-      if (Date.now() - lastProgress < 12000 || recoveryAttempted) return;
-      recoveryAttempted = true;
+      if (window.speechSynthesis.paused) { lastProgress = Date.now(); return; }
+      if (Date.now() - lastProgress < 12000 || retriedNarrative.current === narrative) return;
+      retriedNarrative.current = narrative;
       clearWatchdog();
       // Cancel the stuck utterance, then replay it once; stale callbacks are ignored.
       ++speechGeneration.current;
@@ -252,6 +253,7 @@ export default function App() {
     setAudioPaused(false);
     speechQueue.current = [];
     ++speechGeneration.current;
+    retriedNarrative.current = null;
     if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
     speechWatchdog.current = null;
     speechActive.current = false;
