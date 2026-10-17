@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from vybe.ai import _verified_style, narrate_goal
+from vybe.ai import _verified_facts, narrate_goal
 from vybe.models import MatchDefinition
 
 MATCH = MatchDefinition.model_validate({
@@ -36,30 +36,25 @@ ENV = {
 def test_invalid_response_does_not_become_commentary(candidate):
     with patch.dict("os.environ", ENV, clear=True), patch("vybe.ai._generate", return_value=candidate):
         result = narrate_goal(MATCH, "e2", "young")
-    # Duplicate JSON keys are currently parsed by json.loads; never allow
-    # extra factual text to be accepted as model-authored commentary.
     assert "bicycle" not in result["narrative"]
     assert "cross" not in result["narrative"]
     assert result["score"] == {"home": 1, "away": 0}
     assert result["evidence_event_ids"] == ["e2"]
 
 
-@pytest.mark.parametrize("persona,style", [
-    ("young", "excited"),
-    ("young", "friendly"),
-    ("accessible", "clear"),
-    ("accessible", "calm"),
-    ("analyst", "concise"),
-    ("analyst", "neutral"),
-])
-def test_allowed_style_renders_only_verified_facts(persona, style):
+@pytest.mark.parametrize("persona", ["young", "accessible", "analyst"])
+def test_valid_segments_render_only_verified_facts(persona):
+    _, facts = _verified_facts(MATCH, "e2", persona)
+    candidate = json.dumps({"segments": [
+        {"fact_id": "goal", "text": facts["goal"]},
+        {"fact_id": "score", "text": facts["score"]},
+    ]})
     with patch.dict("os.environ", ENV, clear=True), patch(
-        "vybe.ai._generate", return_value=json.dumps({"style": style})
+        "vybe.ai._generate", return_value=candidate
     ):
         result = narrate_goal(MATCH, "e2", persona)
     assert result["generation_mode"] == "azure_ai"
-    assert "Aurora" in result["narrative"]
-    assert "Harbor" in result["narrative"]
+    assert result["narrative"] == facts["goal"] + " " + facts["score"]
     assert result["score"] == {"home": 1, "away": 0}
     assert result["synthetic"] is True
 
