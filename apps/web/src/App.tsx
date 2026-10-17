@@ -25,6 +25,8 @@ export default function App() {
   const [state, setState] = useState<MatchState | null>(null);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
+  const [narrationError, setNarrationError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem("vybe.contrast")==="true");
   const [largeText, setLargeText] = useState(() => localStorage.getItem("vybe.largeText")==="true");
@@ -210,22 +212,21 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
-    setError("");
     postJson<{ state: MatchState }>("/v1/matches/replay?through_event=" + step, demoMatch)
-      .then((result) => { if (active) setState(result.state); })
+      .then((result) => { if (active) { setState(result.state); setError(""); } })
       .catch((err: unknown) => { if (active) { setState(null); setError(String(err)); } });
     return () => { active = false; };
-  }, [step]);
+  }, [step, retryCount]);
 
   useEffect(() => {
     let active = true;
     setExplanation(null);
-    if (!latestGoal) return;
+    if (!latestGoal) { setNarrationError(""); return; }
     postJson<Explanation>(`/v1/matches/narrate/${latestGoal.id}?persona=${persona}`, demoMatch)
-      .then((result) => { if (active) setExplanation(result); })
-      .catch((err: unknown) => { if (active) setError(String(err)); });
+      .then((result) => { if (active) { setExplanation(result); setNarrationError(""); } })
+      .catch((err: unknown) => { if (active) setNarrationError(String(err)); });
     return () => { active = false; };
-  }, [latestGoal?.id, persona]);
+  }, [latestGoal?.id, persona, retryCount]);
 
   useEffect(() => {
     if (!audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
@@ -434,7 +435,7 @@ export default function App() {
             {[...timelineEvents].reverse().map((event) => <li key={event.id}><span className="event-time">{formatClock(event)}</span><span className={event.type === "goal" ? "event-icon goal-icon" : "event-icon"}>{event.type === "goal" ? "⚽" : event.type === "shot" ? "↗" : event.type === "pass_completed" ? "→" : "•"}</span><div><strong>{event.type === "goal" ? "GOAL!" : event.type.replace("_", " ").toUpperCase()}</strong>{showEventDetails && <p>{event.team ?? "Match official"}{event.player ? ` · ${event.player}` : ""}</p>}</div>{event.type === "goal" && <span className="goal-label">KEY MOMENT</span>}</li>)}
           </ol>
         </section>
-        {error && <div className="error" role="alert">Backend connection issue: {error}. Start the FastAPI server on port 8000.</div>}
+        {(error || narrationError) && <div className="error" role="alert">{error && <p>Unable to load match data: {error}</p>}{narrationError && <p>Unable to load commentary: {narrationError}</p>}<button type="button" className="secondary" onClick={() => setRetryCount(count => count + 1)}>Retry connection</button></div>}
       </main>
       <footer><div className="brand small"><Activity size={17} /> VYBE.</div><span>Built for every kind of fan. Synthetic match data only.</span><span>POWERED BY HUMAN CONNECTION <ArrowRight size={15} /></span></footer>
     </div>

@@ -91,3 +91,17 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 - [ ] Review the final release diff and complete remaining acceptance checks before declaring the demo submission-ready. (PR #15 has already been merged.)
 
 **Status: 24/24 MANUAL E2E ACCEPTANCE PASSED; LOCAL BACKEND/FRONTEND BUILDS AND DEPENDENCY AUDITS PASSED.** The older unchecked template above is retained for future targeted regression testing. No full WCAG certification, comprehensive source-code security audit, or live Azure validation is claimed.
+
+## Pre-Azure validation (October 18, 2026)
+
+- [x] Backend automated tests: 54 passed locally.
+- [x] Playwright browser tests: 4 passed, including replay API failure and retry recovery.
+- [x] Frontend TypeScript and Vite production build passed after final error-handling changes.
+- [x] Docker image built successfully; container health endpoint returned status `ok`.
+- [x] Frontend production dependency audit: 0 known vulnerabilities.
+- [x] Python dependency audit: no known vulnerabilities in audited external packages; local unpublished package skipped.
+- [x] Frontend API requests use a 10-second timeout and provide retry controls for replay and commentary failures.
+- [ ] Live Azure OpenAI integration and deployed Container Apps validation remain pending.
+- [ ] Final source-code security review, cross-browser accessibility audit, and production readiness sign-off remain pending.
+
+These checks establish local pre-deployment readiness only. They do not establish WCAG certification, a comprehensive security audit, or successful live Azure operation.
