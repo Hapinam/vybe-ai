@@ -30,7 +30,7 @@ export default function App() {
   const [largeText, setLargeText] = useState(() => localStorage.getItem("vybe.largeText")==="true");
   const [expandedAudio, setExpandedAudio] = useState(() => localStorage.getItem("vybe.expandedAudio")==="true");
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights">(() => localStorage.getItem("vybe.timeline")==="all"?"all":"highlights");
+  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights" | "goals">(() => { const saved = localStorage.getItem("vybe.timeline"); return saved === "all" || saved === "goals" ? saved : "highlights"; });
   const [showEventDetails, setShowEventDetails] = useState(() => localStorage.getItem("vybe.details")!=="false");
   const [speechRate, setSpeechRate] = useState(() => { const n=Number(localStorage.getItem("vybe.speechRate")); return [0.5,1,1.5,2].includes(n)?n:1; });
   const [audioPaused, setAudioPaused] = useState(false);
@@ -102,7 +102,7 @@ export default function App() {
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
   const latestGoal = [...visibleEvents].reverse().find((event) => event.type === "goal");
-  const timelineEvents = (timelineFilter === "highlights" ? visibleEvents.filter(event => event.type !== "pass_completed") : visibleEvents).filter(event=>selectedWindow===null || (event.minute>=selectedWindow*15 && event.minute<(selectedWindow+1)*15));
+  const timelineEvents = (timelineFilter === "highlights" ? visibleEvents.filter(event => event.type !== "pass_completed") : timelineFilter === "goals" ? visibleEvents.filter(event => event.type === "goal") : visibleEvents).filter(event=>selectedWindow===null || (event.minute>=selectedWindow*15 && event.minute<(selectedWindow+1)*15));
   useEffect(() => { setQuizAnswer(null); }, [latestGoal?.id]);
   const celebratingGoal = persona === "young" && lastEvent.type === "goal" ? lastEvent : null;
   const currentCaption=eventCaption(lastEvent,language,persona);
@@ -379,6 +379,7 @@ export default function App() {
           <div className="timeline-title"><div><span className="section-label">THE STORY SO FAR</span><h2>Match timeline</h2></div><span className="muted">Only simulated events</span></div>
           <div className="timeline-filter" role="group" aria-label="Filter match timeline">
             <button type="button" className={timelineFilter === "highlights" ? "primary" : "secondary"} aria-pressed={timelineFilter === "highlights"} onClick={() => setTimelineFilter("highlights")}>Highlights</button>
+            <button type="button" className={timelineFilter === "goals" ? "primary" : "secondary"} aria-pressed={timelineFilter === "goals"} onClick={() => setTimelineFilter("goals")}>Goals</button>
             <button type="button" className={timelineFilter === "all" ? "primary" : "secondary"} aria-pressed={timelineFilter === "all"} onClick={() => setTimelineFilter("all")}>All events ({visibleEvents.length})</button>
           </div>
           {selectedWindow!==null && <button type="button" className="secondary" onClick={()=>setSelectedWindow(null)}>Clear time filter</button>}
