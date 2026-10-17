@@ -220,8 +220,8 @@ export default function App() {
     if (audioEnabled) stopAudio();
     setStep(current => Math.max(1, Math.min(demoMatch.events.length, current + direction)));
   };
-  const stopAudio = () => {
-    setAudioEnabled(false);
+  const stopAudio = (disable = true) => {
+    if (disable) setAudioEnabled(false);
     setAudioPaused(false);
     speechQueue.current = [];
     speechActive.current = false;
@@ -278,7 +278,7 @@ export default function App() {
             </div>}
             <div className="controls">
               {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
-              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(1); }}><RotateCcw size={15} /> Restart</button>
+              <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
             {!(persona === "accessible" && stepByStep) && <div className="playback-speed" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
@@ -288,7 +288,7 @@ export default function App() {
                 <option value={2}>2× · Default</option>
                 <option value={4}>4× · Fast</option>
               </select>
-              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
+              <button type="button" className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(demoMatch.events.length); }} aria-label="Jump instantly to full time">Instant · Full time</button>
             </div>}
             <label className="progress-label" htmlFor="event-progress">Match progress</label>
             <input id="event-progress" className="progress" type="range" min="1" max={demoMatch.events.length} value={step} onChange={(e) => { setPlaying(false); if(audioEnabled)stopAudio(); setStep(Number(e.target.value)); }} />
