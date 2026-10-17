@@ -12,9 +12,13 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 - [x] Windows Arabic (`ar-EG`) text-to-speech capability installed; Chrome exposed Microsoft Hoda and successfully spoke Arabic test text.
 - [x] User confirmed the Arabic Accessible/Guided Demo narration and Play/Pause worked in the locally running VYBE app.
 
-**Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. The complete cross-persona and cross-language manual pass remains open, although targeted mobile, keyboard and screen-reader checks have now been performed.
+**Scope:** These are targeted checks, not evidence that every item below passed. Voice availability and accent depend on the user's OS/browser; the installed `ar-EG` voice did not sound distinctly Egyptian to the tester. This paragraph describes the October 12 snapshot; the later 24/24 manual acceptance run is documented below.
 
-## Additional verified accessibility checks (October 12, 2026)\n\n- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.\n\n## Final release readiness evidence (October 2026)
+## Additional verified accessibility checks (October 12, 2026)
+
+- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.
+
+## Final release readiness evidence (October 2026)
 
 - [x] Manual E2E acceptance: **24/24 passed** (Young Fan 8/8, Accessible 6/6, Analyst 5/5, General 4/4, Final Smoke 1/1).
 - [x] Goals-only timeline filter manually verified: four synthetic goals displayed; PR #21 merged by project owner.
@@ -93,6 +97,8 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 **Status: 24/24 MANUAL E2E ACCEPTANCE PASSED; LOCAL BACKEND/FRONTEND BUILDS AND DEPENDENCY AUDITS PASSED.** The older unchecked template above is retained for future targeted regression testing. No full WCAG certification, comprehensive source-code security audit, or live Azure validation is claimed.
 
 ## Pre-Azure validation (October 18, 2026)
+
+- [x] PR #39 merged into `main`; all six GitHub Actions checks passed before merge.
 
 - [x] Backend automated tests: 54 passed locally.
 - [x] Playwright browser tests: 4 passed, including replay API failure and retry recovery.
