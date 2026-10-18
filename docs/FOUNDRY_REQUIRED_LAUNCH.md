@@ -35,3 +35,18 @@
 - Agent Service overview: https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview
 
 **This document performs no Azure writes and authorizes no paid services.**
+
+
+## Prelaunch request protection (October 18)
+
+The API middleware now uses two **per-process, ASGI-peer-address** sliding-window
+limits: 240 requests/minute across match endpoints and 30 requests/minute
+shared by `/v1/matches/director/ask` and `/v1/matches/narrate/{event_id}`.
+The latter applies before a model call and does not reduce the replay budget.
+`X-Forwarded-For` is deliberately ignored to avoid client-supplied spoofing.
+
+**Important limitation:** Container Apps ingress may make many users share a
+single peer bucket; these limits are not per-person quotas, distributed
+counters, concurrency limits or a monetary cap. Model deployment TPM/RPM quota
+and spend monitoring must be reviewed on October 21 before approval.
+Do not claim the limits guarantee the 500 CZK total budget.
