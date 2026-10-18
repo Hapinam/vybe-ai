@@ -61,7 +61,17 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 
 **Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but live Foundry operation remains unverified until deployed and tested. Deterministic fallback remains the source of safe answers during model failure. Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
 
-## 6. Foundry live proof (required before submission)\n\n1. In the deployed app, ask a supported factual question and verify the backend reports `generation_mode=foundry_model_tool_call`, an allowlisted `selected_tool`, and event evidence IDs.\n2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.\n3. Confirm no API keys or credentials are exposed in the browser.\n4. Test the fallback separately; it must not be represented as live Foundry.\n5. **Pending:** publish the verified public HTTPS app URL and record this evidence after owner-approved Azure deployment.\n\nSee [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).\n\n## 7. Validation evidence
+## 6. Foundry live proof (required before submission)
+
+1. In the deployed app, ask a supported factual question and verify the backend reports `generation_mode=foundry_model_tool_call`, an allowlisted `selected_tool`, and event evidence IDs.
+2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.
+3. Confirm no API keys or credentials are exposed in the browser.
+4. Test the fallback separately; it must not be represented as live Foundry.
+5. **Pending:** publish the verified public HTTPS app URL and record this evidence after owner-approved Azure deployment.
+
+See [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).
+
+## 7. Validation evidence
 
 The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
 
