@@ -119,3 +119,42 @@ def test_streamed_body_at_limit_without_content_length():
         assert sent[0]["status"] == 200
 
     asyncio.run(run())
+
+
+def test_model_requests_have_separate_lower_bucket():
+    app = FastAPI()
+    app.add_middleware(MatchRequestGuard, requests_per_minute=8, model_requests_per_minute=2)
+
+    @app.post("/v1/matches/replay")
+    async def replay():
+        return {"ok": True}
+
+    @app.post("/v1/matches/director/ask")
+    async def director():
+        return {"ok": True}
+
+    @app.post("/v1/matches/narrate/goal-1")
+    async def narrate():
+        return {"ok": True}
+
+    with TestClient(app) as client:
+        assert client.post("/v1/matches/replay").status_code == 200
+        assert client.post("/v1/matches/director/ask").status_code == 200
+        assert client.post("/v1/matches/narrate/goal-1").status_code == 200
+        blocked = client.post("/v1/matches/director/ask")
+        assert blocked.status_code == 429
+        assert blocked.headers["retry-after"] == "60"
+        assert client.post("/v1/matches/replay").status_code == 200
+
+
+def test_forwarded_for_cannot_evade_model_bucket():
+    app = FastAPI()
+    app.add_middleware(MatchRequestGuard, requests_per_minute=10, model_requests_per_minute=1)
+
+    @app.post("/v1/matches/director/ask")
+    async def director():
+        return {"ok": True}
+
+    with TestClient(app) as client:
+        assert client.post("/v1/matches/director/ask", headers={"X-Forwarded-For": "1.1.1.1"}).status_code == 200
+        assert client.post("/v1/matches/director/ask", headers={"X-Forwarded-For": "2.2.2.2"}).status_code == 429
