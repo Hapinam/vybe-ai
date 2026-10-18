@@ -16,7 +16,8 @@ from .models import MatchDefinition
 from .questions import ask_match
 
 # Explicitly unsupported causal questions must not be reinterpreted as factual answers.
-# Match causal word families at word starts, without matching information/because/Whyte.\n_UNSUPPORTED_CAUSAL = re.compile(r"\b(?:why|caus\w*|tactic\w*|strateg\w*|formation\w*|momentum)\b", re.IGNORECASE)
+# Match causal word families at word starts, without matching information/because/Whyte.
+_UNSUPPORTED_CAUSAL = re.compile(r"\b(?:why|caus\w*|tactic\w*|strateg\w*|formation\w*|momentum)\b", re.IGNORECASE)
 
 log = logging.getLogger(__name__)
 
