@@ -109,3 +109,38 @@ def test_duplicate_json_keys_rejected():
         "vybe.ai._generate", return_value='{"segments":[],"segments":[]}'
     ):
         assert narrate_goal(match(), "goal-1")["generation_mode"] == "deterministic"
+
+
+def test_persona_framing_is_accepted_only_with_verified_facts():
+    _, facts = _verified_facts(match(), "goal-1", "young")
+    payload = json.loads(generated(facts))
+    payload["opening"] = "What a moment!"
+    payload["closing"] = "Keep watching!"
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "vybe.ai._generate", return_value=json.dumps(payload)
+    ):
+        result = narrate_goal(match(), "goal-1", "young")
+    assert result["generation_mode"] == "azure_ai"
+    assert result["narrative"].startswith("What a moment! ")
+    assert result["narrative"].endswith(" Keep watching!")
+    assert result["evidence_event_ids"] == ["goal-1"]
+
+
+def test_unapproved_framing_is_rejected():
+    _, facts = _verified_facts(match(), "goal-1", "young")
+    payload = json.loads(generated(facts))
+    payload["opening"] = "Aurora scored a bicycle kick!"
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "vybe.ai._generate", return_value=json.dumps(payload)
+    ):
+        assert narrate_goal(match(), "goal-1", "young")["generation_mode"] == "deterministic"
+
+
+def test_cross_persona_framing_is_rejected():
+    _, facts = _verified_facts(match(), "goal-1", "analyst")
+    payload = json.loads(generated(facts))
+    payload["opening"] = "What a moment!"
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "vybe.ai._generate", return_value=json.dumps(payload)
+    ):
+        assert narrate_goal(match(), "goal-1", "analyst")["generation_mode"] == "deterministic"
