@@ -249,7 +249,7 @@ export default function App() {
   }, [latestGoal?.id, persona, retryCount]);
 
   useEffect(() => {
-    if (!audioEnabled || (!playing && !stepByStep) || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
     if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
@@ -259,7 +259,7 @@ export default function App() {
   }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
 
   useEffect(() => {
-    if (!expandedAudio || !audioEnabled || (!playing && !stepByStep) || !("speechSynthesis" in window)) return;
+    if (!expandedAudio || !audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !("speechSynthesis" in window)) return;
     if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
     if (spokenEventIds.current.has(lastEvent.id)) return;
     spokenEventIds.current.add(lastEvent.id);
@@ -344,7 +344,7 @@ export default function App() {
               </>}
             </div>}
             <div className="controls">
-              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
+              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
               <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
