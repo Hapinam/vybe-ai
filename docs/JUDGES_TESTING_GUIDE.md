@@ -41,7 +41,15 @@ VYBE presents one fictional football match through three personalized experience
 
 **Important:** Momentum is a custom event-activity indicator (goal = 3, shot = 2, completed pass = 1), **not** possession, expected goals (xG), or tactical causation.
 
-## 4. Technical approach (about 30 seconds)
+## 4. Ask the Match (about 30 seconds)
+
+1. Scroll to **Ask the Match** and select **Who scored?** or **What was the final score?**
+2. Inspect the returned **evidence event IDs**.
+3. Select **Why did momentum change?** to see the explicit limits of the recorded evidence.
+
+**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. This feature currently uses deterministic event queries, **not** an AI agent or Azure LLM. It asks about the complete synthetic fixture, independent of playback position.
+
+## 5. Technical approach (about 30 seconds)
 
 The challenge pipeline is **Ingest → Interpret → Explain → Render → Personalize**.
 
@@ -53,7 +61,7 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 
 The optional Azure AI narration path is separate from the deterministic source of truth. **Microsoft Foundry and advanced agent orchestration are future opportunities, not currently demonstrated integrations.** Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
 
-## 5. Validation evidence
+## 6. Validation evidence
 
 The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
 
