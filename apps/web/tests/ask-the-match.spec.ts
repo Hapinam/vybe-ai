@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("Ask the Match sends the full synthetic fixture and displays evidence", async ({ page }) => {
   let captured: unknown;
-  await page.route("**/v1/matches/ask", async (route) => {
+  await page.route("**/v1/matches/director/ask", async (route) => {
     captured = route.request().postDataJSON();
     await route.fulfill({
       status: 200,
@@ -22,12 +22,13 @@ test("Ask the Match sends the full synthetic fixture and displays evidence", asy
   await expect(page.getByText("Evidence event IDs:")).toBeVisible();
   expect(captured).toMatchObject({
     question: "Who scored?",
+    persona: "young",
     match: { match_id: "vybe-demo-01" },
   });
 });
 
 test("Ask the Match clearly declines unsupported causal questions", async ({ page }) => {
-  await page.route("**/v1/matches/ask", async (route) => {
+  await page.route("**/v1/matches/director/ask", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -47,7 +48,7 @@ test("Ask the Match clearly declines unsupported causal questions", async ({ pag
 });
 
 test("Ask the Match handles API errors without fabricated answers", async ({ page }) => {
-  await page.route("**/v1/matches/ask", async (route) => {
+  await page.route("**/v1/matches/director/ask", async (route) => {
     await route.fulfill({ status: 503, body: "Unavailable" });
   });
   await page.goto("/");
