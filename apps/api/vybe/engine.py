@@ -1,6 +1,6 @@
 """Deterministic match state and evidence-backed fan explanations."""
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace as dc_replace
 from .models import EventType, MatchDefinition, MatchEvent
 
 
@@ -18,6 +18,37 @@ class MatchState:
     events_processed: int = 0
 
 
+def _apply(state: MatchState, event: MatchEvent, home_team: str) -> None:
+    """Apply one event without counting any action twice."""
+    is_home = event.team == home_team
+    if event.type == EventType.goal:
+        if is_home:
+            state.home_score += 1
+        else:
+            state.away_score += 1
+    if event.type in (EventType.shot, EventType.goal):
+        if is_home:
+            state.shots_home += 1
+        else:
+            state.shots_away += 1
+    if event.type == EventType.pass_completed:
+        if is_home:
+            state.passes_home += 1
+        else:
+            state.passes_away += 1
+    state.events_processed += 1
+
+
+def replay_timeline(match: MatchDefinition) -> list[MatchState]:
+    """Snapshots 0..N in one sorted pass, equivalent to replay(match, i)."""
+    state = MatchState(match_id=match.match_id, home_team=match.home_team, away_team=match.away_team)
+    states = [dc_replace(state)]
+    for event in sorted(match.events, key=lambda e: (e.minute, e.second)):
+        _apply(state, event, match.home_team)
+        states.append(dc_replace(state))
+    return states
+
+
 def replay(match: MatchDefinition, through_event: int | None = None) -> MatchState:
     """Reconstruct state from ordered events without mutating source data."""
     state = MatchState(match_id=match.match_id, home_team=match.home_team, away_team=match.away_team)
@@ -27,24 +58,7 @@ def replay(match: MatchDefinition, through_event: int | None = None) -> MatchSta
             raise ValueError("through_event must be nonnegative")
         events = events[:through_event]
     for event in events:
-        is_home = event.team == match.home_team
-        if event.type == EventType.goal:
-            if is_home:
-                state.home_score += 1
-            else:
-                state.away_score += 1
-        # A goal is a successful shot; each event is counted exactly once.
-        if event.type in (EventType.shot, EventType.goal):
-            if is_home:
-                state.shots_home += 1
-            else:
-                state.shots_away += 1
-        if event.type == EventType.pass_completed:
-            if is_home:
-                state.passes_home += 1
-            else:
-                state.passes_away += 1
-        state.events_processed += 1
+        _apply(state, event, match.home_team)
     return state
 
 
