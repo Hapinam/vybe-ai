@@ -25,7 +25,7 @@ Decision: keep the GHCR package **Private**. This replaces the earlier public-im
 
 The private-GHCR Container Apps script now requires **both** Azure OpenAI-compatible
 model adapters to be configured before it can deploy. It validates the six environment
-variables even for dry runs, without invoking Azure:
+variables before any confirmed Azure writes. Dry runs need no model keys:
 
 - `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY`
 - `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY`
