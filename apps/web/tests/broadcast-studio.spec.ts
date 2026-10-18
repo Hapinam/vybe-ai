@@ -31,9 +31,12 @@ test("Studio gates goal moments by playback and keeps persona facts and evidence
   await page.goto("/");
   const studio = page.getByRole("region", { name: /AI Match Director Studio/i });
   await expect(studio.getByText("No recorded goals have played yet.")).toBeVisible();
+  await expect(studio.getByText("Full match recap unlocks after the final whistle.", { exact: false })).toBeVisible();
+  await expect(studio.getByText("Full-fixture recap for young.")).toHaveCount(0);
   await expect(studio.getByText("young goal e2")).toHaveCount(0);
   await page.getByRole("button", { name: "Jump instantly to full time" }).click();
   await expect(studio.getByRole("heading", { name: "young goal e8" })).toBeVisible();
+  await expect(studio.getByText("Full-fixture recap for young.")).toBeVisible();
   await expect(studio.getByText("2 : 2")).toBeVisible();
   await studio.getByRole("button", { name: /Analyst.*Scoreboard impact and evidence/ }).click();
   await expect(studio.getByRole("heading", { name: "analyst goal e8" })).toBeVisible();
