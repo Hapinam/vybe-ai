@@ -88,3 +88,29 @@ def test_http_contract_and_validation():
     assert response.status_code == 200
     assert response.json()["synthetic"] is True
     assert client.post("/v1/matches/director/ask", json={**payload, "persona": "invalid"}).status_code == 422
+
+
+def test_foundry_request_contract_is_explicit_and_secret_stays_in_header():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+    ) as urlopen:
+        result = director_ask(MATCH, "What is the score?")
+    assert result["generation_mode"] == "foundry_model_tool_call"
+    request = urlopen.call_args.args[0]
+    assert request.full_url == (
+        "https://example.openai.azure.com/openai/deployments/gpt-test/"
+        "chat/completions?api-version=2024-10-21"
+    )
+    assert request.get_method() == "POST"
+    assert request.get_header("Api-key") == "fake-test-key"
+    assert urlopen.call_args.kwargs["timeout"] == 6
+    payload = json.loads(request.data)
+    assert payload["temperature"] == 0
+    assert payload["max_tokens"] == 100
+    assert payload["tool_choice"] == "required"
+    assert {tool["function"]["name"] for tool in payload["tools"]} == {
+        "get_match_state", "get_key_moments", "get_match_statistics"
+    }
+    assert all(tool["function"]["parameters"]["additionalProperties"] is False
+               for tool in payload["tools"])
+    assert "fake-test-key" not in request.data.decode()

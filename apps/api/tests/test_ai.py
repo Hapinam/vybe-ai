@@ -170,3 +170,28 @@ def test_null_persona_framing_is_rejected():
         "vybe.ai._generate", return_value=json.dumps(payload)
     ):
         assert narrate_goal(match(), "goal-1")["generation_mode"] == "deterministic"
+
+
+def test_narration_request_contract_matches_configured_deployment():
+    from unittest.mock import MagicMock
+    from vybe.ai import _generate
+    response = MagicMock()
+    response.__enter__.return_value = response
+    response.__exit__.return_value = False
+    response.read.return_value = b'{"choices":[{"message":{"content":"ok"}}]}'
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "urllib.request.urlopen", return_value=response
+    ) as urlopen:
+        _generate("a grounded prompt")
+    request = urlopen.call_args.args[0]
+    assert request.full_url == (
+        "https://test.openai.azure.com/openai/deployments/demo/"
+        "chat/completions?api-version=2024-10-21"
+    )
+    assert request.get_method() == "POST"
+    assert request.get_header("Api-key") == "fake"
+    assert urlopen.call_args.kwargs["timeout"] == 8
+    payload = json.loads(request.data)
+    assert payload["temperature"] == 0
+    assert payload["max_tokens"] == 300
+    assert "fake" not in request.data.decode()
