@@ -113,7 +113,7 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
     fallback["persona"] = persona
     fallback["selected_tool"] = None
     normalized = question.casefold()
-    if any(re.search(r"\b" + re.escape(term) + r"\b", normalized) for term in _UNSUPPORTED_CAUSAL):
+    if re.search(r"\b(?:why|caus\w*|tactic\w*|strateg\w*|formation\w*|momentum)\b", normalized):
         fallback["supported"] = False
         fallback["evidence_event_ids"] = []
         fallback["answer"] = ("The recorded synthetic events do not establish tactical causes, "
