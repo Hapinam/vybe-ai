@@ -91,7 +91,7 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 - [ ] Check desktop and mobile layouts, color contrast, and responsive controls.
 - [ ] Confirm root, API and web READMEs match the implemented code and commands.
 - [ ] Verify synthetic-data disclosure and no secrets or Azure keys are committed.
-- [ ] Verify optional Azure integration is described accurately; do not claim a live Azure service unless actually deployed and verified.
+- [ ] Verify **mandatory** Microsoft Foundry model integration is accurately described; do not claim a live model call or managed Agent Service unless actually deployed and verified.
 - [ ] Review the final release diff and complete remaining acceptance checks before declaring the demo submission-ready. (PR #15 has already been merged.)
 
 **Status: 24/24 MANUAL E2E ACCEPTANCE PASSED; LOCAL BACKEND/FRONTEND BUILDS AND DEPENDENCY AUDITS PASSED.** The older unchecked template above is retained for future targeted regression testing. No full WCAG certification, comprehensive source-code security audit, or live Azure validation is claimed.
@@ -111,3 +111,18 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 - [ ] Final source-code security review, cross-browser accessibility audit, and production readiness sign-off remain pending.
 
 These checks establish local pre-deployment readiness only. They do not establish WCAG certification, a comprehensive security audit, or successful live Azure operation.
+
+## Mandatory Foundry and final-demo acceptance (added October 18, 2026)
+
+- [ ] Confirm Foundry deployment and supported model tool-calling capability; capture actual model, region and deployment name without exposing secrets.
+- [ ] Confirm explicit owner approval and combined Azure forecast remain within 500 CZK **total** through judging.
+- [ ] Confirm private GHCR package, server-side secret references and public HTTPS Container Apps endpoint.
+- [ ] Verify a real supported `/v1/matches/director/ask` request returns `generation_mode=foundry_model_tool_call`, allowlisted `selected_tool`, and valid `evidence_event_ids`.
+- [ ] Verify a real goal narration request returns `generation_mode=azure_ai` with only validated fact IDs.
+- [ ] Verify deliberate Foundry outage produces deterministic fallback; do not mislabel it as live AI.
+- [ ] Re-run continuous spoken narration: persona/language switch must finish current utterance before the next event.
+- [ ] Re-record or validate the final English video (under 2 minutes) from the verified deployed app; existing 53-second video is historical and does not prove Foundry.
+- [ ] Verify judge access without sign-in, and link the actual tested URL in README and judges' guide.
+- [ ] Confirm submission deadline/timezone from the official portal and capture successful submission confirmation.
+
+See [required Foundry gates](FOUNDRY_REQUIRED_LAUNCH.md) and [final demo storyboard](FINAL_DEMO_STORYBOARD.md).

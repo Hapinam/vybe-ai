@@ -4,23 +4,23 @@
 
 ## Deployment decision
 
-- **Planned launch:** October 21, 2026 (not before).
+- **Target launch:** October 22, 2026, after cost/security review and explicit approval.
 - **Public availability target:** through November 21, 2026; confirm the judging window before cleanup.
 - **Planning budget:** 500 CZK for the entire period; **not an enforced Azure spend cap**.
 - **Existing resource group:** `rg-vybe-hackathon`; region `germanywestcentral`.
 - **Runtime:** one container serving React static files and FastAPI, external HTTPS ingress on port 8000; min replicas 0, max 1.
-- **AI:** deterministic fallback by default. Do not configure or claim a live Azure OpenAI/Foundry endpoint without separate approval and validation.
+- **AI:** a real Microsoft Foundry-hosted model is **mandatory** for the final live demo. Deterministic fallback remains for safe failures; do not claim live service until approved and verified.
 
 ## Cost model — preliminary, not a quote
 
 Official Microsoft documentation describes Container Apps Consumption free monthly grants of **180,000 vCPU-seconds, 360,000 GiB-seconds and 2 million requests per subscription**, shared with other apps in that subscription. At zero replicas, the app incurs no replica compute usage charge; other services can still bill.
 
-Microsoft's Azure pricing guidance gives a **rough ACR Basic baseline of about USD 5 per 30 days** (approximately USD 5.2 for 31 days), before build usage, taxes, currency conversion, and any region-specific pricing. This is *not* a verified Czech invoice amount.
+The selected deployment path uses an existing **private GHCR** package rather than provisioning Azure Container Registry. ACR pricing is not part of the intended baseline; include GHCR, Container Apps, Foundry inference, logging, egress and tax in the forecast.
 
 | Item | Planning assumption | Must verify on Oct 21 |
 | --- | --- | --- |
-| ACR Basic | About USD 5 for 30 days, if a new Basic registry is needed | Actual `germanywestcentral` meter and billing currency |
-| ACR build | Usage-based | Build duration/charges |
+| Private GHCR | Existing package; no new ACR planned | Package permissions, token security and any applicable GitHub charges |
+| Foundry model | Pay-as-you-go token usage | Available compatible model, quota, input/output token pricing and usage estimate |
 | Container Apps Consumption | May remain inside shared free grants for light traffic | Subscription's existing free-grant usage and live traffic |
 | Container Apps environment | Consumption-only environment itself can be free; other profile choices differ | Actual selected environment type |
 | Log Analytics | Potential ingestion and retention charges | Workspace choice, data ingestion, retention and billing |
@@ -42,7 +42,7 @@ Run only after the owner chooses to perform a **read-only inspection** of the su
 az account show --query '{name:name,id:id,tenantId:tenantId}' -o json
 az group show --name rg-vybe-hackathon --query '{name:name,location:location,id:id}' -o json
 az resource list --resource-group rg-vybe-hackathon --query '[].{name:name,type:type,location:location}' -o table
-az acr list --resource-group rg-vybe-hackathon --query '[].{name:name,sku:sku.name,admin:adminUserEnabled}' -o table
+az acr list --resource-group rg-vybe-hackathon --query '[].{name:name,sku:sku.name,admin:adminUserEnabled}' -o table # inventory only; no ACR planned
 az containerapp list --resource-group rg-vybe-hackathon --query '[].{name:name,location:location}' -o table
 ```
 
@@ -56,7 +56,7 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 - [ ] Confirm Cost Management budget alerts; understand they **do not** stop charges.
 - [ ] Check any media used in the demo for third-party trademarks, copyrighted music, and reuse rights.
 - [ ] Obtain **explicit owner approval** for billable Azure writes.
-- [ ] Use `infra/azure/deploy.sh` with explicit subscription and stable registry name; do not set `CONFIRM_AZURE_DEPLOY=YES` until approved.
+- [ ] Use `infra/azure/deploy-ghcr.sh` with a verified private GHCR image, explicit subscription and securely supplied read token. This script **does not yet configure Foundry secrets**, so complete that integration and preflight before launch. Do not set `CONFIRM_AZURE_DEPLOY=YES` until separately approved.
 - [ ] Capture deployment output and resource inventory, without secrets.
 
 ## Public launch smoke test (after deployment only)
@@ -67,7 +67,7 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 4. Young Fan: goal celebration, glossary and goal quiz.
 5. Accessible: English/Arabic/Czech captions, contrast, large text, step-by-step controls. Browser speech is optional and OS-voice-dependent.
 6. Analyst: half comparison, 15-minute weighted event activity and timeline filters.
-7. Verify no blocking API errors and that fallback narration works without Azure AI credentials.
+7. Verify real Foundry tool selection (`foundry_model_tool_call`) and grounded narration (`azure_ai`), plus separate fallback behavior without model access.
 8. Test from a separate network/device if possible. Confirm no login is needed for judges.
 9. Update **README**, **Judges' Testing Guide**, and, if supported, the Innovation Studio project page with the **actual verified URL**. Never insert a guessed URL.
 10. Capture a screenshot and timestamp of the public demonstration and check the current cost.
@@ -83,7 +83,7 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 
 - Inspect costs after launch and periodically until judging concludes; billing data can lag.
 - If projected charges approach the owner's limit, seek approval for mitigation immediately.
-- On or after November 21, inventory **registry, Container App, environment, Log Analytics workspace, managed identity and role assignments**, and any incidental resources.
+- On or after November 21, inventory **Container App, environment, Foundry model/resource, Log Analytics workspace, registry credentials and any incidental resources**, and any incidental resources.
 - **Do not delete resources without explicit approval.** Deleting only the Container App may leave ongoing charges; keep the existing resource group.
 
 ## Final submission verification
@@ -92,4 +92,4 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 - Project description, 53-second video, public GitHub repo, judges guide: present.
 - Live URL: pending Azure deployment and public smoke test.
 - Submission/judging acceptance status: not independently confirmed by a dedicated platform status.
-- Never claim the optional AI endpoint, agent orchestration, WCAG certification, or production security certification is complete.
+- Never claim live Foundry, managed Agent Service, WCAG certification, or production security certification without actual validation.

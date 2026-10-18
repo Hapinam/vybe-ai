@@ -2,7 +2,7 @@
 
 **One synthetic football match. Three ways to experience it.**
 
-VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; an optional, evidence-constrained Azure AI narration path is implemented but **not yet deployed**.
+VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Live Microsoft Foundry integration is required for submission, but not yet verified or deployed.**
 
 **[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **Live demo: pending Azure deployment and verification**
 
@@ -14,7 +14,7 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 2. **Accessible Fan:** English/Arabic/Czech captions, larger text, contrast, keyboard and step-by-step playback.
 3. **Analyst Fan:** recorded match statistics, 15-minute weighted event activity and timeline filters.
 
-### Deployment preparation
+### Deployment preparation\n\n- [Mandatory Foundry launch and live proof gates](docs/FOUNDRY_REQUIRED_LAUNCH.md)\n- [Updated delivery milestones](docs/DELIVERY_PLAN.md)\n- [Final demo storyboard and evidence checklist](docs/FINAL_DEMO_STORYBOARD.md)
 
 - [Azure cost and security preflight](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)
 - [Azure launch runbook](docs/AZURE_LAUNCH_RUNBOOK.md)
@@ -34,14 +34,14 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 - **Frontend:** React, TypeScript, Vite, CSS; browser SpeechSynthesis API for optional spoken commentary.
 - **Backend:** Python FastAPI; deterministic replay engine that calculates score, passes and shots from ordered synthetic events.
-- **Narration:** Evidence-based, persona-specific commentary; optional Azure AI selection and ordering of exact, server-verified fact segments with allowlisted framing and deterministic fallback.
+- **Narration:** Evidence-based, persona-specific commentary; Foundry-required Azure AI selection and ordering of exact, server-verified fact segments with allowlisted framing and deterministic fallback.
 - **Data:** Local synthetic match fixture. No external sports API required.
 
 The Vite development server proxies `/v1` and `/health` to the FastAPI service on port **8000**. Playback requests all validated replay snapshots once via `/v1/matches/replay/states` and then scrubs locally; `/v1/matches/replay` remains available for individual queries.
 
 ## Architecture diagram
 
-This diagram shows the **current local prototype**. The Azure AI endpoint is optional and **not yet deployed**.
+This diagram shows the **current local prototype**. The target architecture requires a live Microsoft Foundry-hosted model, but the endpoint is **not yet deployed or validated**.
 
 ```mermaid
 flowchart TD
@@ -53,10 +53,10 @@ flowchart TD
     ENGINE --> EVENTS["Synthetic match events"]
     API --> NARR["Event-grounded narration"]
     NARR --> FALLBACK["Deterministic fallback"]
-    NARR -. "Optional; pending deployment" .-> AZURE["Azure AI model endpoint"]
+    NARR -. "Required for final live demo; pending verification" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI model"]\n    API -. "Bounded read-only tool selection" .-> AZURE
 ```
 
-**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The optional Azure integration is not evidence of a deployed service. Azure deployment topology will be documented after live validation.
+**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The existing Azure model adapter is not evidence of a deployed service or managed Foundry Agent Service. Azure deployment topology will be documented after live validation.
 
 ## Run locally (Windows PowerShell)
 
@@ -133,7 +133,7 @@ In Accessible mode, **Tab** navigates controls. When focus is not inside an inte
 
 ## Azure readiness
 
-The prototype can run locally without paid Azure resources. The Azure integration is **optional**, and cloud provisioning, credentials, costs, deployment and live service validation must be performed separately. Never commit secrets or Azure API keys. The UI distinguishes deterministic narration from Azure-assisted selection and ordering of verbatim verified fact segments when the backend reports that mode; do not interpret this as proof that a live Azure deployment is currently active.
+The prototype can run locally without paid Azure resources. **Live Microsoft Foundry integration is mandatory for the final hackathon demo**; deterministic fallback is for resilience, not a substitute. Cloud provisioning, credentials, costs, deployment and live service validation must be performed separately. Never commit secrets or Azure API keys. The UI distinguishes deterministic narration from Azure-assisted selection and ordering of verbatim verified fact segments when the backend reports that mode; do not interpret this as proof that a live Azure deployment is currently active.
 
 ## Limitations and responsible use
 
@@ -155,6 +155,6 @@ The prototype can run locally without paid Azure resources. The Azure integratio
 2. Play a goal in Young Fan mode; show the celebration and football word explanation.
 3. Switch to Accessible; demonstrate high contrast, large text, keyboard navigation and optional narration.
 4. Switch to Analyst; inspect half-by-half counts, weighted momentum and turning points.
-5. Explain that all claims are grounded in synthetic events, and clearly separate optional Azure integration from verified live services.
+5. Explain that all claims are grounded in synthetic events, and clearly separate required Foundry model integration from the deterministic fallback, and demonstrate a verified live model call only after Azure deployment.
 
 **Every fan belongs. Every moment matters.**
