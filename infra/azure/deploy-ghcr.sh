@@ -15,6 +15,13 @@ case "$GHCR_IMAGE" in
   *) echo "GHCR_IMAGE must be a tagged ghcr.io image" >&2; exit 1 ;;
 esac
 
+if [[ "${CONFIRM_AZURE_DEPLOY:-}" != "YES" ]]; then
+  printf 'DRY RUN: no Azure writes. Subscription: %s; group: %s; region: %s; app: %s; image: %s\n' \
+    "$AZURE_SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$LOCATION" "$APP_NAME" "$GHCR_IMAGE"
+  echo "This does not verify GHCR credentials or Azure pricing."
+  exit 0
+fi
+
 # Foundry is mandatory for the approved live hackathon release. Validate only
 # presence and endpoint/deployment syntax here; never echo credentials.
 # This validation does not contact Azure or incur model usage.
@@ -42,13 +49,6 @@ for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", os.environ[prefix + "_DEPLOYMENT"]):
         raise SystemExit("Invalid model deployment name: " + prefix)
 PY
-
-if [[ "${CONFIRM_AZURE_DEPLOY:-}" != "YES" ]]; then
-  printf 'DRY RUN: no Azure writes. Subscription: %s; group: %s; region: %s; app: %s; image: %s\n' \
-    "$AZURE_SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$LOCATION" "$APP_NAME" "$GHCR_IMAGE"
-  echo "This does not verify GHCR credentials or Azure pricing."
-  exit 0
-fi
 
 # Read-only checks before any Azure write.
 az account show --subscription "$AZURE_SUBSCRIPTION_ID" --query id -o tsv >/dev/null
