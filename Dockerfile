@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8000
 WORKDIR /app
 COPY apps/api/ /app/api/
 RUN pip install --no-cache-dir /app/api && \
-    pip install --no-cache-dir --upgrade 'jaraco.context>=6.1.0' 'wheel>=0.46.2' && \
+    pip uninstall -y setuptools wheel && \
     useradd --create-home --uid 10001 appuser
 COPY --from=web /build/dist/ /app/static/
 USER appuser
