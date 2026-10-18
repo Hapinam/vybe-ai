@@ -33,10 +33,10 @@ test("Studio gates goal moments by playback and keeps persona facts and evidence
   await expect(studio.getByText("No recorded goals have played yet.")).toBeVisible();
   await expect(studio.getByText("young goal e2")).toHaveCount(0);
   await page.getByRole("button", { name: "Jump instantly to full time" }).click();
-  await expect(studio.getByText("young goal e8")).toBeVisible();
+  await expect(studio.getByRole("heading", { name: "young goal e8" })).toBeVisible();
   await expect(studio.getByText("2 : 2")).toBeVisible();
   await studio.getByRole("button", { name: /Analyst.*Scoreboard impact and evidence/ }).click();
-  await expect(studio.getByText("analyst goal e8")).toBeVisible();
+  await expect(studio.getByRole("heading", { name: "analyst goal e8" })).toBeVisible();
   await expect(studio.getByText("2 : 2")).toBeVisible();
   await expect(studio.getByRole("button", { name: /e8.*87:24.*Aurora FC/ })).toBeVisible();
   await studio.getByRole("button", { name: /e2.*12:10.*Aurora FC/ }).count().then(async count => {
