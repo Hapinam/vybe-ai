@@ -166,12 +166,12 @@ def _azure_narration(persona: str, facts: dict) -> tuple[str, list[str]] | None:
     try:
         return _validate_segments(_generate(prompt), facts, persona)
     except AzureConfigurationError as exc:
-        logger.error("Azure narration disabled by invalid configuration (%s)", type(exc).__name__)
+        logger.error("Azure narration disabled by invalid configuration (%s): %s", type(exc).__name__, exc)
     except (OSError, http.client.HTTPException) as exc:
         # Avoid logging provider-supplied messages, which may contain request metadata.
         logger.warning("Azure narration request failed (%s); using fallback", type(exc).__name__)
     except ValueError as exc:
-        logger.warning("Azure narration rejected (%s); using fallback", type(exc).__name__)
+        logger.warning("Azure narration rejected (%s): %s; using fallback", type(exc).__name__, exc)
     except Exception:
         logger.exception("Unexpected Azure narration error; using deterministic fallback")
     return None
