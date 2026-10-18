@@ -89,7 +89,7 @@ def test_custom_match_is_not_hardcoded():
 
 
 def test_derived_causal_questions_are_declined():
-    from vybe.director_agent import _UNSUPPORTED_CAUSAL
+    from vybe.questions import ask_match
     from vybe.models import MatchDefinition
     match = MatchDefinition.model_validate({
         "match_id": "m", "home_team": "Aurora", "away_team": "Harbor", "events": []
