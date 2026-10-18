@@ -3,7 +3,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from .models import MatchDefinition
-from .engine import replay, explain_goal, state_dict
+from .engine import replay, replay_timeline, explain_goal, state_dict
 from .ai import narrate_goal
 from .questions import ask_match
 from .security import MatchRequestGuard
@@ -26,8 +26,7 @@ def replay_match(match: MatchDefinition, through_event: int | None = Query(defau
 def replay_all_states(match: MatchDefinition):
     """Return all replay snapshots in one bounded request, including kickoff."""
     return {"synthetic": True, "states": [
-        state_dict(replay(match, through_event=index))
-        for index in range(1, len(match.events) + 1)
+        state_dict(state) for state in replay_timeline(match)[1:]
     ]}
 
 
