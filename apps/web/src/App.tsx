@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import AskTheMatch from "./AskTheMatch";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 import { eventCaption, languageNames, matchRecap, spokenMatchIntro, spokenMatchOutro, type FanLanguage } from "./localization";
@@ -421,6 +422,8 @@ export default function App() {
             <div className="trust-note"><CircleHelp size={16} /><span>Azure AI optionally selects and orders verified English facts; Arabic and Czech use localized event captions. AI checks are limited, and synthetic scores come from the deterministic engine.</span></div>
           </div>
         </section>
+
+        <AskTheMatch />
 
         <section className="timeline-section">
           <div className="timeline-title"><div><span className="section-label">THE STORY SO FAR</span><h2>Match timeline</h2></div><span className="muted">Only simulated events</span></div>
