@@ -141,7 +141,13 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
             "persona": persona,
             "synthetic": True,
         }
+    except ValueError as exc:
+        # These validation errors are generated locally; do not log provider
+        # response bodies, URLs or credentials.
+        log.warning("Match Director rejected model selection: %s; using deterministic fallback", exc)
+        return fallback
     except Exception as exc:
-        # No exception message: network errors can include request metadata.
+        # Network/provider exception text and tracebacks can contain request
+        # metadata. Log only the class name until redacted diagnostics exist.
         log.warning("Match Director unavailable (%s); using deterministic fallback", type(exc).__name__)
         return fallback
