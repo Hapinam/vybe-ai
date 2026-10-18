@@ -278,12 +278,12 @@ export default function App() {
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
   },[persona,playing,audioEnabled,audioPaused]);
-  const moveManualEvent = (direction: -1 | 1) => {
+  // A persona switch changes the narrative style, not the match position.\n  useEffect(() => {\n    if (!audioEnabled || !playing || step <= 1 || lastEvent.type === "fulltime" || !("speechSynthesis" in window)) return;\n    if (lastEvent.type === "goal") return; // The grounded goal narration effect handles this event.\n    speechQueue.current.push(eventCaption(lastEvent, language, persona));\n    speakNext();\n  }, [persona]);\n\n  const moveManualEvent = (direction: -1 | 1) => {
     setPlaying(false);
     if (audioEnabled) stopAudio(false);
     setStep(current => Math.max(1, Math.min(demoMatch.events.length, current + direction)));
   };
-  const stopAudio = (disable = true) => {
+  const stopAudio = (disable = true, preserveProgress = false) => {
     if (disable) setAudioEnabled(false);
     setAudioPaused(false);
     speechQueue.current = [];
@@ -293,10 +293,12 @@ export default function App() {
     speechWatchdog.current = null;
     speechActive.current = false;
     setNarrating(false);
-    spokenGoalIds.current.clear();
-    spokenEventIds.current.clear();
-    introStarted.current = false;
-    outroStarted.current = false;
+    if (!preserveProgress) {
+      spokenGoalIds.current.clear();
+      spokenEventIds.current.clear();
+      introStarted.current = false;
+      outroStarted.current = false;
+    }
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     previewSpeech.current = null;
   };
@@ -372,7 +374,7 @@ export default function App() {
             <p className="muted">Choose how you'd like to experience each moment.</p>
             <div className="persona-tabs" role="group" aria-label="Choose commentary experience">
               {(["young", "accessible", "analyst"] as const).map((option) => (
-                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { if (persona !== option) { stopAudio(false); setPersona(option); } }}>
+                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { if (persona !== option) { stopAudio(false, true); setPersona(option); } }}>
                   {option === "young" ? <Sparkles size={17} /> : option === "accessible" ? <AudioLines size={17} /> : <BarChart3 size={17} />}
                   {personaInfo[option].label}
                 </button>
@@ -442,7 +444,7 @@ export default function App() {
           </div>
         </section>
 
-        <BroadcastStudio persona={persona} onPersonaChange={(next) => { if (persona !== next) { stopAudio(false); setPersona(next); } }}
+        <BroadcastStudio persona={persona} onPersonaChange={(next) => { if (persona !== next) { stopAudio(false, true); setPersona(next); } }}
           playedEventIds={visibleEvents.map(event => event.id)}
           onJumpToEvent={(eventId) => { const index = demoMatch.events.findIndex(event => event.id === eventId); if (index >= 0) { setPlaying(false); stopAudio(false); setStep(index + 1); } }}
           retryCount={retryCount} />
