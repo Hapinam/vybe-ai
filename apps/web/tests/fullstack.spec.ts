@@ -19,7 +19,7 @@ test("real FastAPI serves replay, persona insights, evidence and grounded Ask", 
   await expect(studio.getByText("Full match recap unlocks after the final whistle.", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "Jump instantly to full time" }).click();
   await expect(studio.getByText("2 : 2")).toBeVisible();
-  await expect(studio.getByText(/Event-grounded match recap\./)).toBeVisible();
+  await expect(studio.getByText(/Full-fixture recap · Event evidence:/)).toBeVisible();
   await expect(studio.getByText("Verified evidence")).toBeVisible();
   await expect(studio.getByRole("button", { name: /e8.*87:24.*Aurora FC/ })).toBeVisible();
 
