@@ -26,6 +26,12 @@ az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 # The existing hackathon resource group must be reused, never silently created.
 [[ "$(az group exists --name "$RESOURCE_GROUP")" == "true" ]] || { echo "Expected existing resource group missing" >&2; exit 1; }
 [[ "$(az group show --name "$RESOURCE_GROUP" --query location -o tsv)" == "$LOCATION" ]] || { echo "Resource group region mismatch" >&2; exit 1; }
+# Refuse to spend on registry builds or new resources if the app already exists.
+if az containerapp show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --output none 2>/dev/null; then
+  echo "Existing app detected: refusing automatic replacement" >&2
+  exit 1
+fi
+
 az provider register --namespace Microsoft.App --wait
 az provider register --namespace Microsoft.OperationalInsights --wait
 if ! az acr show --resource-group "$RESOURCE_GROUP" --name "$REGISTRY_NAME" --output none 2>/dev/null; then
@@ -49,10 +55,6 @@ if [[ "$(az role assignment list --assignee "$PRINCIPAL_ID" --scope "$ACR_ID" --
 fi
 
 # Azure RBAC propagation may take a few minutes after role assignment.
-if az containerapp show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --output none 2>/dev/null; then
-  echo "Existing app detected: refusing automatic replacement" >&2
-  exit 1
-fi
 az containerapp create \
   --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --environment "$ENV_NAME" \
   --image "$ACR_SERVER/$IMAGE_NAME" --target-port 8000 --ingress external \
