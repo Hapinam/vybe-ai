@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
-import { demoMatch, postJson } from "./match";
+import { demoMatch, postJson, type Persona } from "./match";
 
 type MatchAnswer = {
   answer: string;
   supported: boolean;
   synthetic: true;
-  generation_mode: "deterministic";
+  generation_mode: "deterministic" | "foundry_model_tool_call";
+  selected_tool?: string | null;
   evidence_event_ids: string[];
 };
 
@@ -17,7 +18,7 @@ const suggestions = [
   "Why did momentum change?",
 ];
 
-export default function AskTheMatch() {
+export default function AskTheMatch({ persona }: { persona: Persona }) {
   const [question, setQuestion] = useState(suggestions[0]);
   const [answer, setAnswer] = useState<MatchAnswer | null>(null);
   const [error, setError] = useState("");
@@ -34,9 +35,10 @@ export default function AskTheMatch() {
     setLoading(true);
     try {
       // Ask about the complete fictional fixture, not the current replay position.
-      const response = await postJson<MatchAnswer>("/v1/matches/ask", {
+      const response = await postJson<MatchAnswer>("/v1/matches/director/ask", {
         match: demoMatch,
         question: normalized,
+        persona,
       });
       if (id === requestId.current) setAnswer(response);
     } catch {
@@ -56,7 +58,7 @@ export default function AskTheMatch() {
         <span className="muted">Synthetic events only</span>
       </div>
       <p className="muted">
-        Explore the complete fictional match. Answers come from recorded events, not a live AI agent.
+        Explore the complete fictional match. Answers use verified events; an optional server-configured model can select a read-only tool.
         Unsupported questions are declined rather than guessed.
       </p>
       <div role="group" aria-label="Suggested match questions" style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", margin: "1rem 0" }}>
@@ -81,7 +83,8 @@ export default function AskTheMatch() {
           <div className="insight-card">
             <strong>{answer.supported ? "Verified match answer" : "Not established by the events"}</strong>
             <p>{answer.answer}</p>
-            <p className="muted">Source: synthetic event data · Deterministic, not generative AI</p>
+            <p className="muted">Source: synthetic event data · {answer.generation_mode === "foundry_model_tool_call" ? "Model-selected tool, deterministic answer" : "Deterministic fallback; no model tool call"}</p>
+            {answer.selected_tool && <p className="muted">Selected tool: <code>{answer.selected_tool}</code></p>}
             {answer.evidence_event_ids.length > 0 && (
               <p className="evidence">Evidence event IDs: <code>{answer.evidence_event_ids.join(", ")}</code></p>
             )}
