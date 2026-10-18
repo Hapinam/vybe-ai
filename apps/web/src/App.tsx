@@ -42,6 +42,9 @@ export default function App() {
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
+  const [speechCompletedStep, setSpeechCompletedStep] = useState(0);
+  const speechQueuedStep = useRef(0);
+  const activeSpeechStep = useRef(0);
   const speechActive = useRef(false);
   const speechWatchdog = useRef<number | null>(null);
   const speechGeneration = useRef(0);
@@ -75,6 +78,7 @@ export default function App() {
       speechActive.current = false;
       retriedNarrative.current = null;
       setNarrating(false);
+      if (speechQueue.current.length === 0) setSpeechCompletedStep(activeSpeechStep.current);
       speakNext();
     };
     utterance.onstart = () => { lastProgress = Date.now(); };
@@ -168,51 +172,38 @@ export default function App() {
       return { event: e, description: `${change}: ${e.player} scored for ${e.team}. Score ${nextHome}–${nextAway}.` };
     });
 
+  // One immutable narration per event. Persona/language changes update the UI
+  // immediately but affect spoken commentary only when the next event starts.
   useEffect(() => {
-    if (!playing || !audioEnabled || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
-    introStarted.current = true;
-    speechQueue.current.push(spokenMatchIntro(language));
+    if (!playing || !audioEnabled || !("speechSynthesis" in window)) return;
+    if (speechQueuedStep.current === step) return;
+    speechQueuedStep.current = step;
+    activeSpeechStep.current = step;
+    const lines: string[] = [];
+    if (step === 1) lines.push(spokenMatchIntro(language));
+    lines.push(eventCaption(lastEvent, language, persona));
+    if (lastEvent.type === "fulltime") {
+      const goals = visibleEvents.filter(event => event.type === "goal");
+      lines.push(spokenMatchOutro(language,
+        goals.filter(event => event.team === demoMatch.home_team).length,
+        goals.filter(event => event.team === demoMatch.away_team).length));
+    }
+    speechQueue.current.push(...lines);
     speakNext();
-  }, [playing, audioEnabled, persona, step, language]);
+  }, [step, playing, audioEnabled]);
 
   useEffect(() => {
-    if (!playing || !audioEnabled || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
-    outroStarted.current = true;
-    const goals = visibleEvents.filter(event => event.type === "goal");
-    const home = goals.filter(event => event.team === demoMatch.home_team).length;
-    const away = goals.filter(event => event.team === demoMatch.away_team).length;
-    speechQueue.current.push(spokenMatchOutro(language, home, away));
-    speakNext();
-    setPlaying(false);
-  }, [playing, audioEnabled, persona, step, language]);
-
-  // At full time playback is stopped. A language change must still replay the
-  // final score in the newly selected language when commentary remains enabled.
-  useEffect(() => {
-    if (!audioEnabled || playing ||
-        lastEvent.type !== "fulltime" || !("speechSynthesis" in window)) return;
-    if (outroStarted.current) return;
-    outroStarted.current = true;
-    const goals = visibleEvents.filter(event => event.type === "goal");
-    const home = goals.filter(event => event.team === demoMatch.home_team).length;
-    const away = goals.filter(event => event.team === demoMatch.away_team).length;
-    speechQueue.current.push(spokenMatchOutro(language, home, away));
-    speakNext();
-  }, [audioEnabled, persona, playing, step, language]);
-
-  useEffect(() => {
-    if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
-    const timer = window.setInterval(() => {
-      setStep((current) => {
-        if (current >= demoMatch.events.length) {
-          setPlaying(false);
-          return current;
-        }
-        return current + 1;
-      });
-    }, (1900 * 9) / (demoMatch.events.length * playbackSpeed));
-    return () => window.clearInterval(timer);
-  }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step, stepByStep]);
+    if (!playing || (persona === "accessible" && stepByStep)) return;
+    if (audioEnabled && (speechCompletedStep !== step || audioPaused || narrating)) return;
+    if (step >= demoMatch.events.length) {
+      setPlaying(false);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setStep(current => Math.min(demoMatch.events.length, current + 1));
+    }, audioEnabled ? 120 : (1900 * 9) / (demoMatch.events.length * playbackSpeed));
+    return () => window.clearTimeout(timer);
+  }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step, stepByStep, speechCompletedStep]);
 
   // Fetch all snapshots once per retry. Playback and scrubbing stay entirely local.
   const [replayStates, setReplayStates] = useState<MatchState[] | null>(null);
@@ -249,24 +240,6 @@ export default function App() {
   }, [latestGoal?.id, persona, retryCount]);
 
   useEffect(() => {
-    if (!audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
-    if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
-    if (spokenGoalIds.current.has(latestGoal.id)) return;
-    spokenGoalIds.current.add(latestGoal.id);
-    // The narration API currently returns English only; localized speech uses verified event captions.
-    speechQueue.current.push(language==="en"?explanation.narrative:eventCaption(latestGoal,language,persona));
-    speakNext();
-  }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
-
-  useEffect(() => {
-    if (!expandedAudio || !audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !("speechSynthesis" in window)) return;
-    if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
-    if (spokenEventIds.current.has(lastEvent.id)) return;
-    spokenEventIds.current.add(lastEvent.id);
-    speechQueue.current.push(eventCaption(lastEvent,language,persona));
-    speakNext();
-  }, [expandedAudio,audioEnabled,playing,stepByStep,persona,step,language]);
-  useEffect(() => {
     const onKey=(event:KeyboardEvent)=>{
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
       const target=event.target as HTMLElement|null;
@@ -278,14 +251,6 @@ export default function App() {
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
   },[persona,playing,audioEnabled,audioPaused]);
-  // A persona switch changes the narrative style, not the match position.
-  useEffect(() => {
-    if (!audioEnabled || !playing || step <= 1 || lastEvent.type === "fulltime" || !("speechSynthesis" in window)) return;
-    // Re-describe the current moment in the new style, without replaying earlier events.
-    speechQueue.current.push(eventCaption(lastEvent, language, persona));
-    speakNext();
-  }, [persona]);
-
   const moveManualEvent = (direction: -1 | 1) => {
     setPlaying(false);
     if (audioEnabled) stopAudio(false);
@@ -302,6 +267,8 @@ export default function App() {
     speechActive.current = false;
     setNarrating(false);
     if (!preserveProgress) {
+      speechQueuedStep.current = 0;
+      setSpeechCompletedStep(0);
       spokenGoalIds.current.clear();
       spokenEventIds.current.clear();
       introStarted.current = false;
@@ -337,7 +304,7 @@ export default function App() {
             </div>
             <div className="fan-settings" role="group" aria-label="Fan preferences">
               <label htmlFor="fan-language">Commentary language</label>
-              <select id="fan-language" value={language} onChange={e=>{stopAudio(false);setLanguage(e.target.value as FanLanguage);}}>
+              <select id="fan-language" value={language} onChange={e=>setLanguage(e.target.value as FanLanguage)}>
                 {(Object.keys(languageNames) as FanLanguage[]).map(key=><option key={key} value={key}>{languageNames[key]}</option>)}
               </select>
               <label className="access-choice"><input type="checkbox" checked={captionsEnabled} onChange={e=>setCaptionsEnabled(e.target.checked)}/> Live captions</label>
@@ -382,7 +349,7 @@ export default function App() {
             <p className="muted">Choose how you'd like to experience each moment.</p>
             <div className="persona-tabs" role="group" aria-label="Choose commentary experience">
               {(["young", "accessible", "analyst"] as const).map((option) => (
-                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { if (persona !== option) { stopAudio(false, true); setPersona(option); } }}>
+                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { if (persona !== option) setPersona(option); }}>
                   {option === "young" ? <Sparkles size={17} /> : option === "accessible" ? <AudioLines size={17} /> : <BarChart3 size={17} />}
                   {personaInfo[option].label}
                 </button>
@@ -425,7 +392,7 @@ export default function App() {
               {explanation && explanation.event_id === latestGoal?.id && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
             {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><label className="access-choice"><input type="checkbox" checked={expandedAudio} onChange={e=>setExpandedAudio(e.target.checked)}/> Describe shots and passes too</label><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
-            {<div role="group" aria-label="Spoken commentary controls"><p className="muted">Spoken commentary follows your selected fan experience. Switching modes keeps audio enabled and stops the previous voice.</p>
+            {<div role="group" aria-label="Spoken commentary controls"><p className="muted">Spoken commentary follows your selected fan experience. Persona and language changes take effect in speech from the next event; the current commentary finishes uninterrupted.</p>
               <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
               {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
               <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
@@ -452,7 +419,7 @@ export default function App() {
           </div>
         </section>
 
-        <BroadcastStudio persona={persona} onPersonaChange={(next) => { if (persona !== next) { stopAudio(false, true); setPersona(next); } }}
+        <BroadcastStudio persona={persona} onPersonaChange={(next) => { if (persona !== next) setPersona(next); }}
           playedEventIds={visibleEvents.map(event => event.id)}
           onJumpToEvent={(eventId) => { const index = demoMatch.events.findIndex(event => event.id === eventId); if (index >= 0) { setPlaying(false); stopAudio(false); setStep(index + 1); } }}
           retryCount={retryCount} />
