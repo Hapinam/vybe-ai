@@ -16,7 +16,13 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 
 ## Additional verified accessibility checks (October 12, 2026)
 
-- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.\n- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.\n- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.\n- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.\n- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.\n- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.\n- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.
+- [x] PR #17 mobile accessibility controls merged; mobile Chrome iPhone-sized viewport (393×852) checked for horizontal overflow and responsive layout.
+- [x] Keyboard smoke checks (9/9): skip link, language selector, live captions toggle, play/pause, arrow event navigation, and native select arrow behavior. Skip-link landing/scroll positioning remains a minor improvement note.
+- [x] Windows Narrator controls (5/5 targeted): skip link, language selector, live captions state, play/pause, and match progress value were announced.
+- [x] Narrator dynamic captions were announced, but timed playback could finish before speech finished; treated as a timing limitation, not a full pass.
+- [x] PR #18 Step-by-step playback merged and locally built successfully; user confirmed Narrator reads each newly selected event and the event does not advance automatically.
+- [x] Arabic Narrator reading tested with Microsoft Hoda (ar-EG). Pronunciation and punctuation behavior were accepted as OS voice limitations, not a guarantee of natural Arabic speech.
+- [x] PR #18 Web and Container CI checks passed on merged `main` commit `d0a6695`; local `git status -sb` was clean and synchronized.
 
 ## Final release readiness evidence (October 2026)
 
