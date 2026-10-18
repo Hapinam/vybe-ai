@@ -4,7 +4,7 @@ set -euo pipefail
 # Run from repository root. GHCR package remains private.
 # This script intentionally does NOT build/publish a container or create an ACR.
 : "${AZURE_SUBSCRIPTION_ID:?Set AZURE_SUBSCRIPTION_ID}"
-: "${GHCR_IMAGE:?Set GHCR_IMAGE to a verified public ghcr.io/owner/repo:commit-sha}"
+: "${GHCR_IMAGE:?Set GHCR_IMAGE to a verified private ghcr.io/owner/repo:commit-sha}"
 RESOURCE_GROUP="${RESOURCE_GROUP:-rg-vybe-hackathon}"
 LOCATION="${LOCATION:-germanywestcentral}"
 APP_NAME="${APP_NAME:-vybe-demo}"
