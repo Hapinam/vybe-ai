@@ -16,25 +16,27 @@ Review the script before running. From the repository root:
 
 ```bash
 export AZURE_SUBSCRIPTION_ID="your-subscription-id"
-export RESOURCE_GROUP="rg-vybe-demo"
-export LOCATION="westeurope"
+export RESOURCE_GROUP="rg-vybe-hackathon"
+export LOCATION="germanywestcentral"
 export APP_NAME="vybe-demo-unique"
 export REGISTRY_NAME="globallyuniqueacrname"
-bash infra/azure/deploy.sh
+bash infra/azure/deploy.sh  # safe preflight: no Azure writes
+# Only after explicitly approving costs and deployment:
+# export CONFIRM_AZURE_DEPLOY=YES
+# bash infra/azure/deploy.sh
 ```
 
 Azure Container Registry names must be globally unique, lowercase alphanumeric, 5–50 characters. Container Apps application names and environments must be valid and available within their scope.
 
-The script provisions a resource group, Basic Azure Container Registry, Container Apps environment, user-assigned managed identity, AcrPull role, and a public ingress app with scale-to-zero.
+The script **requires the existing** `rg-vybe-hackathon` resource group in `germanywestcentral` and never creates a resource group. Without `CONFIRM_AZURE_DEPLOY=YES`, it prints configuration and exits before Azure CLI calls; this is a configuration-only preflight, **not** an Azure resource or cost validation. The subscription ID and stable registry name are required even for this preflight. With explicit confirmation, it may create a Basic Azure Container Registry, Container Apps environment, user-assigned managed identity, AcrPull role, and a public ingress app with scale-to-zero. It reuses supported existing resources and refuses to replace an existing Container App. Check the Azure resources and expected costs before confirmation.
 
 ## Costs and safeguards
 - Azure Container Registry Basic and the Container Apps environment's associated logging infrastructure may incur costs even when the app is scaled to zero.
 - Registry builds and network egress can incur charges.
 - Review Azure Pricing Calculator and set a subscription budget alert before deployment.
 - The script does not delete resources or set a spending cap.
-- To delete **all resources in the dedicated demo resource group** after judging, review the group contents and run:
-  `az group delete --name rg-vybe-demo`
-- Do not delete a shared resource group.
+- **Do not delete `rg-vybe-hackathon`** as a cleanup shortcut: it predates this deployment and may contain other resources or settings. Inspect and remove only the individually identified demo resources after judging.
+- Azure budget alerts (including the existing €10 monthly alert budget) are notifications, **not a hard spending cap**.
 
 ## Validation
 Visit the deployed URL, `/health`, play the synthetic match, switch personas and verify the API calls work. The application is a prototype, not yet production hardened.
