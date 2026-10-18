@@ -15,6 +15,34 @@ case "$GHCR_IMAGE" in
   *) echo "GHCR_IMAGE must be a tagged ghcr.io image" >&2; exit 1 ;;
 esac
 
+# Foundry is mandatory for the approved live hackathon release. Validate only
+# presence and endpoint/deployment syntax here; never echo credentials.
+# This validation does not contact Azure or incur model usage.
+python3 - <<'PY'
+import os
+import re
+from urllib.parse import urlparse
+
+names = (
+    "VYBE_FOUNDRY_MODEL_ENDPOINT", "VYBE_FOUNDRY_MODEL_DEPLOYMENT",
+    "VYBE_FOUNDRY_MODEL_KEY", "VYBE_AZURE_OPENAI_ENDPOINT",
+    "VYBE_AZURE_OPENAI_DEPLOYMENT", "VYBE_AZURE_OPENAI_KEY",
+)
+missing = [name for name in names if not os.environ.get(name)]
+if missing:
+    raise SystemExit("Missing required Foundry configuration variable(s): " + ", ".join(missing))
+for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
+    endpoint = os.environ[prefix + "_ENDPOINT"].rstrip("/")
+    parsed = urlparse(endpoint)
+    if (parsed.scheme != "https" or not parsed.hostname or
+        not parsed.hostname.endswith(".openai.azure.com") or
+        parsed.username or parsed.password or parsed.path not in ("", "/") or
+        parsed.query or parsed.fragment):
+        raise SystemExit("Invalid Azure OpenAI-compatible endpoint: " + prefix)
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", os.environ[prefix + "_DEPLOYMENT"]):
+        raise SystemExit("Invalid model deployment name: " + prefix)
+PY
+
 if [[ "${CONFIRM_AZURE_DEPLOY:-}" != "YES" ]]; then
   printf 'DRY RUN: no Azure writes. Subscription: %s; group: %s; region: %s; app: %s; image: %s\n' \
     "$AZURE_SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$LOCATION" "$APP_NAME" "$GHCR_IMAGE"
@@ -59,7 +87,11 @@ config = {
         "managedEnvironmentId": os.environ["ENV_ID"],
         "configuration": {
             "ingress": {"external": True, "targetPort": 8000, "transport": "auto"},
-            "secrets": [{"name": "ghcr-read-token", "value": os.environ["GHCR_READ_TOKEN"]}],
+            "secrets": [
+                {"name": "ghcr-read-token", "value": os.environ["GHCR_READ_TOKEN"]},
+                {"name": "foundry-model-key", "value": os.environ["VYBE_FOUNDRY_MODEL_KEY"]},
+                {"name": "azure-openai-key", "value": os.environ["VYBE_AZURE_OPENAI_KEY"]},
+            ],
             "registries": [{
                 "server": "ghcr.io",
                 "username": os.environ["GHCR_USERNAME"],
@@ -71,6 +103,14 @@ config = {
                 "name": "vybe",
                 "image": os.environ["GHCR_IMAGE"],
                 "resources": {"cpu": 0.5, "memory": "1Gi"},
+                "env": [
+                    {"name": "VYBE_FOUNDRY_MODEL_ENDPOINT", "value": os.environ["VYBE_FOUNDRY_MODEL_ENDPOINT"]},
+                    {"name": "VYBE_FOUNDRY_MODEL_DEPLOYMENT", "value": os.environ["VYBE_FOUNDRY_MODEL_DEPLOYMENT"]},
+                    {"name": "VYBE_FOUNDRY_MODEL_KEY", "secretRef": "foundry-model-key"},
+                    {"name": "VYBE_AZURE_OPENAI_ENDPOINT", "value": os.environ["VYBE_AZURE_OPENAI_ENDPOINT"]},
+                    {"name": "VYBE_AZURE_OPENAI_DEPLOYMENT", "value": os.environ["VYBE_AZURE_OPENAI_DEPLOYMENT"]},
+                    {"name": "VYBE_AZURE_OPENAI_KEY", "secretRef": "azure-openai-key"},
+                ],
             }],
             "scale": {"minReplicas": 0, "maxReplicas": 1},
         },
