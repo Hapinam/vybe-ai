@@ -5,6 +5,7 @@ verified factual statements. Its output must cite their IDs and use the exact
 statements as written; free-form factual claims are not accepted.
 """
 import json
+import logging
 import os
 import urllib.error
 import urllib.request
@@ -12,6 +13,8 @@ from urllib.parse import urlparse
 
 from .engine import explain_goal
 from .models import MatchDefinition
+
+logger = logging.getLogger(__name__)
 
 PERSONAS = {"young", "accessible", "analyst"}
 
@@ -72,7 +75,10 @@ def _generate(prompt: str) -> str:
     )
     with urllib.request.urlopen(request, timeout=8) as response:
         data = json.load(response)
-    return data["choices"][0]["message"]["content"].strip()
+    content = data["choices"][0]["message"]["content"]
+    if not isinstance(content, str):
+        raise ValueError("Azure model returned no text content")
+    return content.strip()
 
 
 def _verified_facts(match: MatchDefinition, event_id: str, persona: str) -> tuple[dict, dict]:
@@ -125,6 +131,8 @@ def _validate_segments(response: str, facts: dict, persona: str | None = None) -
     if "goal" not in used or "score" not in used:
         raise ValueError("Goal and score are mandatory")
     opening, closing = parsed.get("opening", ""), parsed.get("closing", "")
+    if not isinstance(opening, str) or not isinstance(closing, str):
+        raise ValueError("Invalid persona framing types")
     if opening or closing:
         if persona not in PERSONA_FRAMING:
             raise ValueError("Unsupported persona framing")
@@ -146,6 +154,6 @@ def narrate_goal(match: MatchDefinition, event_id: str, persona: str = "young") 
         baseline["narrative"] = narrative
         baseline["generation_mode"] = "azure_ai"
         baseline["selected_fact_ids"] = sorted(selected)
-    except (ValueError, TypeError, KeyError, IndexError, OSError, TimeoutError, urllib.error.URLError):
-        pass
+    except (ValueError, TypeError, KeyError, IndexError, OSError, TimeoutError, urllib.error.URLError) as exc:
+        logger.warning("Azure narration rejected; using deterministic fallback (%s)", type(exc).__name__)
     return baseline

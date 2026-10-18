@@ -17,14 +17,14 @@ test("Retry connection recovers after a replay API failure", async ({ page }) =>
     events_processed: 1,
   };
 
-  await page.route("**/v1/matches/replay?**", async (route) => {
+  await page.route("**/v1/matches/replay/states", async (route) => {
     await route.fulfill({
       status: failReplay ? 503 : 200,
       contentType: "application/json",
       body: JSON.stringify(
         failReplay
           ? { detail: "Temporary outage" }
-          : { state }
+          : { states: demoMatch.events.map((_, index) => ({ ...state, events_processed: index + 1 })) }
       ),
     });
   });

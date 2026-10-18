@@ -34,10 +34,10 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 - **Frontend:** React, TypeScript, Vite, CSS; browser SpeechSynthesis API for optional spoken commentary.
 - **Backend:** Python FastAPI; deterministic replay engine that calculates score, passes and shots from ordered synthetic events.
-- **Narration:** Evidence-based, persona-specific commentary; optional Azure AI configuration where supported, with deterministic fallback.
+- **Narration:** Evidence-based, persona-specific commentary; optional Azure AI selection and ordering of exact, server-verified fact segments with allowlisted framing and deterministic fallback.
 - **Data:** Local synthetic match fixture. No external sports API required.
 
-The Vite development server proxies `/v1` and `/health` to the FastAPI service on port **8000**.
+The Vite development server proxies `/v1` and `/health` to the FastAPI service on port **8000**. Playback requests all validated replay snapshots once via `/v1/matches/replay/states` and then scrubs locally; `/v1/matches/replay` remains available for individual queries.
 
 ## Architecture diagram
 
@@ -113,7 +113,7 @@ npx playwright test
 
 Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
 
-**Latest documented checks (October 18, 2026):** 54/54 backend tests, 4/4 Playwright browser tests, 24/24 prior manual acceptance checks; frontend and container builds passed. Azure deployment, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+**Historical validation snapshot (October 18, 2026, before Ask the Match and predeployment changes):** 54/54 backend tests, 4/4 Playwright browser tests, 24/24 prior manual acceptance checks; frontend and container builds passed. Current PR checks must be reviewed separately. Azure deployment, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
 
 ## New fan experiences
 
@@ -122,7 +122,7 @@ Playwright browser setup (first time): `npx.cmd playwright install chromium` in 
 - **Match story recap:** evolving event-grounded score and goal narrative for all personas.
 - **Timeline views:** Highlights, Goals-only, and All events; the Goals view shows goal events without changing the underlying match statistics.
 - **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
-- **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage. No account or cloud sync.
+- **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage when permitted; the app continues without persistence when storage is blocked. No account or cloud sync.
 - **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
 
 ## Accessible controls
@@ -133,7 +133,7 @@ In Accessible mode, **Tab** navigates controls. When focus is not inside an inte
 
 ## Azure readiness
 
-The prototype can run locally without paid Azure resources. The Azure integration is **optional**, and cloud provisioning, credentials, costs, deployment and live service validation must be performed separately. Never commit secrets or Azure API keys. The UI distinguishes deterministic narration from Azure-assisted style selection when the backend reports that mode; do not interpret this as proof that a live Azure deployment is currently active.
+The prototype can run locally without paid Azure resources. The Azure integration is **optional**, and cloud provisioning, credentials, costs, deployment and live service validation must be performed separately. Never commit secrets or Azure API keys. The UI distinguishes deterministic narration from Azure-assisted selection and ordering of verbatim verified fact segments when the backend reports that mode; do not interpret this as proof that a live Azure deployment is currently active.
 
 ## Limitations and responsible use
 

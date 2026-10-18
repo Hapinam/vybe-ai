@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import AskTheMatch from "./AskTheMatch";
+import { store } from "./storage";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 import { eventCaption, languageNames, matchRecap, spokenMatchIntro, spokenMatchOutro, type FanLanguage } from "./localization";
@@ -14,28 +15,28 @@ const personaInfo: Record<Persona, { label: string; subtitle: string }> = {
 
 export default function App() {
   const [step, setStep] = useState(1);
-  const [persona, setPersona] = useState<Persona>(() => { const v=localStorage.getItem("vybe.persona"); return v==="young"||v==="accessible"||v==="analyst"?v:"young"; });
-  const [language, setLanguage] = useState<FanLanguage>(() => { const v=localStorage.getItem("vybe.language"); return v==="ar"||v==="cs"?v:"en"; });
-  const [captionsEnabled, setCaptionsEnabled] = useState(() => localStorage.getItem("vybe.captions")!=="false");
+  const [persona, setPersona] = useState<Persona>(() => { const v=store.get("vybe.persona"); return v==="young"||v==="accessible"||v==="analyst"?v:"young"; });
+  const [language, setLanguage] = useState<FanLanguage>(() => { const v=store.get("vybe.language"); return v==="ar"||v==="cs"?v:"en"; });
+  const [captionsEnabled, setCaptionsEnabled] = useState(() => store.get("vybe.captions")!=="false");
   const [demoMode, setDemoMode] = useState(false);
   const demoModeRef = useRef(false);
   const [selectedWindow, setSelectedWindow] = useState<number|null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(2);
-  const [stepByStep, setStepByStep] = useState(() => localStorage.getItem("vybe.stepByStep")==="true");
+  const [stepByStep, setStepByStep] = useState(() => store.get("vybe.stepByStep")==="true");
   const [state, setState] = useState<MatchState | null>(null);
   const [explanation, setExplanation] = useState<Explanation | null>(null);
   const [error, setError] = useState("");
   const [narrationError, setNarrationError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [highContrast, setHighContrast] = useState(() => localStorage.getItem("vybe.contrast")==="true");
-  const [largeText, setLargeText] = useState(() => localStorage.getItem("vybe.largeText")==="true");
-  const [expandedAudio, setExpandedAudio] = useState(() => localStorage.getItem("vybe.expandedAudio")==="true");
+  const [highContrast, setHighContrast] = useState(() => store.get("vybe.contrast")==="true");
+  const [largeText, setLargeText] = useState(() => store.get("vybe.largeText")==="true");
+  const [expandedAudio, setExpandedAudio] = useState(() => store.get("vybe.expandedAudio")==="true");
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights" | "goals">(() => { const saved = localStorage.getItem("vybe.timeline"); return saved === "all" || saved === "goals" ? saved : "highlights"; });
-  const [showEventDetails, setShowEventDetails] = useState(() => localStorage.getItem("vybe.details")!=="false");
-  const [speechRate, setSpeechRate] = useState(() => { const n=Number(localStorage.getItem("vybe.speechRate")); return [0.5,1,1.5,2].includes(n)?n:1; });
+  const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights" | "goals">(() => { const saved = store.get("vybe.timeline"); return saved === "all" || saved === "goals" ? saved : "highlights"; });
+  const [showEventDetails, setShowEventDetails] = useState(() => store.get("vybe.details")!=="false");
+  const [speechRate, setSpeechRate] = useState(() => { const n=Number(store.get("vybe.speechRate")); return [0.5,1,1.5,2].includes(n)?n:1; });
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
@@ -96,16 +97,16 @@ export default function App() {
       speakNext();
     }, 2000);
   };
-  useEffect(() => { localStorage.setItem("vybe.persona",persona); },[persona]);
-  useEffect(() => { localStorage.setItem("vybe.language",language); },[language]);
-  useEffect(() => { localStorage.setItem("vybe.contrast",String(highContrast)); },[highContrast]);
-  useEffect(() => { localStorage.setItem("vybe.largeText",String(largeText)); },[largeText]);
-  useEffect(() => { localStorage.setItem("vybe.captions",String(captionsEnabled)); },[captionsEnabled]);
-  useEffect(() => { localStorage.setItem("vybe.timeline",timelineFilter); },[timelineFilter]);
-  useEffect(() => { localStorage.setItem("vybe.details",String(showEventDetails)); },[showEventDetails]);
-  useEffect(() => { localStorage.setItem("vybe.speechRate",String(speechRate)); },[speechRate]);
-  useEffect(() => { localStorage.setItem("vybe.expandedAudio",String(expandedAudio)); },[expandedAudio]);
-  useEffect(() => { localStorage.setItem("vybe.stepByStep",String(stepByStep)); },[stepByStep]);
+  useEffect(() => { store.set("vybe.persona",persona); },[persona]);
+  useEffect(() => { store.set("vybe.language",language); },[language]);
+  useEffect(() => { store.set("vybe.contrast",String(highContrast)); },[highContrast]);
+  useEffect(() => { store.set("vybe.largeText",String(largeText)); },[largeText]);
+  useEffect(() => { store.set("vybe.captions",String(captionsEnabled)); },[captionsEnabled]);
+  useEffect(() => { store.set("vybe.timeline",timelineFilter); },[timelineFilter]);
+  useEffect(() => { store.set("vybe.details",String(showEventDetails)); },[showEventDetails]);
+  useEffect(() => { store.set("vybe.speechRate",String(speechRate)); },[speechRate]);
+  useEffect(() => { store.set("vybe.expandedAudio",String(expandedAudio)); },[expandedAudio]);
+  useEffect(() => { store.set("vybe.stepByStep",String(stepByStep)); },[stepByStep]);
   useEffect(() => {
     demoModeRef.current=demoMode;
     if(!demoMode) return;
@@ -211,13 +212,29 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, [playing, playbackSpeed, audioEnabled, persona, narrating, audioPaused, step, stepByStep]);
 
+  // Fetch all snapshots once per retry. Playback and scrubbing stay entirely local.
+  const [replayStates, setReplayStates] = useState<MatchState[] | null>(null);
   useEffect(() => {
     let active = true;
-    postJson<{ state: MatchState }>("/v1/matches/replay?through_event=" + step, demoMatch)
-      .then((result) => { if (active) { setState(result.state); setError(""); } })
-      .catch((err: unknown) => { if (active) { setState(null); setError(String(err)); } });
+    setReplayStates(null);
+    setState(null);
+    postJson<{ states: MatchState[] }>("/v1/matches/replay/states", demoMatch)
+      .then((result) => {
+        if (!active) return;
+        if (result.states.length !== demoMatch.events.length) {
+          throw new Error("Unexpected replay snapshot count");
+        }
+        setReplayStates(result.states);
+        setError("");
+      })
+      .catch((err: unknown) => {
+        if (active) { setReplayStates(null); setError(String(err)); }
+      });
     return () => { active = false; };
-  }, [step, retryCount]);
+  }, [retryCount]);
+  useEffect(() => {
+    setState(replayStates?.[step - 1] ?? null);
+  }, [replayStates, step]);
 
   useEffect(() => {
     let active = true;

@@ -181,3 +181,24 @@ def test_boundary_event_count_is_accepted():
         for i in range(500)
     ]}
     assert client.post("/v1/matches/replay", json=match).status_code == 200
+
+
+def test_replay_all_states_matches_each_partial_replay():
+    response = client.post("/v1/matches/replay/states", json=MATCH)
+    assert response.status_code == 200
+    states = response.json()["states"]
+    assert len(states) == len(MATCH["events"])
+    for i, state in enumerate(states, start=1):
+        partial = client.post(f"/v1/matches/replay?through_event={i}", json=MATCH)
+        assert state == partial.json()["state"]
+
+
+def test_replay_all_states_rejects_invalid_match():
+    broken = {**MATCH, "events": [MATCH["events"][0], MATCH["events"][0]]}
+    assert client.post("/v1/matches/replay/states", json=broken).status_code == 422
+
+
+def test_replay_all_states_empty_match():
+    response = client.post("/v1/matches/replay/states", json={**MATCH, "events": []})
+    assert response.status_code == 200
+    assert response.json()["states"] == []

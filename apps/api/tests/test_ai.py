@@ -144,3 +144,29 @@ def test_cross_persona_framing_is_rejected():
         "vybe.ai._generate", return_value=json.dumps(payload)
     ):
         assert narrate_goal(match(), "goal-1", "analyst")["generation_mode"] == "deterministic"
+
+
+def test_null_azure_content_uses_deterministic_fallback():
+    """Content filtering can return a valid envelope with null content."""
+    from unittest.mock import MagicMock
+    from vybe.ai import _generate
+    response = MagicMock()
+    response.__enter__.return_value = response
+    response.__exit__.return_value = False
+    response.read.return_value = b'{"choices":[{"message":{"content":null}}]}'
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "urllib.request.urlopen", return_value=response
+    ):
+        result = narrate_goal(match(), "goal-1")
+    assert result["generation_mode"] == "deterministic"
+    assert result["evidence_event_ids"] == ["goal-1"]
+
+
+def test_null_persona_framing_is_rejected():
+    _, facts = _verified_facts(match(), "goal-1", "young")
+    payload = json.loads(generated(facts))
+    payload["opening"] = None
+    with patch.dict("os.environ", ENV, clear=True), patch(
+        "vybe.ai._generate", return_value=json.dumps(payload)
+    ):
+        assert narrate_goal(match(), "goal-1")["generation_mode"] == "deterministic"
