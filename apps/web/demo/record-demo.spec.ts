@@ -36,7 +36,7 @@ test("record VYBE feature walkthrough", async ({ page }) => {
     await expect(button).toHaveAttribute("aria-pressed", "true");
   };
 
-  await page.waitForTimeout(1800); // opening title
+  await page.waitForTimeout(3500); // opening title
 
   // Young fan: jump to the first goal, reveal the celebration and answer the quiz.
   await selectPersona("Young Fan");
@@ -46,6 +46,18 @@ test("record VYBE feature walkthrough", async ({ page }) => {
   await page.getByRole("button", { name: "Aurora FC", exact: true }).last().click();
   await expect(page.getByText("Correct! Great football knowledge!")).toBeVisible();
   await page.waitForTimeout(1200);
+
+  // Demonstrate localized captions and commentary language selection.
+  // Playwright video does not capture system speech; final MP4 adds narration separately.
+  await focus('[aria-label="Fan preferences"]', 1800);
+  await page.getByLabel("Commentary language").selectOption("ar");
+  await focus(".live-caption", 2400);
+  await expect(page.locator(".live-caption")).toContainText("العربية");
+  await page.getByLabel("Commentary language").selectOption("cs");
+  await focus(".live-caption", 2400);
+  await expect(page.locator(".live-caption")).toContainText("Čeština");
+  await page.getByLabel("Commentary language").selectOption("en");
+  await focus(".live-caption", 1800);
 
   // Accessible: demonstrate the real preferences, keyboard-friendly controls and captions.
   await selectPersona("Accessible");
@@ -73,6 +85,6 @@ test("record VYBE feature walkthrough", async ({ page }) => {
 
   // End with the match center and brand.
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-  await page.waitForTimeout(2200);
+  await page.waitForTimeout(3500);
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
