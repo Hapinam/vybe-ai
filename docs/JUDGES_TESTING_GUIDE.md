@@ -56,7 +56,7 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 - A deterministic Python replay engine processes ordered synthetic events and computes match facts.
 - FastAPI exposes match state and event-grounded narratives.
 - React/TypeScript presents the same match to three audiences.
-- Preferences persist in the current browser.
+- Preferences persist in the current browser when storage is permitted; blocked storage does not prevent use.
 - Docker and Azure Container Apps deployment infrastructure are prepared.
 
 The optional Azure AI narration path is separate from the deterministic source of truth. **Microsoft Foundry and advanced agent orchestration are future opportunities, not currently demonstrated integrations.** Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
@@ -65,10 +65,9 @@ The optional Azure AI narration path is separate from the deterministic source o
 
 The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
 
-- **54/54** backend tests passed.
-- **4/4** Playwright browser tests passed.
-- **24/24** manual end-to-end acceptance checks completed.
-- Frontend production build, Docker image build, and container health check succeeded.
+- GitHub Actions runs backend, Playwright, frontend/container and dependency checks; see the latest workflow results for current status.
+- **24/24** manual end-to-end acceptance checks were previously recorded; these do not cover subsequent changes.
+- Azure runtime and post-deployment smoke tests remain to be verified.
 
 These checks are not a production security certification or a full accessibility audit.
 
