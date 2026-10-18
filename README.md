@@ -10,6 +10,10 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 
 **[Judges' Testing Guide — 3–5 minute walkthrough](docs/JUDGES_TESTING_GUIDE.md)** covers Young Fan, Accessible Fan, Analyst Fan, the challenge pipeline, and validation evidence. The live application URL will be provided only after deployment is verified.
 
+## Azure deployment preflight
+
+Before enabling Azure provisioning, review the **[cost, security, and judging preflight checklist](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)**. The 500 CZK planning budget is not an automatic spending cap; registry and logging costs require explicit approval.
+
 ## Experiences
 
 | Persona | Features |
