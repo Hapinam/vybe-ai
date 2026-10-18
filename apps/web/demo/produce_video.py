@@ -21,11 +21,12 @@ DEST = ROOT / "demo-output/VYBE-Every-Fan-Belongs.mp4"
 # Each cue is synthesized separately so it can start at the specified second.
 CUES = [
     (0.5, "VYBE. Every fan belongs."),
-    (4.0, "One football match. Three experiences, designed for every kind of fan."),
-    (9.0, "Young fans celebrate the goals and test their football knowledge."),
-    (17.0, "Accessible mode offers high contrast, larger text, and step by step navigation."),
-    (28.0, "Analysts explore match statistics, momentum, insights, and the event timeline."),
-    (36.0, "VYBE. Every fan belongs."),
+    (4.2, "One football match. Three experiences, designed for every kind of fan."),
+    (10.2, "Young fans celebrate goals and test their football knowledge."),
+    (17.0, "Choose commentary in English, Arabic, or Czech, with localized live captions."),
+    (28.0, "Accessible mode offers high contrast, larger text, and step by step navigation."),
+    (39.0, "Analysts explore match statistics, momentum, insights, and the event timeline."),
+    (48.0, "VYBE. Every fan belongs."),
 ]
 
 
@@ -63,7 +64,7 @@ def main() -> None:
     meta = json.loads(run("ffprobe", "-v", "error", "-show_entries",
                           "format=duration", "-of", "json", str(SOURCE)))
     duration = float(meta["format"]["duration"])
-    if not 35 <= duration <= 65:
+    if not 45 <= duration <= 90:
         sys.exit(f"Unexpected recording duration ({duration:.1f}s); review narration timing.")
 
     DEST.parent.mkdir(parents=True, exist_ok=True)
