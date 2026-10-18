@@ -16,7 +16,7 @@ from .models import MatchDefinition
 from .questions import ask_match
 
 # Explicitly unsupported causal questions must not be reinterpreted as factual answers.
-_UNSUPPORTED_CAUSAL = ("why", "cause", "caused", "tactic", "strategy", "formation", "momentum")
+# Match causal word families at word starts, without matching information/because/Whyte.\n_UNSUPPORTED_CAUSAL = re.compile(r"\b(?:why|caus\w*|tactic\w*|strateg\w*|formation\w*|momentum)\b", re.IGNORECASE)
 
 log = logging.getLogger(__name__)
 
@@ -112,8 +112,7 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
     fallback = ask_match(match, question)
     fallback["persona"] = persona
     fallback["selected_tool"] = None
-    normalized = question.casefold()
-    if re.search(r"\b(?:why|caus\w*|tactic\w*|strateg\w*|formation\w*|momentum)\b", normalized):
+    if _UNSUPPORTED_CAUSAL.search(question):
         fallback["supported"] = False
         fallback["evidence_event_ids"] = []
         fallback["answer"] = ("The recorded synthetic events do not establish tactical causes, "
