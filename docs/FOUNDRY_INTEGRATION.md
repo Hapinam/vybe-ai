@@ -1,25 +1,24 @@
-# VYBE: optional Azure AI commentary
+# VYBE: optional Azure OpenAI narration
 
-The match engine and score are deterministic. AI never computes the match state.
+The match replay engine and score are deterministic. Azure AI is **optional**, and the planned Azure Container Apps deployment does **not** automatically provision or configure an Azure OpenAI model.
 
 ## Integration
-The `/v1/matches/narrate/{event_id}` endpoint provides an optional Azure OpenAI-compatible model call. Without configuration it returns the existing deterministic explanation. It is not yet a multi-agent workflow or Microsoft Agent Framework implementation.
 
-## Configuration (only after Azure access and costs are approved)
-- `VYBE_AZURE_OPENAI_ENDPOINT`: HTTPS Azure OpenAI resource endpoint, e.g. `https://your-resource.openai.azure.com`
+`POST /v1/matches/narrate/{event_id}?persona=young|accessible|analyst` returns verified synthetic-event narration. Without Azure configuration, or if the model returns an invalid/filtered response, it returns deterministic narration.
+
+Configuration (only with separate owner approval for costs and live service):
+- `VYBE_AZURE_OPENAI_ENDPOINT`: HTTPS resource root such as `https://your-resource.openai.azure.com`
 - `VYBE_AZURE_OPENAI_DEPLOYMENT`: model deployment name
-- `VYBE_AZURE_OPENAI_KEY`: secret; never commit this value
+- `VYBE_AZURE_OPENAI_KEY`: secret; never place in source control, frontend assets or logs
 
-This adapter uses the Azure OpenAI deployment REST API and may require a compatible model deployment and permissions. Microsoft Foundry projects may use different endpoints; this implementation does not yet support every Foundry project endpoint.
+The adapter calls the Azure OpenAI chat-completions REST API. It is **not** a general Foundry agent or Microsoft Agent Framework integration. Not every Foundry project endpoint is compatible.
 
-## Safety boundaries
-The system sends a minimal synthetic event fact bundle and asks for grounded commentary. A basic response check rejects outputs missing the team or score; **this is not a complete hallucination validator**. Before using generated text in judging, add stronger structured-output verification against an explicit allowlist of facts, evaluation tests, content safety review, and a clear generation badge in the UI.
+## Current safety boundary
 
-Never put keys in GitHub, frontend bundles or screenshots. Prefer managed identity in a later production implementation. The demo does not use real Premier League feeds, footage or statistics.
+The server prepares a minimal, trusted bundle of goal, score and synthetic-context fact sentences. The model may choose and order 1–3 exact fact segments and use optional persona-specific, allowlisted opening/closing phrases. The server checks the complete JSON schema, duplicate keys, response size, required goal and score facts, fact IDs, verbatim text equality and persona framing. Unverified output is rejected and deterministic narration used instead.
 
-## Local smoke test
-```bash
-cd apps/api
-pip install -e ".[test]"
-pytest -q
-```
+The model **cannot** freely invent football commentary. Player names and tactical explanations are not in the model's current fact bundle. See [AI grounding](AI_GROUNDING.md) for precise limitations.
+
+## Deployment boundary
+
+The current `infra/azure/deploy.sh` does not configure Azure OpenAI credentials or deploy a model. Do not enable paid Azure AI or add secrets without explicit approval. For local smoke tests, run `pytest -q` in `apps/api`. Do not claim live Azure AI operation until it is separately verified.
