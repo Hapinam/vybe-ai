@@ -63,6 +63,7 @@ export default function BroadcastStudio({
     return () => { active = false; controller.abort(); };
   }, [persona, retryCount]);
 
+  const fulltimePlayed = demoMatch.events.some(event => event.type === "fulltime" && played.has(event.id));
   const available = data?.insights.filter(item => played.has(item.event_id)) ?? [];
   const current = available.find(item => item.event_id === selectedEventId) ?? available[available.length - 1];
   const evidence = current?.evidence_event_ids.map(id => demoMatch.events.find(event => event.id === id)).filter(
@@ -117,8 +118,10 @@ export default function BroadcastStudio({
           </button>)}
           {!available.length && <p className="studio-muted">No goal moments available yet.</p>}
           <h3>Match recap</h3>
-          <p>{data.recap}</p>
-          <small className="studio-muted">Full-fixture recap, including events not yet replayed. Event evidence: {data.recap_evidence_event_ids.join(", ") || "none"}</small>
+          {fulltimePlayed ? <>
+            <p>{data.recap}</p>
+            <small className="studio-muted">Full-fixture recap · Event evidence: {data.recap_evidence_event_ids.join(", ") || "none"}</small>
+          </> : <p className="studio-muted" role="status">Full match recap unlocks after the final whistle. Keep watching for verified moments.</p>}
         </aside>
       </div>}
       <p className="studio-disclaimer">Studio insights are deterministic, not AI-generated commentary. Model-based tool selection is optional in Ask the Match and is only active when configured on the server.</p>
