@@ -121,7 +121,7 @@ export default function App() {
     return ()=>{demoModeRef.current=false;window.clearInterval(timer);};
   },[demoMode]);
   useEffect(() => {
-    if (!demoMode || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    if (!demoMode || !("speechSynthesis" in window)) return;
     const utterance = new SpeechSynthesisUtterance(
       language === "cs" ? "Vítejte ve VYBE. Aurora FC hraje proti Harbor United." :
       language === "ar" ? "أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد." :
@@ -169,14 +169,14 @@ export default function App() {
     });
 
   useEffect(() => {
-    if (!playing || !audioEnabled || persona !== "accessible" || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
+    if (!playing || !audioEnabled || step !== 1 || introStarted.current || !("speechSynthesis" in window)) return;
     introStarted.current = true;
     speechQueue.current.push(spokenMatchIntro(language));
     speakNext();
   }, [playing, audioEnabled, persona, step, language]);
 
   useEffect(() => {
-    if (!playing || !audioEnabled || persona !== "accessible" || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
+    if (!playing || !audioEnabled || lastEvent.type !== "fulltime" || outroStarted.current || !("speechSynthesis" in window)) return;
     outroStarted.current = true;
     const goals = visibleEvents.filter(event => event.type === "goal");
     const home = goals.filter(event => event.team === demoMatch.home_team).length;
@@ -189,7 +189,7 @@ export default function App() {
   // At full time playback is stopped. A language change must still replay the
   // final score in the newly selected language when commentary remains enabled.
   useEffect(() => {
-    if (!audioEnabled || persona !== "accessible" || playing ||
+    if (!audioEnabled || playing ||
         lastEvent.type !== "fulltime" || !("speechSynthesis" in window)) return;
     if (outroStarted.current) return;
     outroStarted.current = true;
@@ -201,7 +201,7 @@ export default function App() {
   }, [audioEnabled, persona, playing, step, language]);
 
   useEffect(() => {
-    if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && persona === "accessible" && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
+    if (!playing || (persona === "accessible" && stepByStep) || (audioEnabled && (narrating || audioPaused || (step === 1 && !introStarted.current) || (lastEvent.type === "goal" && !spokenGoalIds.current.has(lastEvent.id))))) return;
     const timer = window.setInterval(() => {
       setStep((current) => {
         if (current >= demoMatch.events.length) {
@@ -249,7 +249,7 @@ export default function App() {
   }, [latestGoal?.id, persona, retryCount]);
 
   useEffect(() => {
-    if (!audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
+    if (!audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !explanation || !latestGoal || lastEvent.type !== "goal" || lastEvent.id !== latestGoal.id || !("speechSynthesis" in window)) return;
     if (!explanation.evidence_event_ids.includes(latestGoal.id)) return;
     if (spokenGoalIds.current.has(latestGoal.id)) return;
     spokenGoalIds.current.add(latestGoal.id);
@@ -259,7 +259,7 @@ export default function App() {
   }, [audioEnabled, playing, stepByStep, persona, explanation, latestGoal?.id, step, language]);
 
   useEffect(() => {
-    if (!expandedAudio || !audioEnabled || (!playing && !stepByStep) || persona !== "accessible" || !("speechSynthesis" in window)) return;
+    if (!expandedAudio || !audioEnabled || (!playing && !(persona === "accessible" && stepByStep)) || !("speechSynthesis" in window)) return;
     if (lastEvent.type !== "shot" && lastEvent.type !== "pass_completed") return;
     if (spokenEventIds.current.has(lastEvent.id)) return;
     spokenEventIds.current.add(lastEvent.id);
@@ -344,7 +344,7 @@ export default function App() {
               </>}
             </div>}
             <div className="controls">
-              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && persona === "accessible" && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
+              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
               <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
@@ -372,7 +372,7 @@ export default function App() {
             <p className="muted">Choose how you'd like to experience each moment.</p>
             <div className="persona-tabs" role="group" aria-label="Choose commentary experience">
               {(["young", "accessible", "analyst"] as const).map((option) => (
-                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { setPersona(option); stopAudio(); }}>
+                <button key={option} aria-pressed={persona === option} className={persona === option ? "persona active" : "persona"} onClick={() => { if (persona !== option) { stopAudio(false); setPersona(option); } }}>
                   {option === "young" ? <Sparkles size={17} /> : option === "accessible" ? <AudioLines size={17} /> : <BarChart3 size={17} />}
                   {personaInfo[option].label}
                 </button>
@@ -415,7 +415,7 @@ export default function App() {
               {explanation && explanation.event_id === latestGoal?.id && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
             {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><label className="access-choice"><input type="checkbox" checked={expandedAudio} onChange={e=>setExpandedAudio(e.target.checked)}/> Describe shots and passes too</label><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
-            {persona === "accessible" && <div role="group" aria-label="Spoken commentary controls">
+            {<div role="group" aria-label="Spoken commentary controls"><p className="muted">Spoken commentary follows your selected fan experience. Switching modes keeps audio enabled and stops the previous voice.</p>
               <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
               {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
               <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
@@ -442,7 +442,7 @@ export default function App() {
           </div>
         </section>
 
-        <BroadcastStudio persona={persona} onPersonaChange={(next) => { setPersona(next); stopAudio(); }}
+        <BroadcastStudio persona={persona} onPersonaChange={(next) => { if (persona !== next) { stopAudio(false); setPersona(next); } }}
           playedEventIds={visibleEvents.map(event => event.id)}
           onJumpToEvent={(eventId) => { const index = demoMatch.events.findIndex(event => event.id === eventId); if (index >= 0) { setPlaying(false); stopAudio(false); setStep(index + 1); } }}
           retryCount={retryCount} />
