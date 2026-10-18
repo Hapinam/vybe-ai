@@ -10,7 +10,9 @@ FROM python:3.11-slim AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8000
 WORKDIR /app
 COPY apps/api/ /app/api/
-RUN pip install --no-cache-dir /app/api && useradd --create-home --uid 10001 appuser
+RUN pip install --no-cache-dir /app/api && \
+    pip uninstall -y setuptools wheel && \
+    useradd --create-home --uid 10001 appuser
 COPY --from=web /build/dist/ /app/static/
 USER appuser
 EXPOSE 8000
