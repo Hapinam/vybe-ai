@@ -6,6 +6,10 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 
 > **Synthetic demo only:** Teams, players and match events are fictional. This project does not use official Premier League match feeds or claim real-time match coverage.
 
+## For hackathon judges
+
+**[Judges' Testing Guide — 3–5 minute walkthrough](docs/JUDGES_TESTING_GUIDE.md)** covers Young Fan, Accessible Fan, Analyst Fan, the challenge pipeline, and validation evidence. The live application URL will be provided only after deployment is verified.
+
 ## Experiences
 
 | Persona | Features |
