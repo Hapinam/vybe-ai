@@ -1,32 +1,22 @@
-# Cost-conscious GHCR deployment (review only)
+# Private GHCR deployment — review only
 
-This path replaces the ACR dependency with a **public GHCR package**, but does not guarantee a free Azure deployment. The original ACR script remains available for comparison. Neither workflow nor script provisions Azure on merge.
+Decision: keep the GHCR package **Private**. This replaces the earlier public-image proposal. Public Azure HTTPS ingress for judges does not make the registry package public.
 
-## Current subscription inventory (owner-provided, 2026-10-18)
-- Subscription: `Dawood_SUB` (do not commit subscription IDs).
-- Resource group: `rg-vybe-hackathon`, `germanywestcentral`.
-- `az resource list`, `az acr list` and `az containerapp list` returned no resources in the group.
-- Monthly `Demo_Budget` amount 10.0, **currency not yet verified**. Budget alerts are not spending limits.
-- Total target: **500 CZK** including all services through the planned judging availability window.
+## Known budget and inventory (owner-provided October 18, 2026)
+- Subscription: Dawood_SUB; resource group: `rg-vybe-hackathon`; region: `germanywestcentral`.
+- The resource group inventory returned no resources.
+- `Demo_Budget` is **EUR 10 monthly**; current reported spend EUR 0 (billing may lag). Alerts at 25%, 50%, 75%, 90%, 100%; **not** a hard spend limit.
+- Separate target: approximately 500 CZK total through judging; check exchange rates, taxes, usage and logging before Azure writes.
 
-## Publication (no Azure charges; manual action)
-1. Confirm repository code and Docker image contents are suitable for public distribution.
-2. Run GitHub Actions **Publish VYBE image to GHCR** via `workflow_dispatch` only after approving publication. It publishes `ghcr.io/hapinam/vybe-ai:<full-main-commit-sha>`.
-3. In GitHub Packages, set the container package visibility to **Public** if it is initially private. This is a deliberate public distribution decision.
-4. Verify an **unauthenticated** `docker pull ghcr.io/hapinam/vybe-ai:<full-main-commit-sha>` succeeds. A private package will not work with this deployment path. Never store a PAT in a public workflow or command log.
-5. Confirm the published image is from the intended `main` commit. Workflow may be run from other refs, so inspect the run ref.
+## Publishing
+- Run the manual GitHub Actions **Publish VYBE image to GHCR** only after the security checks pass.
+- Leave package visibility **Private**; do not select Public in GitHub Packages.
+- Tag is `ghcr.io/hapinam/vybe-ai:<full commit SHA>`. Verify package access using authenticated Docker pull.
+- A GitHub token with `read:packages` and permission to access the package is required for Azure Container Apps to pull it. Prefer a dedicated, revocable, minimal-permission token and rotate it after judging. Do not put tokens in Git, tickets, chat, screenshots or CI logs.
 
-## Azure deployment — requires a separate, explicit owner approval
-Review actual subscription costs and current spend, the Consumption environment/logging configuration, billing currency, budget notifications and total retention period first. The environment may create or use logging services; GHCR only removes ACR charges.
-
-From a Bash shell at the repository root, after explicit approval:
-```bash
-export AZURE_SUBSCRIPTION_ID="<subscription ID, local only>"
-export GHCR_IMAGE="ghcr.io/hapinam/vybe-ai:<verified full commit SHA>"
-bash infra/azure/deploy-ghcr.sh   # DRY RUN, no Azure writes
-# Only after separate approval for Azure resources and cost:
-CONFIRM_AZURE_DEPLOY=YES bash infra/azure/deploy-ghcr.sh
-```
-Do not run the final command just because this file exists. Script refuses replacing an existing Container App, uses min replicas 0 and max 1, and does not create an ACR. It may still create a Container Apps environment, associated logging resources and a billable public Container App. A failed deployment can leave resources charging; inventory them before retrying.
-
-After launch, verify public HTTPS root, `/health`, all fan modes, Ask the Match, and the 2–2 replay. Update judges links only with a verified URL. Get explicit approval before deleting resources after judging.
+## Azure
+- `infra/azure/deploy-ghcr.sh` requires `AZURE_SUBSCRIPTION_ID`, `GHCR_IMAGE`, `GHCR_USERNAME`, and `GHCR_READ_TOKEN`.
+- Dry run requires only subscription and image; it does not access Azure resources or publish anything.
+- The script authenticates a local Docker pull before Azure writes, and supplies registry credentials when creating the Container App. The script does **not** put the token in Azure CLI command-line arguments. It generates an owner-only temporary JSON (valid YAML) Container Apps configuration, preferably under Linux memory-backed `/dev/shm`, with a `ghcr-read-token` application secret and `passwordSecretRef`. The file is deleted after the Azure CLI call. The token is still briefly present in process environment/memory and Azure deployment request; use a trusted host, never enable verbose shell tracing, and do not commit or share it. On hosts without `/dev/shm`, a restricted temporary file is used on disk.
+- No deployment is authorized by merging this PR. `CONFIRM_AZURE_DEPLOY=YES` is an additional technical gate, **not** substitute for the owner's separate approval for billable Azure writes.
+- Verify logging costs, public endpoint security and complete retention-period estimates first. After launch, test `/health`, UI and fan modes, replay and director; never claim live Foundry without validation.
