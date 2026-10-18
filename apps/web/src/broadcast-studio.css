@@ -1,0 +1,23 @@
+/* Broadcast Studio: scoped styles, no changes to existing page controls. */
+.studio{margin:2rem 0;padding:clamp(1rem,3vw,2rem);background:linear-gradient(135deg,#191a35,#282348);border:1px solid #7265a6;border-radius:1.2rem;color:#f8f7ff}
+.studio-header{display:flex;justify-content:space-between;align-items:start;gap:1rem;flex-wrap:wrap}
+.studio-header h2{font-size:clamp(1.4rem,3vw,2rem);margin:.5rem 0}
+.studio-muted{color:#d1cce5}
+.studio-pill{padding:.5rem .8rem;border-radius:99px;background:#373258;border:1px solid #aaa0d8;font-size:.85rem}
+.studio-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin:1.5rem 0}
+.studio-mode,.studio-pick,.studio-evidence-link{font:inherit;color:inherit;cursor:pointer;text-align:left}
+.studio-mode{display:flex;flex-direction:column;gap:.35rem;background:#25223f;border:1px solid #8479a7;border-radius:.75rem;padding:.9rem}
+.studio-mode span,.studio-pick small{font-size:.85rem;color:#d5cfe9}
+.studio-mode.active,.studio-pick.selected{border:2px solid #87d7ff;background:#303358}
+.studio-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(15rem,1fr);gap:1rem}
+.studio-main,.studio-side{background:#18172f;border:1px solid #595277;border-radius:1rem;padding:1.25rem;min-width:0}
+.studio-score{display:flex;justify-content:space-between;align-items:center;gap:.7rem;text-align:center}
+.studio-score span{flex:1;font-weight:650}
+.studio-score strong{font-size:clamp(1.8rem,4vw,3.5rem);white-space:nowrap}
+.studio-explanation{font-size:1.15rem;line-height:1.65}
+.studio-evidence{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.studio-evidence-link{background:#282442;border:1px solid #8880b2;border-radius:.55rem;padding:.7rem}
+.studio-pick{display:flex;flex-direction:column;width:100%;gap:.35rem;padding:.7rem;margin:.45rem 0;background:#272340;border:1px solid #7c729e;border-radius:.65rem}
+.studio-disclaimer{color:#d5cfe9;font-size:.85rem;margin:1.2rem 0 0}
+.studio button:focus-visible{outline:3px solid #fbbf24;outline-offset:3px}
+@media(max-width:700px){.studio-layout{grid-template-columns:1fr}.studio-modes{grid-template-columns:1fr}.studio-score{flex-wrap:wrap}}
