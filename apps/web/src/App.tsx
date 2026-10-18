@@ -34,7 +34,6 @@ export default function App() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [highContrast, setHighContrast] = useState(() => store.get("vybe.contrast")==="true");
   const [largeText, setLargeText] = useState(() => store.get("vybe.largeText")==="true");
-  const [expandedAudio, setExpandedAudio] = useState(() => store.get("vybe.expandedAudio")==="true");
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [timelineFilter, setTimelineFilter] = useState<"all" | "highlights" | "goals">(() => { const saved = store.get("vybe.timeline"); return saved === "all" || saved === "goals" ? saved : "highlights"; });
   const [showEventDetails, setShowEventDetails] = useState(() => store.get("vybe.details")!=="false");
@@ -111,7 +110,6 @@ export default function App() {
   useEffect(() => { store.set("vybe.timeline",timelineFilter); },[timelineFilter]);
   useEffect(() => { store.set("vybe.details",String(showEventDetails)); },[showEventDetails]);
   useEffect(() => { store.set("vybe.speechRate",String(speechRate)); },[speechRate]);
-  useEffect(() => { store.set("vybe.expandedAudio",String(expandedAudio)); },[expandedAudio]);
   useEffect(() => { store.set("vybe.stepByStep",String(stepByStep)); },[stepByStep]);
   useEffect(() => {
     demoModeRef.current=demoMode;
@@ -391,7 +389,7 @@ export default function App() {
               <p className="insight-text">{(explanation && explanation.event_id === latestGoal?.id ? explanation.narrative : undefined) ?? (latestGoal ? "Preparing the latest goal insight…" : "Press play to experience the match. Insights appear when a goal is scored.")}</p>
               {explanation && explanation.event_id === latestGoal?.id && <div className="evidence"><CheckCircle2 size={15} /> Verified from synthetic event <code>{explanation.evidence_event_ids.join(", ")}</code></div>}
             </div>
-            {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><label className="access-choice"><input type="checkbox" checked={expandedAudio} onChange={e=>setExpandedAudio(e.target.checked)}/> Describe shots and passes too</label><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
+            {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><p className="muted">With spoken commentary enabled, every match event is described, including shots and passes.</p><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
             {<div role="group" aria-label="Spoken commentary controls"><p className="muted">Spoken commentary follows your selected fan experience. Persona and language changes take effect in speech from the next event; the current commentary finishes uninterrupted.</p>
               <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
               {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
