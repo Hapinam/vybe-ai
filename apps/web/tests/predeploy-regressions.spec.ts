@@ -21,11 +21,13 @@ test("replay playback and scrubbing reuse one bulk request", async ({ page }) =>
   });
   await page.goto("/");
   await expect(page.getByText("0 : 0")).toBeVisible();
+  const initialRequests = requests; // React StrictMode may mount effects twice in dev.
   await page.getByRole("button", { name: "Jump instantly to full time" }).click();
   await expect(page.getByText("2 : 2")).toBeVisible();
   await page.getByRole("button", { name: "Restart" }).click();
   await expect(page.getByText("0 : 0")).toBeVisible();
-  expect(requests).toBe(1);
+  expect(initialRequests).toBeGreaterThan(0);
+  expect(requests).toBe(initialRequests);
 });
 
 test("app still renders when browser storage access throws", async ({ page }) => {
