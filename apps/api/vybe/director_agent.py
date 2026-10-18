@@ -15,6 +15,9 @@ from .director_tools import TOOL_NAMES, call_director_tool
 from .models import MatchDefinition
 from .questions import ask_match
 
+# Explicitly unsupported causal questions must not be reinterpreted as factual answers.
+_UNSUPPORTED_CAUSAL = ("why", "cause", "caused", "tactic", "strategy", "formation", "momentum")
+
 log = logging.getLogger(__name__)
 
 _TOOL_DESCRIPTIONS = {
@@ -109,6 +112,14 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
     fallback = ask_match(match, question)
     fallback["persona"] = persona
     fallback["selected_tool"] = None
+    normalized = question.casefold()
+    if any(term in normalized for term in _UNSUPPORTED_CAUSAL):
+        fallback["supported"] = False
+        fallback["evidence_event_ids"] = []
+        fallback["answer"] = ("The recorded synthetic events do not establish tactical causes, "
+                              "formations, strategy or real-world momentum. They can only confirm "
+                              "score changes and recorded actions.")
+        return fallback
     try:
         config = _configuration()
         if config is None:
