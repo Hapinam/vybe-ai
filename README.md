@@ -2,21 +2,23 @@
 
 **One synthetic football match. Three ways to experience it.**
 
-VYBE is an accessibility-first football replay prototype for the **Microsoft + Premier League Inside the Game Developer Hackathon 2026**. It presents the same fictional Aurora FC vs Harbor United match through different experiences, with grounded event data and an optional Azure AI narration integration.
+VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; an optional, evidence-constrained Azure AI narration path is implemented but **not yet deployed**.
 
-> **Synthetic demo only:** Teams, players and match events are fictional. This project does not use official Premier League match feeds or claim real-time match coverage.
+**[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **Live demo: pending Azure deployment and verification**
 
-## For hackathon judges
+> **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
 
-**[Judges' Testing Guide — 3–5 minute walkthrough](docs/JUDGES_TESTING_GUIDE.md)** covers Young Fan, Accessible Fan, Analyst Fan, the challenge pipeline, and validation evidence. The live application URL will be provided only after deployment is verified.
+### Quick tour
 
-## Azure deployment preflight
+1. **Young Fan:** goals, celebrations, glossary and quiz.
+2. **Accessible Fan:** English/Arabic/Czech captions, larger text, contrast, keyboard and step-by-step playback.
+3. **Analyst Fan:** recorded match statistics, 15-minute weighted event activity and timeline filters.
 
-Before enabling Azure provisioning, review the **[cost, security, and judging preflight checklist](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)**. The 500 CZK planning budget is not an automatic spending cap; registry and logging costs require explicit approval.
+### Deployment preparation
 
-## Azure launch runbook
-
-**[Azure Launch Runbook](docs/AZURE_LAUNCH_RUNBOOK.md)** provides the pre-deployment cost model, read-only resource inspection, owner-approval gates, public judging smoke test, and post-judging cleanup plan. No Azure resources are created by the document.
+- [Azure cost and security preflight](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)
+- [Azure launch runbook](docs/AZURE_LAUNCH_RUNBOOK.md)
+- [Validation evidence and limitations](docs/FINAL_ACCEPTANCE_CHECKLIST.md)
 
 ## Experiences
 
@@ -111,23 +113,7 @@ npx playwright test
 
 Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
 
-**Historical validation — October 12, 2026:** 43 local backend tests passed, the frontend production build passed, and the API/Web/Container GitHub CI checks passed for merged PR #15. FastAPI and Vite started locally; Arabic Accessible/Guided Demo narration and Play/Pause were confirmed by manual testing in Chrome with the installed Microsoft Hoda (`ar-EG`) voice. The voice was understandable Arabic but not perceived as a natural Egyptian dialect.
-
-**October 12 accessibility update:** Mobile Chrome viewport (393×852) was checked for horizontal overflow and responsive controls; keyboard navigation and Windows Narrator controls passed targeted smoke tests. PR #18 added manual Previous/Next event navigation in Accessible mode. Narrator reads live captions but can lag behind timed playback; step-by-step mode lets the user wait until reading finishes. Arabic was tested with Microsoft Hoda, whose pronunciation quality is OS-voice-dependent. The PR #18 frontend production build and Web/Container CI passed. These are targeted checks, not a full WCAG audit.
-
-**Final manual E2E update (October 2026):** The project owner completed **24/24** manual end-to-end checks across Young Fan (8/8), Accessible Fan (6/6), Analyst Fan (5/5), General (4/4), and Final Smoke (1/1). The Goals timeline filter was separately verified in the UI, showing the four synthetic goals. Backend tests were rerun locally on Python 3.13.14 (**43 passed, 1 dependency deprecation warning**), and the TypeScript/Vite production build passed. `npm audit` reported **0 known vulnerabilities** including development dependencies; `pip-audit` reported **no known vulnerabilities** in installed external Python packages, while the local `vybe-api` project itself was not audited by that tool. These checks do not establish full WCAG compliance, application source-code security, or cloud production readiness. See [`docs/FINAL_ACCEPTANCE_CHECKLIST.md`](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
-
-## Latest validation — October 18, 2026
-
-- **54/54** backend tests passed locally.
-- **4/4** Playwright browser tests passed, including retry recovery with a mocked API response.
-- TypeScript/Vite production build and Docker image build passed; container health endpoint returned `ok`.
-- GitHub Actions checks passed on PR #39 before merge into `main`.
-- Frontend production dependency audit found **0 known vulnerabilities**; Python dependency audit found none in audited external packages (local unpublished project excluded).
-- **24/24** manual end-to-end acceptance checks were completed in the earlier release validation.
-- Azure OpenAI and Container Apps deployment, live-cloud checks, comprehensive security review, and full WCAG audit **remain pending**.
-
-For evidence, scope and remaining gates, see [Final Acceptance Checklist](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+**Latest documented checks (October 18, 2026):** 54/54 backend tests, 4/4 Playwright browser tests, 24/24 prior manual acceptance checks; frontend and container builds passed. Azure deployment, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
 
 ## New fan experiences
 
@@ -162,12 +148,6 @@ The prototype can run locally without paid Azure resources. The Azure integratio
 - `apps/api/` — FastAPI routes, match engine and tests
 - `apps/web/` — React replay dashboard and personas
 - `apps/web/src/match.ts` — synthetic match fixture and frontend types
-
-## Project showcase
-
-VYBE demonstrates how one fictional football match can be experienced in three distinct ways: playful learning, accessible navigation and narration, and event-grounded analysis. All experiences use the same underlying synthetic events.
-
-**Demo video:** [Watch VYBE — Every Fan Belongs on YouTube](https://youtu.be/c717qul116M) (53 seconds, unlisted). The original recording is stored locally at apps/web/demo-output/VYBE-Every-Fan-Belongs.mp4 and excluded from Git. No live Azure demo URL is claimed yet.
 
 ## Hackathon demo outline
 
