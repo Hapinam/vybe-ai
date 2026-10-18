@@ -155,7 +155,7 @@ The prototype can run locally without paid Azure resources. The Azure integratio
 
 VYBE demonstrates how one fictional football match can be experienced in three distinct ways: playful learning, accessible navigation and narration, and event-grounded analysis. All experiences use the same underlying synthetic events.
 
-**Demo media:** Screenshots and a short walkthrough video will be added after the final deployment and demo capture. No live Azure demo URL is claimed yet.
+**Demo media:** A 52-second narrated walkthrough video has been recorded locally at apps/web/demo-output/VYBE-Every-Fan-Belongs.mp4. Generated recordings are excluded from Git; the video is not yet publicly hosted. No live Azure demo URL is claimed yet.
 
 ## Hackathon demo outline
 
