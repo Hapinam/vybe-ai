@@ -14,6 +14,10 @@ VYBE is an accessibility-first football replay prototype for the **Microsoft + P
 
 Before enabling Azure provisioning, review the **[cost, security, and judging preflight checklist](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)**. The 500 CZK planning budget is not an automatic spending cap; registry and logging costs require explicit approval.
 
+## Azure launch runbook
+
+**[Azure Launch Runbook](docs/AZURE_LAUNCH_RUNBOOK.md)** provides the pre-deployment cost model, read-only resource inspection, owner-approval gates, public judging smoke test, and post-judging cleanup plan. No Azure resources are created by the document.
+
 ## Experiences
 
 | Persona | Features |
