@@ -4,6 +4,7 @@ The model may compose prose, but only from a finite set of server-authored,
 verified factual statements. Its output must cite their IDs and use the exact
 statements as written; free-form factual claims are not accepted.
 """
+import http.client
 import json
 import logging
 import os
@@ -15,6 +16,14 @@ from .engine import explain_goal
 from .models import MatchDefinition
 
 logger = logging.getLogger(__name__)
+
+class AzureConfigurationError(ValueError):
+    """Azure credentials or endpoint are unusable."""
+
+
+class ModelResponseError(ValueError):
+    """Azure response cannot be used safely."""
+
 
 PERSONAS = {"young", "accessible", "analyst"}
 
@@ -46,10 +55,10 @@ def _generate(prompt: str) -> str:
         or parsed.fragment
         or not parsed.hostname.endswith(".openai.azure.com")
     ):
-        raise ValueError("Expected an HTTPS Azure OpenAI resource root endpoint")
+        raise AzureConfigurationError("Expected an HTTPS Azure OpenAI resource root endpoint")
     deployment = os.environ["VYBE_AZURE_OPENAI_DEPLOYMENT"]
     if not deployment.replace("-", "").replace("_", "").isalnum():
-        raise ValueError("Invalid deployment name")
+        raise AzureConfigurationError("Invalid deployment name")
     url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version=2024-10-21"
     payload = {
         "messages": [
@@ -75,9 +84,17 @@ def _generate(prompt: str) -> str:
     )
     with urllib.request.urlopen(request, timeout=8) as response:
         data = json.load(response)
-    content = data["choices"][0]["message"]["content"]
-    if not isinstance(content, str):
-        raise ValueError("Azure model returned no text content")
+    return _extract_content(data)
+
+
+def _extract_content(data: object) -> str:
+    """Validate the completion envelope, including content-filter null responses."""
+    try:
+        content = data["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError):
+        raise ModelResponseError("Unexpected Azure response shape") from None
+    if not isinstance(content, str) or not content.strip():
+        raise ModelResponseError("Azure returned no text content")
     return content.strip()
 
 
@@ -142,18 +159,33 @@ def _validate_segments(response: str, facts: dict, persona: str | None = None) -
     return " ".join(x for x in [opening, *texts, closing] if x), list(used)
 
 
+def _azure_narration(persona: str, facts: dict) -> tuple[str, list[str]] | None:
+    """Azure-side failures degrade gracefully; unexpected bugs retain a traceback."""
+    prompt = json.dumps({"persona": persona, "synthetic": True, "facts": facts,
+                         "allowed_framing": PERSONA_FRAMING[persona]})
+    try:
+        return _validate_segments(_generate(prompt), facts, persona)
+    except AzureConfigurationError as exc:
+        logger.error("Azure narration disabled by invalid configuration (%s)", type(exc).__name__)
+    except (OSError, http.client.HTTPException) as exc:
+        # Avoid logging provider-supplied messages, which may contain request metadata.
+        logger.warning("Azure narration request failed (%s); using fallback", type(exc).__name__)
+    except ValueError as exc:
+        logger.warning("Azure narration rejected (%s); using fallback", type(exc).__name__)
+    except Exception:
+        logger.exception("Unexpected Azure narration error; using deterministic fallback")
+    return None
+
+
 def narrate_goal(match: MatchDefinition, event_id: str, persona: str = "young") -> dict:
     baseline, facts = _verified_facts(match, event_id, persona)
     baseline["generation_mode"] = "deterministic"
     if not _configured():
         return baseline
-    prompt = json.dumps({"persona": persona, "synthetic": True, "facts": facts, "allowed_framing": PERSONA_FRAMING[persona]})
-    try:
-        candidate = _generate(prompt)
-        narrative, selected = _validate_segments(candidate, facts, persona)
+    result = _azure_narration(persona, facts)
+    if result is not None:
+        narrative, selected = result
         baseline["narrative"] = narrative
         baseline["generation_mode"] = "azure_ai"
         baseline["selected_fact_ids"] = sorted(selected)
-    except (ValueError, TypeError, KeyError, IndexError, OSError, TimeoutError, urllib.error.URLError) as exc:
-        logger.warning("Azure narration rejected; using deterministic fallback (%s)", type(exc).__name__)
     return baseline
