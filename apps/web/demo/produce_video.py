@@ -39,15 +39,20 @@ def synthesize(text: str, target: Path) -> None:
     # Pass narration via base64 to avoid shell quoting issues.
     import base64
     payload = base64.b64encode(text.encode("utf-8")).decode("ascii")
+    output_path = base64.b64encode(str(target).encode("utf-8")).decode("ascii")
+    # Embed base64 values in the script rather than passing positional args
+    # after -Command (which PowerShell does not bind as expected).
     ps = (
         "Add-Type -AssemblyName System.Speech; "
+        f"$path = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('{output_path}')); "
+        f"$words = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('{payload}')); "
         "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; "
-        "$s.Rate = 1; "
-        "$s.SetOutputToWaveFile($args[0]); "
-        "$s.Speak([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($args[1]))); "
-        "$s.Dispose()"
+        "try { $s.Rate = 1; $s.SetOutputToWaveFile($path); $s.Speak($words) } "
+        "finally { $s.Dispose() }"
     )
-    run("powershell.exe", "-NoProfile", "-Command", ps, str(target), payload)
+    # EncodedCommand also avoids Windows shell escaping problems.
+    encoded = base64.b64encode(ps.encode("utf-16-le")).decode("ascii")
+    run("powershell.exe", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded)
 
 
 def main() -> None:
