@@ -7,6 +7,7 @@ from .engine import replay, replay_timeline, explain_goal, state_dict
 from .ai import narrate_goal
 from .questions import ask_match
 from .director_agent import director_ask
+from .insights import match_insights
 from .security import MatchRequestGuard
 
 app = FastAPI(title="VYBE Synthetic Match API", version="0.1.0")
@@ -70,3 +71,8 @@ class DirectorQuestion(BaseModel):
 @app.post("/v1/matches/director/ask")
 def ask_director_question(request: DirectorQuestion):
     return director_ask(request.match, request.question, request.persona)
+
+
+@app.post("/v1/matches/insights")
+def get_match_insights(match: MatchDefinition, persona: str = Query(default="analyst", pattern=r"^(young|accessible|analyst)$")):
+    return match_insights(match, persona)
