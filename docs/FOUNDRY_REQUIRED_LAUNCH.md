@@ -42,7 +42,7 @@
 The API middleware now uses two **per-process, ASGI-peer-address** sliding-window
 limits: 240 requests/minute across match endpoints and 30 requests/minute
 shared by `/v1/matches/director/ask` and `/v1/matches/narrate/{event_id}`.
-The latter applies before a model call and does not reduce the replay budget.
+The latter applies before a model call and also counts toward the overall 240/minute bucket, so model traffic can reduce the available replay capacity.
 `X-Forwarded-For` is deliberately ignored to avoid client-supplied spoofing.
 
 **Important limitation:** Container Apps ingress may make many users share a
