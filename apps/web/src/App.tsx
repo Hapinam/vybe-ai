@@ -278,7 +278,15 @@ export default function App() {
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
   },[persona,playing,audioEnabled,audioPaused]);
-  // A persona switch changes the narrative style, not the match position.\n  useEffect(() => {\n    if (!audioEnabled || !playing || step <= 1 || lastEvent.type === "fulltime" || !("speechSynthesis" in window)) return;\n    // Re-describe the current moment in the new style, without replaying earlier events.\n    speechQueue.current.push(eventCaption(lastEvent, language, persona));\n    speakNext();\n  }, [persona]);\n\n  const moveManualEvent = (direction: -1 | 1) => {
+  // A persona switch changes the narrative style, not the match position.
+  useEffect(() => {
+    if (!audioEnabled || !playing || step <= 1 || lastEvent.type === "fulltime" || !("speechSynthesis" in window)) return;
+    // Re-describe the current moment in the new style, without replaying earlier events.
+    speechQueue.current.push(eventCaption(lastEvent, language, persona));
+    speakNext();
+  }, [persona]);
+
+  const moveManualEvent = (direction: -1 | 1) => {
     setPlaying(false);
     if (audioEnabled) stopAudio(false);
     setStep(current => Math.max(1, Math.min(demoMatch.events.length, current + direction)));
