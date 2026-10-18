@@ -1,0 +1,58 @@
+name: Full-stack smoke (real API)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      VYBE_FOUNDRY_MODEL_ENDPOINT: ""
+      VYBE_FOUNDRY_MODEL_KEY: ""
+      VYBE_FOUNDRY_MODEL_DEPLOYMENT: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install FastAPI
+        working-directory: apps/api
+        run: python -m pip install -e .
+      - name: Install web dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start real API
+        working-directory: apps/api
+        run: |
+          python -m uvicorn vybe.main:app --host 127.0.0.1 --port 8000 > /tmp/vybe-api.log 2>&1 &
+          echo $! > /tmp/vybe-api.pid
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vybe-api.log
+          exit 1
+      - name: Real API + browser integration
+        run: npx playwright test --config=playwright.fullstack.config.ts
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fullstack-smoke-results
+          path: |
+            apps/web/test-results/
+            /tmp/vybe-api.log
+          retention-days: 7
