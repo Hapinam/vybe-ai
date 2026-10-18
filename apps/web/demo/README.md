@@ -33,4 +33,6 @@ The raw **WebM** browser recording is saved in `apps/web/demo-output/` under the
 - The recorder currently produces a **draft silent clip**, not a final narrated hackathon submission.
 - Microsoft Foundry model integration is **required** for final submission, but cannot be represented as live until independently verified. This draft recorder does not establish live Foundry use.
 
-## Final submission video\n\nFollow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The current 53-second published video is an earlier demo, not proof of a deployed Foundry model. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.\n
+## Final submission video
+
+Follow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The current 53-second published video is an earlier demo, not proof of a deployed Foundry model. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.\n

@@ -86,3 +86,17 @@ def test_custom_match_is_not_hardcoded():
     data = ask("Final score?", custom).json()
     assert "North 0–1 South" in data["answer"]
     assert data["evidence_event_ids"] == ["z", "f"]
+
+
+def test_derived_causal_questions_are_declined():
+    from vybe.questions import ask_match
+    from vybe.models import MatchDefinition
+    match = MatchDefinition.model_validate({
+        "match_id": "m", "home_team": "Aurora", "away_team": "Harbor", "events": []
+    })
+    for question in (
+        "What tactics did they use?", "Which tactical setup?",
+        "Explain the strategies", "Which formations?",
+        "Was it causal?", "What caused it?",
+    ):
+        assert ask_match(match, question)["supported"] is False, question

@@ -114,3 +114,32 @@ def test_foundry_request_contract_is_explicit_and_secret_stays_in_header():
     assert all(tool["function"]["parameters"]["additionalProperties"] is False
                for tool in payload["tools"])
     assert "fake-test-key" not in request.data.decode()
+
+
+def test_unsupported_causal_variants_declined_before_model_call():
+    from unittest.mock import patch
+    variants = (
+        "What tactics did Harbor use?", "Was their play tactical?",
+        "Which formations did they play?", "Explain the strategies",
+        "Was it a causal effect?", "What caused the defeat?",
+    )
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+    ) as urlopen:
+        for question in variants:
+            result = director_ask(MATCH, question)
+            assert result["supported"] is False, question
+            assert result["generation_mode"] == "deterministic", question
+            assert result["selected_tool"] is None, question
+    urlopen.assert_not_called()
+
+
+def test_unrelated_substrings_do_not_trigger_causal_decline():
+    from unittest.mock import patch
+    for question in ("Who is Whyte?", "What information is recorded?", "Because of whom?"):
+        with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+            "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+        ) as urlopen:
+            result = director_ask(MATCH, question)
+            assert result["generation_mode"] == "foundry_model_tool_call", question
+            urlopen.assert_called_once()
