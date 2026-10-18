@@ -1,0 +1,90 @@
+"""Mocked Foundry-hosted model tool selection; no cloud calls or credentials."""
+import io
+import json
+from unittest.mock import patch
+
+from fastapi.testclient import TestClient
+
+from vybe.director_agent import director_ask
+from vybe.main import app
+from vybe.models import MatchDefinition
+
+MATCH = MatchDefinition.model_validate({
+    "match_id": "m", "home_team": "Aurora", "away_team": "Harbor",
+    "events": [
+        {"id": "g1", "minute": 10, "team": "Aurora", "type": "goal"},
+        {"id": "g2", "minute": 80, "team": "Harbor", "type": "goal"},
+        {"id": "end", "minute": 90, "type": "fulltime"},
+    ],
+})
+CONFIG = ("https://example.openai.azure.com", "fake-test-key", "gpt-test")
+
+
+def reply(name, args="{}"):
+    return io.BytesIO(json.dumps({"choices": [{"message": {"tool_calls": [
+        {"type": "function", "function": {"name": name, "arguments": args}}
+    ]}}]}).encode())
+
+
+def test_no_configuration_preserves_deterministic_fallback(monkeypatch):
+    for key in ("VYBE_FOUNDRY_MODEL_ENDPOINT", "VYBE_FOUNDRY_MODEL_KEY", "VYBE_FOUNDRY_MODEL_DEPLOYMENT"):
+        monkeypatch.delenv(key, raising=False)
+    result = director_ask(MATCH, "Who scored?")
+    assert result["generation_mode"] == "deterministic"
+    assert result["selected_tool"] is None
+    assert result["evidence_event_ids"] == ["g1", "g2"]
+
+
+def test_real_tool_call_envelope_mocked():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_key_moments")
+    ) as urlopen:
+        result = director_ask(MATCH, "What were the turning points?")
+    assert result["generation_mode"] == "foundry_model_tool_call"
+    assert result["selected_tool"] == "get_key_moments"
+    assert result["evidence_event_ids"] == ["g1", "g2"]
+    assert "equalizer" in result["answer"]
+    request = urlopen.call_args.args[0]
+    payload = json.loads(request.data)
+    assert payload["tool_choice"] == "required"
+    assert len(payload["tools"]) == 3
+    assert "fake-test-key" not in request.data.decode()
+
+
+def test_unknown_tool_refused_and_fallback():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=reply("run_shell")
+    ):
+        result = director_ask(MATCH, "Who scored?")
+    assert result["generation_mode"] == "deterministic"
+    assert result["selected_tool"] is None
+
+
+def test_arguments_rejected():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state", '{"command":"rm"}')
+    ):
+        assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
+
+
+def test_timeout_falls_back():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", side_effect=TimeoutError("timeout")
+    ):
+        assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
+
+
+def test_malformed_response_falls_back():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
+        "vybe.director_agent.urllib.request.urlopen", return_value=io.BytesIO(b'{"choices": []}')
+    ):
+        assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
+
+
+def test_http_contract_and_validation():
+    client = TestClient(app)
+    payload = {"match": MATCH.model_dump(mode="json"), "question": "Who scored?", "persona": "young"}
+    response = client.post("/v1/matches/director/ask", json=payload)
+    assert response.status_code == 200
+    assert response.json()["synthetic"] is True
+    assert client.post("/v1/matches/director/ask", json={**payload, "persona": "invalid"}).status_code == 422
