@@ -47,7 +47,7 @@ VYBE presents one fictional football match through three personalized experience
 2. Inspect the returned **evidence event IDs**.
 3. Select **Why did momentum change?** to see the explicit limits of the recorded evidence.
 
-**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. This feature currently uses deterministic event queries, **not** an AI agent or Azure LLM. It asks about the complete synthetic fixture, independent of playback position.
+**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. The code can use a Foundry-hosted Azure OpenAI-compatible model to select one of three allowlisted read-only tools; without verified live configuration it uses deterministic event queries. A managed Foundry Agent Service agent is **not** implemented. It asks about the complete synthetic fixture, independent of playback position.
 
 ## 5. Technical approach (about 30 seconds)
 
@@ -59,9 +59,9 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 - Preferences persist in the current browser when storage is permitted; blocked storage does not prevent use.
 - Docker and Azure Container Apps deployment infrastructure are prepared.
 
-The optional Azure AI narration path is separate from the deterministic source of truth. **Microsoft Foundry and advanced agent orchestration are future opportunities, not currently demonstrated integrations.** Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
+**Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but live Foundry operation remains unverified until deployed and tested. Deterministic fallback remains the source of safe answers during model failure. Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
 
-## 6. Validation evidence
+## 6. Foundry live proof (required before submission)\n\n1. In the deployed app, ask a supported factual question and verify the backend reports `generation_mode=foundry_model_tool_call`, an allowlisted `selected_tool`, and event evidence IDs.\n2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.\n3. Confirm no API keys or credentials are exposed in the browser.\n4. Test the fallback separately; it must not be represented as live Foundry.\n5. **Pending:** publish the verified public HTTPS app URL and record this evidence after owner-approved Azure deployment.\n\nSee [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).\n\n## 7. Validation evidence
 
 The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
 
