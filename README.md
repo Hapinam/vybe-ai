@@ -14,7 +14,11 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 2. **Accessible Fan:** English/Arabic/Czech captions, larger text, contrast, keyboard and step-by-step playback.
 3. **Analyst Fan:** recorded match statistics, 15-minute weighted event activity and timeline filters.
 
-### Deployment preparation\n\n- [Mandatory Foundry launch and live proof gates](docs/FOUNDRY_REQUIRED_LAUNCH.md)\n- [Updated delivery milestones](docs/DELIVERY_PLAN.md)\n- [Final demo storyboard and evidence checklist](docs/FINAL_DEMO_STORYBOARD.md)
+### Deployment preparation
+
+- [Mandatory Foundry launch and live proof gates](docs/FOUNDRY_REQUIRED_LAUNCH.md)
+- [Updated delivery milestones](docs/DELIVERY_PLAN.md)
+- [Final demo storyboard and evidence checklist](docs/FINAL_DEMO_STORYBOARD.md)
 
 - [Azure cost and security preflight](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)
 - [Azure launch runbook](docs/AZURE_LAUNCH_RUNBOOK.md)
@@ -53,7 +57,8 @@ flowchart TD
     ENGINE --> EVENTS["Synthetic match events"]
     API --> NARR["Event-grounded narration"]
     NARR --> FALLBACK["Deterministic fallback"]
-    NARR -. "Required for final live demo; pending verification" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI model"]\n    API -. "Bounded read-only tool selection" .-> AZURE
+    NARR -. "Required for final live demo; pending verification" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI model"]
+    API -. "Bounded read-only tool selection" .-> AZURE
 ```
 
 **Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The existing Azure model adapter is not evidence of a deployed service or managed Foundry Agent Service. Azure deployment topology will be documented after live validation.
