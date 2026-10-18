@@ -63,7 +63,7 @@ def ask_match(match: MatchDefinition, question: str) -> dict:
         summary = ", ".join(f"{v} {k.replace('_', ' ')}" for k, v in sorted(counts.items()))
         return result(f"Recorded events in the final 15 minutes: {summary}.", recent)
 
-    if "momentum" in q or "why" in q or "cause" in q:
+    if any(re.search(r"\b" + term + r"\b", q) for term in ("momentum", "why", "cause")):
         return result(
             "The supplied events do not establish tactical causes. The momentum indicator is a weighted event-activity metric (goal=3, shot=2, completed pass=1), not xG or proof of causation.",
             supported=False,

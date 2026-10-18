@@ -20,6 +20,11 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+      - name: Run backend tests before publishing
+        run: |
+          python3 -m pip install --user -e "./apps/api[test]"
+          cd apps/api
+          python3 -m pytest -q
       - uses: docker/setup-buildx-action@v3
       - name: Scan repository for committed secrets
         run: |
