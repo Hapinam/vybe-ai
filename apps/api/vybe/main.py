@@ -22,6 +22,15 @@ def replay_match(match: MatchDefinition, through_event: int | None = Query(defau
     return {"synthetic": True, "state": state_dict(replay(match, through_event))}
 
 
+@app.post("/v1/matches/replay/states")
+def replay_all_states(match: MatchDefinition):
+    """Return all replay snapshots in one bounded request, including kickoff."""
+    return {"synthetic": True, "states": [
+        state_dict(replay(match, through_event=index))
+        for index in range(1, len(match.events) + 1)
+    ]}
+
+
 @app.post("/v1/matches/explain/{event_id}")
 def explain_match_event(
     event_id: str,
