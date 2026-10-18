@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import AskTheMatch from "./AskTheMatch";
+import BroadcastStudio from "./BroadcastStudio";
+import "./broadcast-studio.css";
 import { store } from "./storage";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
@@ -440,7 +442,11 @@ export default function App() {
           </div>
         </section>
 
-        <AskTheMatch />
+        <BroadcastStudio persona={persona} onPersonaChange={(next) => { setPersona(next); stopAudio(); }}
+          playedEventIds={visibleEvents.map(event => event.id)}
+          onJumpToEvent={(eventId) => { const index = demoMatch.events.findIndex(event => event.id === eventId); if (index >= 0) { setPlaying(false); stopAudio(false); setStep(index + 1); } }}
+          retryCount={retryCount} />
+        <AskTheMatch persona={persona} />
 
         <section className="timeline-section">
           <div className="timeline-title"><div><span className="section-label">THE STORY SO FAR</span><h2>Match timeline</h2></div><span className="muted">Only simulated events</span></div>
