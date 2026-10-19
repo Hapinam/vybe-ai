@@ -36,6 +36,7 @@ def test_declined_off_topic_question_is_not_answered_with_the_score():
     assert result["selected_tool"] is None
     assert result["evidence_event_ids"] == []
     assert result["generation_mode"] != "foundry_model_tool_call"
+    assert result["model_declined"] is True
     assert "score" not in result["answer"].lower() or "cannot" in result["answer"].lower()
 
 
@@ -59,3 +60,14 @@ def test_real_tools_still_work_and_are_marked_as_model_selected():
     assert result["supported"] is True
     assert result["selected_tool"] == "get_match_state"
     assert result["generation_mode"] == "foundry_model_tool_call"
+
+def test_model_declined_flag_is_absent_when_the_model_was_not_consulted(monkeypatch):
+    for key in ("VYBE_FOUNDRY_MODEL_ENDPOINT", "VYBE_FOUNDRY_MODEL_KEY", "VYBE_FOUNDRY_MODEL_DEPLOYMENT"):
+        monkeypatch.delenv(key, raising=False)
+    assert "model_declined" not in director_ask(MATCH, "Tell me a joke")
+
+
+def test_model_declined_flag_is_absent_when_the_model_picks_a_data_tool():
+    with patch("vybe.director_agent._configuration", return_value=CONFIG), \
+            patch("vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")):
+        assert "model_declined" not in director_ask(MATCH, "What's the final score?")
