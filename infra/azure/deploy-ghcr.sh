@@ -33,6 +33,9 @@ missing = [name for name in names if not os.environ.get(name)]
 if os.environ.get("CONFIRM_AZURE_DEPLOY") == "YES" and missing:
     raise SystemExit("Missing required Foundry configuration variable(s): " + ", ".join(missing))
 for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
+    deployment = os.environ.get(prefix + "_DEPLOYMENT")
+    if deployment and not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", deployment):
+        raise SystemExit("Invalid model deployment name: " + prefix)
     if not os.environ.get(prefix + "_ENDPOINT"):
         continue
     endpoint = os.environ[prefix + "_ENDPOINT"].rstrip("/")
@@ -42,9 +45,6 @@ for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
         parsed.username or parsed.password or parsed.path not in ("", "/") or
         parsed.query or parsed.fragment):
         raise SystemExit("Invalid Azure OpenAI-compatible endpoint: " + prefix)
-    deployment = os.environ.get(prefix + "_DEPLOYMENT")
-    if deployment and not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", deployment):
-        raise SystemExit("Invalid model deployment name: " + prefix)
 if missing:
     print("DRY RUN: Missing Foundry variable(s): " + ", ".join(missing))
 PY
