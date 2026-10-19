@@ -3,7 +3,7 @@
 **Product decision (18 October 2026): Microsoft Foundry is a required part of the live VYBE demo.** Deterministic fallback is retained for safety and local development; it does **not** satisfy the live Foundry acceptance gate.
 
 ## What exists today (verified in source)
-- `apps/api/vybe/director_agent.py`: Azure OpenAI-compatible Chat Completions call selects one of three read-only match tools. Valid responses report `generation_mode=foundry_model_tool_call`. This is **model tool calling**, **not** managed Microsoft Foundry Agent Service.
+- `apps/api/vybe/director_agent.py`: Azure OpenAI-compatible Chat Completions call selects one of three read-only match data tools or a fourth explicit decline tool. Valid data-tool responses report `generation_mode=foundry_model_tool_call`; model-selected declines report `model_declined=true` with deterministic text. This is **model tool calling**, **not** managed Microsoft Foundry Agent Service.
 - `apps/api/vybe/ai.py`: Azure OpenAI-compatible grounded goal narration. Valid responses report `generation_mode=azure_ai`.
 - Both integrations require a compatible Azure OpenAI resource endpoint ending in `.openai.azure.com`; arbitrary Foundry project endpoints are not supported by these adapters.
 - No real Foundry resource, model deployment, paid call or end-to-end Azure verification has been demonstrated. Do not claim otherwise.
