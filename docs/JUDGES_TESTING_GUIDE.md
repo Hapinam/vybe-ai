@@ -47,7 +47,7 @@ VYBE presents one fictional football match through three personalized experience
 2. Inspect the returned **evidence event IDs**.
 3. Select **Why did momentum change?** to see the explicit limits of the recorded evidence.
 
-**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. The code can use a Foundry-hosted Azure OpenAI-compatible model to select one of three allowlisted read-only tools; without verified live configuration it uses deterministic event queries. A managed Foundry Agent Service agent is **not** implemented. It asks about the complete synthetic fixture, independent of playback position.
+**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. The code can use a Foundry-hosted Azure OpenAI-compatible model to select one of three allowlisted read-only data tools or a fourth explicit decline tool; without verified live configuration it uses deterministic event queries. A managed Foundry Agent Service agent is **not** implemented. It asks about the complete synthetic fixture, independent of playback position.
 
 ## 5. Technical approach (about 30 seconds)
 
@@ -65,7 +65,7 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 
 1. In the deployed app, ask a supported factual question and verify the backend reports `generation_mode=foundry_model_tool_call`, an allowlisted `selected_tool`, and event evidence IDs.
 2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.
-3. Confirm no API keys or credentials are exposed in the browser.
+3. Ask an off-topic question and verify `model_declined=true` when the live model selects the decline tool (distinct from unconfigured/failed model access). Confirm no API keys or credentials are exposed in the browser.
 4. Test the fallback separately; it must not be represented as live Foundry.
 5. **Pending:** publish the verified public HTTPS app URL and record this evidence after owner-approved Azure deployment.
 
