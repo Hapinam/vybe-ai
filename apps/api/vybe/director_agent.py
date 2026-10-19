@@ -133,7 +133,8 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
             return fallback
         name = _select_tool(question, config)
         if name == DECLINE_TOOL:
-            # Preserve the grounded deterministic answer or its unsupported response.
+            # Model was consulted and explicitly declined; distinguish from an unavailable model.
+            fallback["model_declined"] = True
             return fallback
         result = call_director_tool(name, match)
         evidence = result.get("evidence_event_ids")
