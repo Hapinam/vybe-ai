@@ -56,7 +56,7 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 - [ ] Confirm Cost Management budget alerts; understand they **do not** stop charges.
 - [ ] Check any media used in the demo for third-party trademarks, copyrighted music, and reuse rights.
 - [ ] Obtain **explicit owner approval** for billable Azure writes.
-- [ ] Use `infra/azure/deploy-ghcr.sh` with a verified private GHCR image, explicit subscription and securely supplied read token. This script **does not yet configure Foundry secrets**, so complete that integration and preflight before launch. Do not set `CONFIRM_AZURE_DEPLOY=YES` until separately approved.
+- [ ] Use `infra/azure/deploy-ghcr.sh` with a verified private GHCR image, explicit subscription and securely supplied read token. This script validates both Foundry adapter configurations and injects their keys as Container Apps secrets; a compatible live model deployment and verification are still required before launch. Do not set `CONFIRM_AZURE_DEPLOY=YES` until separately approved.
 - [ ] Capture deployment output and resource inventory, without secrets.
 
 ## Public launch smoke test (after deployment only)

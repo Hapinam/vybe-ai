@@ -15,15 +15,9 @@ case "$GHCR_IMAGE" in
   *) echo "GHCR_IMAGE must be a tagged ghcr.io image" >&2; exit 1 ;;
 esac
 
-if [[ "${CONFIRM_AZURE_DEPLOY:-}" != "YES" ]]; then
-  printf 'DRY RUN: no Azure writes. Subscription: %s; group: %s; region: %s; app: %s; image: %s\n' \
-    "$AZURE_SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$LOCATION" "$APP_NAME" "$GHCR_IMAGE"
-  echo "This does not verify GHCR credentials or Azure pricing."
-  exit 0
-fi
-
 # Foundry is mandatory for the approved live hackathon release. Validate only
 # presence and endpoint/deployment syntax here; never echo credentials.
+# Dry runs check supplied values and report missing names without requiring secrets.
 # This validation does not contact Azure or incur model usage.
 python3 - <<'PY'
 import os
@@ -36,9 +30,14 @@ names = (
     "VYBE_AZURE_OPENAI_DEPLOYMENT", "VYBE_AZURE_OPENAI_KEY",
 )
 missing = [name for name in names if not os.environ.get(name)]
-if missing:
+if os.environ.get("CONFIRM_AZURE_DEPLOY") == "YES" and missing:
     raise SystemExit("Missing required Foundry configuration variable(s): " + ", ".join(missing))
 for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
+    deployment = os.environ.get(prefix + "_DEPLOYMENT")
+    if deployment and not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", deployment):
+        raise SystemExit("Invalid model deployment name: " + prefix)
+    if not os.environ.get(prefix + "_ENDPOINT"):
+        continue
     endpoint = os.environ[prefix + "_ENDPOINT"].rstrip("/")
     parsed = urlparse(endpoint)
     if (parsed.scheme != "https" or not parsed.hostname or
@@ -46,9 +45,16 @@ for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
         parsed.username or parsed.password or parsed.path not in ("", "/") or
         parsed.query or parsed.fragment):
         raise SystemExit("Invalid Azure OpenAI-compatible endpoint: " + prefix)
-    if not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", os.environ[prefix + "_DEPLOYMENT"]):
-        raise SystemExit("Invalid model deployment name: " + prefix)
+if missing:
+    print("DRY RUN: Missing Foundry variable(s): " + ", ".join(missing))
 PY
+
+if [[ "${CONFIRM_AZURE_DEPLOY:-}" != "YES" ]]; then
+  printf 'DRY RUN: no Azure writes. Subscription: %s; group: %s; region: %s; app: %s; image: %s\n' \
+    "$AZURE_SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$LOCATION" "$APP_NAME" "$GHCR_IMAGE"
+  echo "This does not verify GHCR credentials or Azure pricing."
+  exit 0
+fi
 
 # Read-only checks before any Azure write.
 az account show --subscription "$AZURE_SUBSCRIPTION_ID" --query id -o tsv >/dev/null
