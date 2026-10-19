@@ -35,4 +35,4 @@ The raw **WebM** browser recording is saved in `apps/web/demo-output/` under the
 
 ## Final submission video
 
-Follow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The current 53-second published video is an earlier demo, not proof of a deployed Foundry model. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.\n
+Follow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The current 53-second published video is an earlier demo, not proof of a deployed Foundry model. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.
