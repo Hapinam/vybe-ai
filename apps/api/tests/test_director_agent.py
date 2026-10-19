@@ -47,7 +47,7 @@ def test_real_tool_call_envelope_mocked():
     request = urlopen.call_args.args[0]
     payload = json.loads(request.data)
     assert payload["tool_choice"] == "required"
-    assert len(payload["tools"]) == 3
+    assert len(payload["tools"]) == 4
     assert "fake-test-key" not in request.data.decode()
 
 
@@ -109,7 +109,7 @@ def test_foundry_request_contract_is_explicit_and_secret_stays_in_header():
     assert payload["max_tokens"] == 100
     assert payload["tool_choice"] == "required"
     assert {tool["function"]["name"] for tool in payload["tools"]} == {
-        "get_match_state", "get_key_moments", "get_match_statistics"
+        "get_match_state", "get_key_moments", "get_match_statistics", "decline_unsupported_question"
     }
     assert all(tool["function"]["parameters"]["additionalProperties"] is False
                for tool in payload["tools"])
