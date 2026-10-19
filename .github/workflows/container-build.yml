@@ -17,6 +17,9 @@ on:
       - "apps/web/**"
       - ".github/workflows/container-build.yml"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
