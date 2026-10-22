@@ -43,7 +43,7 @@ def _configuration():
     if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
             or parsed.path not in ("", "/") or parsed.query or parsed.fragment
             or not parsed.hostname.endswith(".openai.azure.com")
-            or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", deployment)):
+            or not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", deployment)):
         raise ValueError("Invalid Foundry-hosted Azure OpenAI model configuration")
     return endpoint, key, deployment
 

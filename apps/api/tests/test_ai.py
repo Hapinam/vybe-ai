@@ -37,7 +37,7 @@ def test_valid_verified_model_segments():
     ):
         result = narrate_goal(match(), "goal-1", "young")
     assert result["generation_mode"] == "azure_ai"
-    assert result["narrative"] == " ".join([facts["score"], facts["goal"], facts["context"]])
+    assert result["narrative"] == " ".join(["What a moment!", facts["score"], facts["goal"], facts["context"], "Keep watching!"])
     assert result["selected_fact_ids"] == ["context", "goal", "score"]
     assert result["evidence_event_ids"] == ["goal-1"]
 

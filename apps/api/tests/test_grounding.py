@@ -54,7 +54,7 @@ def test_valid_segments_render_only_verified_facts(persona):
     ):
         result = narrate_goal(MATCH, "e2", persona)
     assert result["generation_mode"] == "azure_ai"
-    assert result["narrative"] == facts["goal"] + " " + facts["score"]
+    assert result["narrative"] == " ".join([{"young": "What a moment!", "accessible": "Match update.", "analyst": "Confirmed event summary."}[persona], facts["goal"], facts["score"], {"young": "Keep watching!", "accessible": "End of update.", "analyst": "No tactical cause is inferred."}[persona]])
     assert result["score"] == {"home": 1, "away": 0}
     assert result["synthetic"] is True
 
