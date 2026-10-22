@@ -1,17 +1,17 @@
 name: Publish VYBE image to GHCR
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: [PR Quality Gate]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   publish:
-    if: github.ref == 'refs/heads/main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.event == 'push'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -20,6 +20,15 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Verify tested commit is current main
+        env:
+          TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURRENT_SHA=$(gh api repos/${{ github.repository }}/git/ref/heads/main --jq .object.sha)
+          test "$TESTED_SHA" = "$CURRENT_SHA"
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -41,6 +50,14 @@ jobs:
         run: |
           docker run --rm --entrypoint sh vybe:security-gate -c 'find /app -type f \( -name "*.pem" -o -name "*.key" -o -name ".env" -o -name ".env.*" -o -name "id_rsa" \) -print' > suspect-files.txt
           if [ -s suspect-files.txt ]; then cat suspect-files.txt; exit 1; fi
+      - name: Reverify main before publishing
+        env:
+          TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURRENT_SHA=$(gh api repos/${{ github.repository }}/git/ref/heads/main --jq .object.sha)
+          test "$TESTED_SHA" = "$CURRENT_SHA"
+
       - name: Sign in to GHCR
         uses: docker/login-action@v3
         with:
@@ -56,7 +73,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.image.outputs.name }}:${{ github.sha }}
+          tags: ${{ steps.image.outputs.name }}:${{ github.event.workflow_run.head_sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.revision=${{ github.event.workflow_run.head_sha }}
