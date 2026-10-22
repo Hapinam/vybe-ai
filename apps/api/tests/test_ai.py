@@ -192,6 +192,6 @@ def test_narration_request_contract_matches_configured_deployment():
     assert request.get_header("Api-key") == "fake"
     assert urlopen.call_args.kwargs["timeout"] == 8
     payload = json.loads(request.data)
-    assert payload["temperature"] == 0
-    assert payload["max_tokens"] == 300
+    assert "temperature" not in payload
+    assert payload["max_completion_tokens"] == 600
     assert "fake" not in request.data.decode()
