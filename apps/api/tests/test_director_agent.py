@@ -105,8 +105,8 @@ def test_foundry_request_contract_is_explicit_and_secret_stays_in_header():
     assert request.get_header("Api-key") == "fake-test-key"
     assert urlopen.call_args.kwargs["timeout"] == 6
     payload = json.loads(request.data)
-    assert payload["temperature"] == 0
-    assert payload["max_tokens"] == 100
+    assert "temperature" not in payload
+    assert payload["max_completion_tokens"] == 400
     assert payload["tool_choice"] == "required"
     assert {tool["function"]["name"] for tool in payload["tools"]} == {
         "get_match_state", "get_key_moments", "get_match_statistics", "decline_unsupported_question"

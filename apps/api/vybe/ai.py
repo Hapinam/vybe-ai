@@ -73,8 +73,7 @@ def _generate(prompt: str) -> str:
             )},
             {"role": "user", "content": prompt},
         ],
-        "temperature": 0,
-        "max_tokens": 300,
+        "max_completion_tokens": 600,
     }
     request = urllib.request.Request(
         url,

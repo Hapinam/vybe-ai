@@ -68,7 +68,7 @@ def _select_tool(question: str, config: tuple[str, str, str]) -> str:
             )},
             {"role": "user", "content": question},
         ],
-        "tools": tools, "tool_choice": "required", "temperature": 0, "max_tokens": 100,
+        "tools": tools, "tool_choice": "required", "max_completion_tokens": 400,
     }
     request = urllib.request.Request(
         url, data=json.dumps(payload).encode("utf-8"), method="POST",
