@@ -1,6 +1,6 @@
 """HTTP API for synthetic match playback and grounded explanations."""
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Response
 from pydantic import BaseModel, Field
 from .models import MatchDefinition
 from .engine import replay, replay_timeline, explain_goal, state_dict
@@ -9,6 +9,7 @@ from .questions import ask_match
 from .director_agent import director_ask
 from .insights import match_insights
 from .security import MatchRequestGuard
+from .speech import synthesize
 
 app = FastAPI(title="VYBE Synthetic Match API", version="0.1.0")
 app.add_middleware(MatchRequestGuard)
@@ -76,3 +77,15 @@ def ask_director_question(request: DirectorQuestion):
 @app.post("/v1/matches/insights")
 def get_match_insights(match: MatchDefinition, persona: str = Query(default="analyst", pattern=r"^(young|accessible|analyst)$")):
     return match_insights(match, persona)
+
+
+class SpeechRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=1200)
+    language: str = Field(pattern=r"^(en|ar|cs)$")
+    rate: float = Field(default=1.0, ge=0.5, le=2.0)
+
+
+@app.post("/v1/matches/speech")
+def generate_match_speech(request: SpeechRequest):
+    audio = synthesize(request.text, request.language, request.rate)
+    return Response(content=audio, media_type="audio/mpeg", headers={"Cache-Control": "private, no-store"})
