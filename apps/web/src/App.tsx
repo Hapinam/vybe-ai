@@ -103,6 +103,19 @@ export default function App() {
       utterance.onend = finish;
       utterance.onerror = finish;
     }
+    // Fall back to browser speech if cloud synthesis or MP3 playback fails.
+    const fallbackFromCloud = () => {
+      if (generation !== speechGeneration.current) return;
+      // Detach callbacks before resetting audio to avoid recursive error events.
+      if (cloudAudio.current) {
+        cloudAudio.current.onended = null;
+        cloudAudio.current.onerror = null;
+      }
+      releaseCloudAudio();
+      cloudEnabled.current = false;
+      if (utterance) window.speechSynthesis.speak(utterance);
+      else finish();
+    };
     // Prefer a server-generated voice; retain browser TTS as a no-cost fallback.
     if (cloudEnabled.current) {
       const controller = new AbortController();
@@ -115,16 +128,10 @@ export default function App() {
           const audio = new Audio(url);
           cloudAudio.current = audio;
           audio.onended = () => { releaseCloudAudio(); finish(); };
-          audio.onerror = () => { releaseCloudAudio(); finish(); };
+          audio.onerror = fallbackFromCloud;
           if (!audioPausedRef.current) await audio.play();
         })
-        .catch(() => {
-          if (generation !== speechGeneration.current) return;
-          releaseCloudAudio();
-          cloudEnabled.current = false;
-          if (utterance) window.speechSynthesis.speak(utterance);
-          else finish();
-        });
+        .catch(fallbackFromCloud);
       return;
     }
     if (!utterance) { finish(); return; }
