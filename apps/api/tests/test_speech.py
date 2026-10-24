@@ -150,7 +150,7 @@ def test_legacy_arabic_brand_is_normalized():
     assert _spoken_text("أهلًا بكم في فايب.", "ar") == "أهلًا بكم في ڤايب."
 
 
-def test_arabic_brand_uses_language_tagged_ssml_without_changing_captions(monkeypatch):
+def test_arabic_brand_uses_explicit_english_voice_without_changing_captions(monkeypatch):
     monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
     monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
 
@@ -163,6 +163,31 @@ def test_arabic_brand_uses_language_tagged_ssml_without_changing_captions(monkey
         assert synthesize("أهلًا بكم في VYBE & فايب.", "ar") == b"fake-mp3"
     body = mocked.call_args.args[0].data.decode("utf-8")
     assert 'name="ar-EG-SalmaNeural"' in body
-    assert body.count('<lang xml:lang="en-US">Vibe</lang>') == 2
+    assert body.count('name="en-US-GuyNeural"') == 2
+    assert body.count('name="ar-EG-SalmaNeural"') == 3
+    assert "<lang " not in body
+    import xml.etree.ElementTree as ET
+    root = ET.fromstring(body)
+    ns = {"s": "http://www.w3.org/2001/10/synthesis"}
+    voices = root.findall("s:voice", ns)
+    assert len(voices) == 5
+    assert all(not v.findall("s:voice", ns) for v in voices)
     assert "&amp;" in body
     assert _spoken_text("أهلًا بكم في VYBE.", "ar") == "أهلًا بكم في ڤايب."
+
+
+def test_mixed_voice_preserves_escaping_and_rate(monkeypatch):
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
+    class FakeResponse:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self, size): return b"fake-mp3"
+    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+        synthesize("VYBE < & > فايب", "ar", 1.5)
+    body = mocked.call_args.args[0].data.decode("utf-8")
+    assert body.count('name="en-US-GuyNeural"') == 2
+    assert body.count('rate="+50%"') == 4
+    assert "&lt; &amp; &gt;" in body
+    import xml.etree.ElementTree as ET
+    ET.fromstring(body)
