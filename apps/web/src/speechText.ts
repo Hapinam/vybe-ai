@@ -34,7 +34,7 @@ export function effectiveSpeechRate(rate: number, language: FanLanguage): number
 }
 
 export function browserSpeechText(text: string, language: FanLanguage): string {
-  text = text.replace(/\bVYBE\b/gi, language === "ar" ? "فايب" : "Vibe");
+  text = text.replace(/\bVYBE\b/gi, language === "ar" ? "ڤايب" : "Vibe");
   const clock = (original: string, mm: string, ss: string): string => {
     const minute = Number(mm), second = Number(ss);
     if (second > 59) return original;
@@ -48,9 +48,9 @@ export function browserSpeechText(text: string, language: FanLanguage): string {
     }
     const prefix = "في الدقيقة " + arabicNumber(minute);
     if (second === 0) return prefix;
-    if (second === 1) return prefix + "، بعد ثانية واحدة";
-    if (second === 2) return prefix + "، بعد ثانيتين";
-    return prefix + "، بعد " + arabicNumber(second) +
+    if (second === 1) return prefix + " وثانية واحدة";
+    if (second === 2) return prefix + " وثانيتين";
+    return prefix + " و" + arabicNumber(second) +
       (second >= 3 && second <= 10 ? " ثواني" : " ثانية");
   };
   if (language === "ar") {
