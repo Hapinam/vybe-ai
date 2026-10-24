@@ -35,6 +35,7 @@ export function effectiveSpeechRate(rate: number, language: FanLanguage): number
 
 export function browserSpeechText(text: string, language: FanLanguage): string {
   text = text.replace(/\bVYBE\b/gi, language === "ar" ? "ڤايب" : "Vibe");
+  if (language === "ar") text = text.replace(/(^|[^\p{L}\p{N}_])فايب(?=$|[^\p{L}\p{N}_])/gu, "$1ڤايب");
   const clock = (original: string, mm: string, ss: string): string => {
     const minute = Number(mm), second = Number(ss);
     if (second > 59) return original;
