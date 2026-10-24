@@ -144,3 +144,7 @@ def test_egyptian_match_clock_natural_conjunction(clock, expected):
 
 def test_egyptian_brand_uses_v_not_f():
     assert _spoken_text("VYBE! vybe.", "ar") == "ڤايب! ڤايب."
+
+
+def test_legacy_arabic_brand_is_normalized():
+    assert _spoken_text("أهلًا بكم في فايب.", "ar") == "أهلًا بكم في ڤايب."
