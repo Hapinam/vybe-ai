@@ -4,6 +4,7 @@ import BroadcastStudio from "./BroadcastStudio";
 import "./broadcast-studio.css";
 import { store } from "./storage";
 import { requestSpeechAudio } from "./cloudSpeech";
+import { browserSpeechText, effectiveSpeechRate } from "./speechText";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 import { eventCaption, languageNames, matchRecap, spokenMatchIntro, spokenMatchOutro, type FanLanguage } from "./localization";
@@ -78,9 +79,9 @@ export default function App() {
     speechActive.current = true;
     setNarrating(true);
     const generation = ++speechGeneration.current;
-    const utterance = "speechSynthesis" in window ? new SpeechSynthesisUtterance(narrative) : null;
+    const utterance = "speechSynthesis" in window ? new SpeechSynthesisUtterance(browserSpeechText(narrative, language)) : null;
     if (utterance) {
-      utterance.rate = speechRateRef.current;
+      utterance.rate = effectiveSpeechRate(speechRateRef.current, language);
       utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
     }
     let lastProgress = Date.now();
@@ -176,12 +177,12 @@ export default function App() {
   useEffect(() => {
     if (!demoMode || !("speechSynthesis" in window)) return;
     const utterance = new SpeechSynthesisUtterance(
-      language === "cs" ? "Vítejte ve VYBE. Aurora FC hraje proti Harbor United." :
+      language === "cs" ? "Vítejte ve Vibe. Aurora FC hraje proti Harbor United." :
       language === "ar" ? "أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد." :
-      "Welcome to VYBE. Aurora FC faces Harbor United."
+      "Welcome to Vibe. Aurora FC faces Harbor United."
     );
     utterance.lang = language === "cs" ? "cs-CZ" : language === "ar" ? "ar-EG" : "en-US";
-    utterance.rate = speechRateRef.current;
+    utterance.rate = effectiveSpeechRate(speechRateRef.current, language);
     window.speechSynthesis.speak(utterance);
     return () => window.speechSynthesis.cancel();
   }, [demoMode, persona, language]);
@@ -457,7 +458,7 @@ export default function App() {
                 if (!("speechSynthesis" in window)) return;
                 // Keep the match commentary intact: do not cancel an active narration.
                 if (speechActive.current || window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
-                const preview = new SpeechSynthesisUtterance("Welcome to VYBE. This is a preview of your selected commentary speed.");
+                const preview = new SpeechSynthesisUtterance("Welcome to Vibe. This is a preview of your selected commentary speed.");
                 preview.rate = speechRateRef.current;
                 previewSpeech.current = preview;
                 preview.onend = () => { previewSpeech.current = null; };

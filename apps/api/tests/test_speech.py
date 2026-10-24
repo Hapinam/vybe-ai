@@ -13,7 +13,7 @@ def test_goal_is_a_word_not_an_acronym():
 
 def test_arabic_match_minute_includes_seconds_as_spoken_words():
     assert _spoken_text("هدف! Alex في الدقيقة 24:35.", "ar") == (
-        "هدف! Alex في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية."
+        "هدف! Alex في الدقيقة أربعة وعشرين، بعد خمسة وتلاتين ثانية."
     )
 
 
@@ -23,7 +23,7 @@ def test_arabic_exact_minute_does_not_speak_zero_seconds():
 
 def test_arabic_early_match_time_is_not_confused_with_another_minute():
     assert _spoken_text("هدف في الدقيقة 12:10.", "ar") == (
-        "هدف في الدقيقة اتناشر وعشرة ثواني."
+        "هدف في الدقيقة اتناشر، بعد عشرة ثواني."
     )
 
 
@@ -55,7 +55,7 @@ def test_speech_request_uses_ssml_and_returns_mp3(monkeypatch):
 
 @pytest.mark.parametrize("language,expected", [
     ("en", "Vibe"),
-    ("ar", "ڤايب"),
+    ("ar", "فايب"),
     ("cs", "Vibe"),
 ])
 def test_brand_is_spoken_as_one_word(language, expected):
@@ -74,14 +74,14 @@ def test_english_match_clock_not_read_as_time_of_day(time, expected):
 
 
 @pytest.mark.parametrize("time,expected", [
-    ("00:15", "0 minut a 15 sekund"),
-    ("12:10", "12 minut a 10 sekund"),
-    ("24:35", "24 minut a 35 sekund"),
-    ("45:00", "45 minut"),
-    ("87:24", "87 minut a 24 sekund"),
+    ("00:15", "ve 0. minutě a 15. sekundě"),
+    ("12:10", "ve 12. minutě a 10. sekundě"),
+    ("24:35", "ve 24. minutě a 35. sekundě"),
+    ("45:00", "ve 45. minutě"),
+    ("87:24", "ve 87. minutě a 24. sekundě"),
 ])
 def test_czech_match_clock_has_explicit_minutes_and_seconds(time, expected):
-    assert _spoken_text(f"Gól v {time}.", "cs") == f"Gól v {expected}."
+    assert _spoken_text(f"Gól, čas {time}.", "cs") == f"Gól, {expected}."
 
 
 def test_czech_speech_rate_is_reduced(monkeypatch):
@@ -96,3 +96,38 @@ def test_czech_speech_rate_is_reduced(monkeypatch):
     with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
         synthesize("VYBE", "cs")
     assert b'rate="-10%"' in mocked.call_args.args[0].data
+
+
+@pytest.mark.parametrize("clock,expected", [
+    ("24:01", "في الدقيقة أربعة وعشرين، بعد ثانية واحدة"),
+    ("24:02", "في الدقيقة أربعة وعشرين، بعد ثانيتين"),
+    ("24:03", "في الدقيقة أربعة وعشرين، بعد تلاتة ثواني"),
+    ("24:11", "في الدقيقة أربعة وعشرين، بعد حداشر ثانية"),
+    ("87:24", "في الدقيقة سبعة وتمانين، بعد أربعة وعشرين ثانية"),
+])
+def test_arabic_seconds_agreement(clock, expected):
+    assert _spoken_text(f"هدف في الدقيقة {clock}", "ar") == f"هدف {expected}"
+
+
+def test_czech_goal_caption_not_clock_time():
+    assert _spoken_text("Gól! Alex, čas 24:35.", "cs") == (
+        "Gól! Alex, ve 24. minutě a 35. sekundě."
+    )
+
+
+def test_invalid_seconds_not_treated_as_match_clock():
+    assert _spoken_text("Goal at 24:75.", "en") == "Goal at 24:75."
+
+
+def test_xml_escape_and_english_clock(monkeypatch):
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
+    class FakeResponse:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self, size): return b"fake-mp3"
+    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+        synthesize("VYBE & Goal at 24:35.", "en")
+    body = mocked.call_args.args[0].data.decode("utf-8")
+    assert "Vibe &amp; Goal at twenty-four minutes and thirty-five seconds" in body
+    assert "24:35" not in body

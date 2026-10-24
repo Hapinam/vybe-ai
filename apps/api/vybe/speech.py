@@ -64,32 +64,41 @@ def _english_number(n: int) -> str:
 
 
 def _spoken_text(text: str, language: str) -> str:
-    """Prepare audio-only text; leave visual captions untouched."""
-    text = re.sub(r"\bVYBE\b", "ڤايب" if language == "ar" else "Vibe",
+    """Prepare audio-only text; captions keep the original spelling and clock."""
+    text = re.sub(r"\bVYBE\b", "فايب" if language == "ar" else "Vibe",
                   text, flags=re.I)
-    if language == "ar":
-        def arabic_time(match: re.Match[str]) -> str:
-            minute, second = int(match.group(1)), int(match.group(2))
-            spoken_minute = _arabic_cardinal(minute)
-            if second == 0:
-                return f"في الدقيقة {spoken_minute}"
-            seconds_unit = "ثواني" if 3 <= second <= 10 else "ثانية"
-            if second == 2:
-                seconds_unit = "ثانيتين"
-            return f"في الدقيقة {spoken_minute} و{_arabic_cardinal(second)} {seconds_unit}"
 
-        return re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})", arabic_time, text)
-
-    def match_clock(match: re.Match[str]) -> str:
+    def clock(match: re.Match[str]) -> str:
         minute, second = int(match.group(1)), int(match.group(2))
+        if second > 59:
+            return match.group(0)
         if language == "en":
             result = f"{_english_number(minute)} minutes"
             return result + (f" and {_english_number(second)} seconds" if second else "")
-        result = f"{minute} minut"
-        return result + (f" a {second} sekund" if second else "")
+        if language == "cs":
+            result = f"ve {minute}. minutě"
+            return result + (f" a {second}. sekundě" if second else "")
+        # Natural Egyptian Arabic: no 'one second' or 'two two seconds'.
+        result = f"في الدقيقة {_arabic_cardinal(minute)}"
+        if second == 0:
+            return result
+        if second == 1:
+            return result + "، بعد ثانية واحدة"
+        if second == 2:
+            return result + "، بعد ثانيتين"
+        unit = "ثواني" if 3 <= second <= 10 else "ثانية"
+        return result + f"، بعد {_arabic_cardinal(second)} {unit}"
 
-    text = re.sub(r"(?<![\d:])(\d{1,3}):(\d{2})(?!\d)", match_clock, text)
-    return re.sub(r"\bGOOO+A+L\b|\bGOAL\b", "Goal", text, flags=re.I)
+    if language == "ar":
+        text = re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})(?!\d)", clock, text)
+    elif language == "cs":
+        # Czech goal captions use 'čas MM:SS'. Replace that phrase with
+        # an ordinal minute/second construction, not a time of day.
+        text = re.sub(r"čas\s+(\d{1,3}):(\d{2})(?!\d)", clock, text)
+    else:
+        text = re.sub(r"(?<![\d:])(\d{1,3}):(\d{2})(?!\d)", clock, text)
+        text = re.sub(r"\bGOOO+A+L\b|\bGOAL\b", "Goal", text, flags=re.I)
+    return text
 
 
 def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
