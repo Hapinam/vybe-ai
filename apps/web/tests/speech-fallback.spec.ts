@@ -24,11 +24,13 @@ test("Egyptian Arabic brand and match seconds are spoken naturally", async ({ pa
     const { browserSpeechText } = await import("/src/speechText.ts");
     return {
       brand: browserSpeechText("VYBE! vybe.", "ar"),
+      legacyBrand: browserSpeechText("أهلًا بكم في فايب.", "ar"),
       clock: browserSpeechText("هدف في الدقيقة 24:12.", "ar"),
       other: browserSpeechText("هدف في الدقيقة 24:35.", "ar"),
     };
   });
   expect(actual.brand).toBe("ڤايب! ڤايب.");
+  expect(actual.legacyBrand).toBe("أهلًا بكم في ڤايب.");
   expect(actual.clock).toBe("هدف في الدقيقة أربعة وعشرين واتناشر ثانية.");
   expect(actual.other).toBe("هدف في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية.");
 });
