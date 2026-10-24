@@ -13,7 +13,7 @@ def test_goal_is_a_word_not_an_acronym():
 
 def test_arabic_match_minute_includes_seconds_as_spoken_words():
     assert _spoken_text("هدف! Alex في الدقيقة 24:35.", "ar") == (
-        "هدف! Alex في الدقيقة أربعة وعشرين، بعد خمسة وتلاتين ثانية."
+        "هدف! Alex في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية."
     )
 
 
@@ -23,7 +23,7 @@ def test_arabic_exact_minute_does_not_speak_zero_seconds():
 
 def test_arabic_early_match_time_is_not_confused_with_another_minute():
     assert _spoken_text("هدف في الدقيقة 12:10.", "ar") == (
-        "هدف في الدقيقة اتناشر، بعد عشرة ثواني."
+        "هدف في الدقيقة اتناشر وعشرة ثواني."
     )
 
 
@@ -55,7 +55,7 @@ def test_speech_request_uses_ssml_and_returns_mp3(monkeypatch):
 
 @pytest.mark.parametrize("language,expected", [
     ("en", "Vibe"),
-    ("ar", "فايب"),
+    ("ar", "ڤايب"),
     ("cs", "Vibe"),
 ])
 def test_brand_is_spoken_as_one_word(language, expected):
@@ -99,11 +99,11 @@ def test_czech_speech_rate_is_reduced(monkeypatch):
 
 
 @pytest.mark.parametrize("clock,expected", [
-    ("24:01", "في الدقيقة أربعة وعشرين، بعد ثانية واحدة"),
-    ("24:02", "في الدقيقة أربعة وعشرين، بعد ثانيتين"),
-    ("24:03", "في الدقيقة أربعة وعشرين، بعد تلاتة ثواني"),
-    ("24:11", "في الدقيقة أربعة وعشرين، بعد حداشر ثانية"),
-    ("87:24", "في الدقيقة سبعة وتمانين، بعد أربعة وعشرين ثانية"),
+    ("24:01", "في الدقيقة أربعة وعشرين وثانية واحدة"),
+    ("24:02", "في الدقيقة أربعة وعشرين وثانيتين"),
+    ("24:03", "في الدقيقة أربعة وعشرين وتلاتة ثواني"),
+    ("24:11", "في الدقيقة أربعة وعشرين وحداشر ثانية"),
+    ("87:24", "في الدقيقة سبعة وتمانين وأربعة وعشرين ثانية"),
 ])
 def test_arabic_seconds_agreement(clock, expected):
     assert _spoken_text(f"هدف في الدقيقة {clock}", "ar") == f"هدف {expected}"
@@ -131,3 +131,16 @@ def test_xml_escape_and_english_clock(monkeypatch):
     body = mocked.call_args.args[0].data.decode("utf-8")
     assert "Vibe &amp; Goal at twenty-four minutes and thirty-five seconds" in body
     assert "24:35" not in body
+
+
+@pytest.mark.parametrize("clock,expected", [
+    ("24:12", "في الدقيقة أربعة وعشرين واتناشر ثانية"),
+    ("24:35", "في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية"),
+    ("45:00", "في الدقيقة خمسة وأربعين"),
+])
+def test_egyptian_match_clock_natural_conjunction(clock, expected):
+    assert _spoken_text(f"هدف في الدقيقة {clock}", "ar") == f"هدف {expected}"
+
+
+def test_egyptian_brand_uses_v_not_f():
+    assert _spoken_text("VYBE! vybe.", "ar") == "ڤايب! ڤايب."
