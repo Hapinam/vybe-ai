@@ -2,9 +2,9 @@
 
 **One synthetic football match. Three ways to experience it.**
 
-VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Live Microsoft Foundry integration is required for submission, but not yet verified or deployed.**
+VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Azure AI Foundry integration is implemented; live model and API behavior must be verified independently before submission.**
 
-**[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **Live demo: pending Azure deployment and verification**
+**[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Live VYBE demo](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)** (API and Foundry verification pending)
 
 > **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
 
@@ -13,6 +13,10 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 1. **Young Fan:** goals, celebrations, glossary and quiz.
 2. **Accessible Fan:** English/Arabic/Czech captions, larger text, contrast, keyboard and step-by-step playback.
 3. **Analyst Fan:** recorded match statistics, 15-minute weighted event activity and timeline filters.
+
+### Product vision and future roadmap
+
+- **[Future vision for judges: multilingual expansion, caching, personalization, event processing and reliability](docs/PRODUCT_VISION_ROADMAP.md)** — proposed capabilities only; not implemented in the current demo.
 
 ### Deployment preparation
 
@@ -45,7 +49,7 @@ The Vite development server proxies `/v1` and `/health` to the FastAPI service o
 
 ## Architecture diagram
 
-This diagram shows the **current local prototype**. The target architecture requires a live Microsoft Foundry-hosted model, but the endpoint is **not yet deployed or validated**.
+This diagram describes the deployed architecture and optional browser speech fallback. The public frontend URL is available; end-to-end Azure API and Foundry behavior still requires independent live verification.
 
 ```mermaid
 flowchart TD
@@ -57,7 +61,7 @@ flowchart TD
     ENGINE --> EVENTS["Synthetic match events"]
     API --> NARR["Event-grounded narration"]
     NARR --> FALLBACK["Deterministic fallback"]
-    NARR -. "Required for final live demo; pending verification" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI model"]
+    NARR -. "Foundry integration; live verification pending" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI model"]
     API -. "Bounded read-only tool selection" .-> AZURE
 ```
 

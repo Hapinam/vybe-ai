@@ -34,7 +34,7 @@ class MatchRequestGuard:
         path = scope.get("path", "")
         # Only these endpoints can invoke a paid model. Keep a separate,
         # shared per-peer bucket in addition to the overall API limit.
-        model_route = path == "/v1/matches/director/ask" or path.startswith("/v1/matches/narrate/")
+        model_route = path == "/v1/matches/director/ask" or path.startswith("/v1/matches/narrate/") or path == "/v1/matches/speech"
         async with self._lock:
             hits = self._hits[ip]
             while hits and hits[0] <= now - 60:
