@@ -8,9 +8,22 @@ from .engine import replay
 from .models import EventType, MatchDefinition
 
 
+_HALFTIME_TERMS = ("half time score", "halftime score", "score at half time", "score at halftime")
+_FINAL_WINDOW_TERMS = ("last 15 minutes", "final 15 minutes")
+
+
+def _normalized_question(question: str) -> str:
+    return " ".join(re.sub(r"[^a-z0-9\\s]", " ", question.casefold()).split())
+
+
+def is_temporal_question(question: str) -> bool:
+    """Recognize time-scoped questions that require evidence from a specific window."""
+    q = _normalized_question(question)
+    return any(term in q for term in (*_HALFTIME_TERMS, *_FINAL_WINDOW_TERMS))
+
+
 def ask_match(match: MatchDefinition, question: str) -> dict:
-    q = re.sub(r"[^a-z0-9\s]", " ", question.casefold()).strip()
-    q = " ".join(q.split())
+    q = _normalized_question(question)
     events = sorted(match.events, key=lambda e: (e.minute, e.second))
     goals = [e for e in events if e.type == EventType.goal]
 
