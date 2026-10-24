@@ -6,7 +6,7 @@ VYBE presents one fictional football match through three personalized experience
 
 - **Demo video (53 seconds):** https://youtu.be/c717qul116M
 - **Source code:** https://github.com/Hapinam/vybe-ai
-- **Live application:** To be provided after successful Azure deployment and verification. No live URL is claimed yet.
+- **Live application:** https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — GitHub Actions deployment and revision health checks succeeded; interactive speech and Foundry behavior still require manual validation.
 
 ## 1. Young Fan (about 45 seconds)
 
@@ -22,12 +22,12 @@ VYBE presents one fictional football match through three personalized experience
 1. Switch to **Accessible**.
 2. Select English, Arabic, or Czech commentary/captions.
 3. Enable captions, high contrast, and larger text.
-4. Optionally turn on browser speech and change the voice speed.
+4. Optionally enable spoken commentary (Azure Speech with browser fallback) and change the voice speed.
 5. Enable **Step-by-step playback (screen reader friendly)** and use **Previous event** / **Next event**.
 
 **Look for:** user-controlled presentation, multilingual event text, and keyboard-friendly navigation.
 
-**Important:** Spoken commentary uses installed browser/OS voices. Arabic/Czech voices may not be available; captions remain usable. Captions are synchronized to events, not word-level speech transcription. This prototype has not undergone a full WCAG audit.
+**Important:** Spoken commentary first requests server-side Azure Speech and falls back to installed browser/OS voices if unavailable. The Arabic VYBE pronunciation is under live audio validation; do not claim it is fixed from automated tests alone. Arabic/Czech browser voices may not be available; captions remain usable. Captions are synchronized to events, not word-level speech transcription. This prototype has not undergone a full WCAG audit.
 
 ## 3. Analyst Fan (about 60 seconds)
 
@@ -57,9 +57,9 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 - FastAPI exposes match state and event-grounded narratives.
 - React/TypeScript presents the same match to three audiences.
 - Preferences persist in the current browser when storage is permitted; blocked storage does not prevent use.
-- Docker and Azure Container Apps deployment infrastructure are prepared.
+- Docker and Azure Container Apps deployment infrastructure are active; the latest main image passed the deployment workflow's health and traffic-switch checks.
 
-**Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but live Foundry operation remains unverified until deployed and tested. Deterministic fallback remains the source of safe answers during model failure. Do not assume the live Azure deployment or Azure AI endpoint is active unless separately verified.
+**Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but live Foundry inference remains unverified until tested. Deterministic fallback remains the source of safe answers during model failure. Successful Container Apps deployment does not establish live Foundry behavior.
 
 ## 6. Foundry live proof (required before submission)
 
@@ -67,7 +67,7 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.
 3. Ask an off-topic question and verify `model_declined=true` when the live model selects the decline tool (distinct from unconfigured/failed model access). Confirm no API keys or credentials are exposed in the browser.
 4. Test the fallback separately; it must not be represented as live Foundry.
-5. **Pending:** publish the verified public HTTPS app URL and record this evidence after owner-approved Azure deployment.
+5. **Pending:** record live Foundry evidence from the deployed public HTTPS app after owner-approved inference.
 
 See [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).
 
@@ -77,7 +77,7 @@ The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_A
 
 - GitHub Actions runs backend, Playwright, frontend/container and dependency checks; see the latest workflow results for current status.
 - **24/24** manual end-to-end acceptance checks were previously recorded; these do not cover subsequent changes.
-- Azure runtime and post-deployment smoke tests remain to be verified.
+- GitHub Actions confirmed a healthy Container Apps revision and successful traffic switch; manual browser speech and Foundry verification remain pending.
 
 These checks are not a production security certification or a full accessibility audit.
 
