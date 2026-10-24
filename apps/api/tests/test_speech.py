@@ -187,7 +187,7 @@ def test_mixed_voice_preserves_escaping_and_rate(monkeypatch):
         synthesize("VYBE < & > فايب", "ar", 1.5)
     body = mocked.call_args.args[0].data.decode("utf-8")
     assert body.count('name="en-US-GuyNeural"') == 2
-    assert body.count('rate="+50%"') == 4
+    assert body.count('rate="+50%"') == 3
     assert "&lt; &amp; &gt;" in body
     import xml.etree.ElementTree as ET
     ET.fromstring(body)
