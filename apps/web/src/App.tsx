@@ -175,16 +175,38 @@ export default function App() {
     return ()=>{demoModeRef.current=false;window.clearInterval(timer);};
   },[demoMode]);
   useEffect(() => {
-    if (!demoMode || !("speechSynthesis" in window)) return;
-    const utterance = new SpeechSynthesisUtterance(
-      language === "cs" ? "Vítejte ve Vibe. Aurora FC hraje proti Harbor United." :
-      language === "ar" ? "أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد." :
-      "Welcome to Vibe. Aurora FC faces Harbor United."
-    );
-    utterance.lang = language === "cs" ? "cs-CZ" : language === "ar" ? "ar-EG" : "en-US";
-    utterance.rate = effectiveSpeechRate(speechRateRef.current, language);
-    window.speechSynthesis.speak(utterance);
-    return () => window.speechSynthesis.cancel();
+    if (!demoMode) return;
+    // The guided-demo introduction must use the same cloud pronunciation path
+    // as match commentary, rather than a separate hardcoded browser-only voice.
+    const intro = language === "cs" ? "Vítejte ve Vibe. Aurora FC hraje proti Harbor United." :
+      language === "ar" ? "أهلًا بكم في VYBE. أورورا إف سي يواجه هاربور يونايتد." :
+      "Welcome to Vibe. Aurora FC faces Harbor United.";
+    const controller = new AbortController();
+    let disposed = false;
+    let objectUrl: string | null = null;
+    let audio: HTMLAudioElement | null = null;
+    const fallback = () => {
+      if (disposed || !("speechSynthesis" in window)) return;
+      const utterance = new SpeechSynthesisUtterance(browserSpeechText(intro, language));
+      utterance.lang = language === "cs" ? "cs-CZ" : language === "ar" ? "ar-EG" : "en-US";
+      utterance.rate = effectiveSpeechRate(speechRateRef.current, language);
+      window.speechSynthesis.speak(utterance);
+    };
+    void requestSpeechAudio(intro, language, speechRateRef.current, controller.signal)
+      .then(async (url) => {
+        if (disposed) { URL.revokeObjectURL(url); return; }
+        objectUrl = url;
+        audio = new Audio(url);
+        try { await audio.play(); } catch { fallback(); }
+      })
+      .catch(() => fallback());
+    return () => {
+      disposed = true;
+      controller.abort();
+      audio?.pause();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    };
   }, [demoMode, persona, language]);
   const visibleEvents = useMemo(() => demoMatch.events.slice(0, step), [step]);
   const lastEvent = visibleEvents[visibleEvents.length - 1];
