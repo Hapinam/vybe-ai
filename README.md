@@ -4,7 +4,7 @@
 
 VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Azure AI Foundry integration is implemented; live model and API behavior must be verified independently before submission.**
 
-**[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Live VYBE demo](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)** (API and Foundry verification pending)
+**[Watch the 53-second demo](https://youtu.be/c717qul116M)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Live VYBE demo](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)** (deployment health verified; live Foundry and audible speech acceptance pending)
 
 > **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
 
@@ -40,7 +40,7 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 ## Architecture
 
-- **Frontend:** React, TypeScript, Vite, CSS; browser SpeechSynthesis API for optional spoken commentary.
+- **Frontend:** React, TypeScript, Vite, CSS; server-side Azure Speech MP3 for spoken commentary with browser SpeechSynthesis fallback.
 - **Backend:** Python FastAPI; deterministic replay engine that calculates score, passes and shots from ordered synthetic events.
 - **Narration:** Evidence-based, persona-specific commentary; Foundry-required Azure AI selection and ordering of exact, server-verified fact segments with allowlisted framing and deterministic fallback.
 - **Data:** Local synthetic match fixture. No external sports API required.
@@ -65,7 +65,7 @@ flowchart TD
     API -. "Bounded read-only tool selection" .-> AZURE
 ```
 
-**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The existing Azure model adapter is not evidence of a deployed service or managed Foundry Agent Service. Azure deployment topology will be documented after live validation.
+**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser speech uses installed OS/browser voices. The existing Azure model adapter is not evidence of a deployed service or managed Foundry Agent Service. Azure Container Apps is deployed; end-to-end Foundry inference and spoken-audio acceptance still require live validation.
 
 ## Run locally (Windows PowerShell)
 
@@ -122,7 +122,7 @@ npx playwright test
 
 Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
 
-**Validation:** CI runs backend tests, browser tests, builds and dependency checks; consult GitHub Actions for current results. Earlier manual acceptance checks recorded 24/24 passes; these are historical, not a substitute for deployment smoke tests. Current PR checks must be reviewed separately. Azure deployment, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+**Validation:** CI runs backend tests, browser tests, builds and dependency checks; consult GitHub Actions for current results. Earlier manual acceptance checks recorded 24/24 passes; these are historical, not a substitute for deployment smoke tests. Current PR checks must be reviewed separately. Azure Container Apps deployment and automated health checks succeeded; manual Arabic speech, live Foundry inference, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
 
 ## New fan experiences
 
