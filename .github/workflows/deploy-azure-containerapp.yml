@@ -1,0 +1,115 @@
+name: Deploy verified VYBE image to Azure Container Apps
+
+on:
+  workflow_run:
+    workflows: ["Publish VYBE image to GHCR"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vybe-azure-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-24.04
+    environment: azure-demo
+    permissions:
+      contents: read
+    steps:
+      - name: Verify published commit is still main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMAGE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          current_sha="$(gh api repos/${GITHUB_REPOSITORY}/git/ref/heads/main --jq .object.sha)"
+          test "$IMAGE_SHA" = "$current_sha"
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create a new revision from the verified image
+        id: deploy
+        env:
+          IMAGE_SHA: ${{ github.event.workflow_run.head_sha }}
+          RESOURCE_GROUP: rg-vybe-hackathon
+          APP_NAME: vybe-app
+        run: |
+          set -euo pipefail
+          image="ghcr.io/hapinam/vybe-ai:${IMAGE_SHA}"
+          suffix="sha-${IMAGE_SHA:0:7}"
+          az containerapp update \
+            --name "$APP_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --image "$image" \
+            --revision-suffix "$suffix" \
+            --output none
+          revision="$(az containerapp show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --query properties.latestRevisionName -o tsv)"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for revision health before switching traffic
+        env:
+          REVISION: ${{ steps.deploy.outputs.revision }}
+          RESOURCE_GROUP: rg-vybe-hackathon
+          APP_NAME: vybe-app
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            state="$(az containerapp revision show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --revision "$REVISION" --query properties.healthState -o tsv 2>/dev/null || true)"
+            provisioning="$(az containerapp revision show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --revision "$REVISION" --query properties.provisioningState -o tsv 2>/dev/null || true)"
+            if [[ "$state" == "Healthy" && "$provisioning" == "Provisioned" ]]; then
+              break
+            fi
+            if [[ "$state" == "Unhealthy" || "$provisioning" == "Failed" ]]; then
+              echo "New revision did not become healthy; leaving existing traffic unchanged." >&2
+              exit 1
+            fi
+            sleep 10
+          done
+          test "$state" = "Healthy" && test "$provisioning" = "Provisioned" || {
+            echo "Timed out waiting for healthy revision; leaving existing traffic unchanged." >&2
+            exit 1
+          }
+
+      - name: Smoke-test new revision before switching traffic
+        env:
+          REVISION: ${{ steps.deploy.outputs.revision }}
+          RESOURCE_GROUP: rg-vybe-hackathon
+          APP_NAME: vybe-app
+        run: |
+          set -euo pipefail
+          fqdn="$(az containerapp revision show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --revision "$REVISION" --query properties.fqdn -o tsv)"
+          for attempt in $(seq 1 12); do
+            code="$(curl --silent --show-error --output /tmp/vybe-health.json --write-out '%{http_code}' "https://${fqdn}/health" || true)"
+            if [[ "$code" == "200" ]] && grep -q '"status":"ok"' /tmp/vybe-health.json; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "New revision health endpoint failed; existing traffic remains unchanged." >&2
+          exit 1
+
+      - name: Send 100% traffic to the new healthy revision
+        env:
+          REVISION: ${{ steps.deploy.outputs.revision }}
+          RESOURCE_GROUP: rg-vybe-hackathon
+          APP_NAME: vybe-app
+        run: |
+          set -euo pipefail
+          az containerapp ingress traffic set \
+            --name "$APP_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --revision-weight "${REVISION}=100" \
+            --output none
+          az containerapp ingress traffic show \
+            --name "$APP_NAME" \
+            --resource-group "$RESOURCE_GROUP" \
+            --output table
