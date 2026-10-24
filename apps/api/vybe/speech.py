@@ -120,6 +120,15 @@ def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
 
     locale, voice = VOICES[language]
     spoken = escape(_spoken_text(text, language))
+    if language == "ar":
+        # Arabic voices may drop the initial V in ڤايب. Try language-tagged
+        # English pronunciation while retaining the Arabic voice/context.
+        # This is an SSML candidate: audible Azure validation is still required.
+        spoken = re.sub(
+            r"(?<!\w)ڤايب(?!\w)",
+            '<lang xml:lang="en-US">Vibe</lang>',
+            spoken,
+        )
     effective_rate = rate * (0.9 if language == "cs" else 1.0)
     percentage = round((effective_rate - 1) * 100)
     ssml = (

@@ -148,3 +148,21 @@ def test_egyptian_brand_uses_v_not_f():
 
 def test_legacy_arabic_brand_is_normalized():
     assert _spoken_text("أهلًا بكم في فايب.", "ar") == "أهلًا بكم في ڤايب."
+
+
+def test_arabic_brand_uses_language_tagged_ssml_without_changing_captions(monkeypatch):
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
+
+    class FakeResponse:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self, size): return b"fake-mp3"
+
+    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+        assert synthesize("أهلًا بكم في VYBE & فايب.", "ar") == b"fake-mp3"
+    body = mocked.call_args.args[0].data.decode("utf-8")
+    assert 'name="ar-EG-SalmaNeural"' in body
+    assert body.count('<lang xml:lang="en-US">Vibe</lang>') == 2
+    assert "&amp;" in body
+    assert _spoken_text("أهلًا بكم في VYBE.", "ar") == "أهلًا بكم في ڤايب."
