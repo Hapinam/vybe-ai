@@ -68,6 +68,9 @@ def _spoken_text(text: str, language: str) -> str:
     text = re.sub(r"\bVYBE\b", "ڤايب" if language == "ar" else "Vibe",
                   text, flags=re.I)
 
+    if language == "ar":
+        text = re.sub(r"(?<![\w])فايب(?![\w])", "ڤايب", text)
+
     def clock(match: re.Match[str]) -> str:
         minute, second = int(match.group(1)), int(match.group(2))
         if second > 59:
