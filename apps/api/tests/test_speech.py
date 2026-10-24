@@ -51,3 +51,48 @@ def test_speech_request_uses_ssml_and_returns_mp3(monkeypatch):
     assert b"Goal!" in request.data
     assert b"en-US-GuyNeural" in request.data
     assert b"GOAL!" not in request.data
+
+
+@pytest.mark.parametrize("language,expected", [
+    ("en", "Vibe"),
+    ("ar", "ڤايب"),
+    ("cs", "Vibe"),
+])
+def test_brand_is_spoken_as_one_word(language, expected):
+    assert _spoken_text("Welcome to VYBE!", language) == f"Welcome to {expected}!"
+
+
+@pytest.mark.parametrize("time,expected", [
+    ("00:15", "zero minutes and fifteen seconds"),
+    ("12:10", "twelve minutes and ten seconds"),
+    ("24:35", "twenty-four minutes and thirty-five seconds"),
+    ("45:00", "forty-five minutes"),
+    ("87:24", "eighty-seven minutes and twenty-four seconds"),
+])
+def test_english_match_clock_not_read_as_time_of_day(time, expected):
+    assert _spoken_text(f"Goal at {time}.", "en") == f"Goal at {expected}."
+
+
+@pytest.mark.parametrize("time,expected", [
+    ("00:15", "0 minut a 15 sekund"),
+    ("12:10", "12 minut a 10 sekund"),
+    ("24:35", "24 minut a 35 sekund"),
+    ("45:00", "45 minut"),
+    ("87:24", "87 minut a 24 sekund"),
+])
+def test_czech_match_clock_has_explicit_minutes_and_seconds(time, expected):
+    assert _spoken_text(f"Gól v {time}.", "cs") == f"Gól v {expected}."
+
+
+def test_czech_speech_rate_is_reduced(monkeypatch):
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
+    monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
+
+    class FakeResponse:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self, size): return b"fake-mp3"
+
+    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+        synthesize("VYBE", "cs")
+    assert b'rate="-10%"' in mocked.call_args.args[0].data

@@ -42,9 +42,31 @@ def _arabic_cardinal(value: int) -> str:
     return str(value)
 
 
+_EN_UNITS = ("zero", "one", "two", "three", "four", "five", "six", "seven",
+             "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
+             "fifteen", "sixteen", "seventeen", "eighteen", "nineteen")
+_EN_TENS = ("", "", "twenty", "thirty", "forty", "fifty",
+            "sixty", "seventy", "eighty", "ninety")
+
+
+def _english_number(n: int) -> str:
+    if n < 20:
+        return _EN_UNITS[n]
+    if n < 100:
+        tens, units = divmod(n, 10)
+        return _EN_TENS[tens] + (f"-{_EN_UNITS[units]}" if units else "")
+    if n < 1000:
+        hundreds, remainder = divmod(n, 100)
+        return _EN_UNITS[hundreds] + " hundred" + (
+            f" and {_english_number(remainder)}" if remainder else ""
+        )
+    return str(n)
+
+
 def _spoken_text(text: str, language: str) -> str:
-    # Convert football-clock timestamps to spoken language, not colon-separated
-    # digits. Arabic commentary retains seconds and spells both numbers out.
+    """Prepare audio-only text; leave visual captions untouched."""
+    text = re.sub(r"\bVYBE\b", "ڤايب" if language == "ar" else "Vibe",
+                  text, flags=re.I)
     if language == "ar":
         def arabic_time(match: re.Match[str]) -> str:
             minute, second = int(match.group(1)), int(match.group(2))
@@ -52,16 +74,22 @@ def _spoken_text(text: str, language: str) -> str:
             if second == 0:
                 return f"في الدقيقة {spoken_minute}"
             seconds_unit = "ثواني" if 3 <= second <= 10 else "ثانية"
-            if second == 1:
-                seconds_unit = "ثانية"
-            elif second == 2:
+            if second == 2:
                 seconds_unit = "ثانيتين"
             return f"في الدقيقة {spoken_minute} و{_arabic_cardinal(second)} {seconds_unit}"
 
-        text = re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})", arabic_time, text)
-    else:
-        text = re.sub(r"\bGOOO+A+L\b|\bGOAL\b", "Goal", text, flags=re.I)
-    return text
+        return re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})", arabic_time, text)
+
+    def match_clock(match: re.Match[str]) -> str:
+        minute, second = int(match.group(1)), int(match.group(2))
+        if language == "en":
+            result = f"{_english_number(minute)} minutes"
+            return result + (f" and {_english_number(second)} seconds" if second else "")
+        result = f"{minute} minut"
+        return result + (f" a {second} sekund" if second else "")
+
+    text = re.sub(r"(?<![\d:])(\d{1,3}):(\d{2})(?!\d)", match_clock, text)
+    return re.sub(r"\bGOOO+A+L\b|\bGOAL\b", "Goal", text, flags=re.I)
 
 
 def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
@@ -80,7 +108,8 @@ def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
 
     locale, voice = VOICES[language]
     spoken = escape(_spoken_text(text, language))
-    percentage = round((rate - 1) * 100)
+    effective_rate = rate * (0.9 if language == "cs" else 1.0)
+    percentage = round((effective_rate - 1) * 100)
     ssml = (
         f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" '
         f'xml:lang="{locale}"><voice name="{voice}">'
