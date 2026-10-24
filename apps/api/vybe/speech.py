@@ -65,7 +65,7 @@ def _english_number(n: int) -> str:
 
 def _spoken_text(text: str, language: str) -> str:
     """Prepare audio-only text; captions keep the original spelling and clock."""
-    text = re.sub(r"\bVYBE\b", "فايب" if language == "ar" else "Vibe",
+    text = re.sub(r"\bVYBE\b", "ڤايب" if language == "ar" else "Vibe",
                   text, flags=re.I)
 
     def clock(match: re.Match[str]) -> str:
@@ -83,11 +83,11 @@ def _spoken_text(text: str, language: str) -> str:
         if second == 0:
             return result
         if second == 1:
-            return result + "، بعد ثانية واحدة"
+            return result + " وثانية واحدة"
         if second == 2:
-            return result + "، بعد ثانيتين"
+            return result + " وثانيتين"
         unit = "ثواني" if 3 <= second <= 10 else "ثانية"
-        return result + f"، بعد {_arabic_cardinal(second)} {unit}"
+        return result + f" و{_arabic_cardinal(second)} {unit}"
 
     if language == "ar":
         text = re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})(?!\d)", clock, text)
