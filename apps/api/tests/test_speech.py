@@ -55,7 +55,7 @@ def test_speech_request_uses_ssml_and_returns_mp3(monkeypatch):
 
 @pytest.mark.parametrize("language,expected", [
     ("en", "Vibe"),
-    ("ar", "ڤايب"),
+    ("ar", "Vibe"),
     ("cs", "Vibe"),
 ])
 def test_brand_is_spoken_as_one_word(language, expected):
@@ -143,40 +143,14 @@ def test_egyptian_match_clock_natural_conjunction(clock, expected):
 
 
 def test_egyptian_brand_uses_v_not_f():
-    assert _spoken_text("VYBE! vybe.", "ar") == "ڤايب! ڤايب."
+    assert _spoken_text("VYBE! vybe.", "ar") == "Vibe! Vibe."
 
 
 def test_legacy_arabic_brand_is_normalized():
-    assert _spoken_text("أهلًا بكم في فايب.", "ar") == "أهلًا بكم في ڤايب."
+    assert _spoken_text("أهلًا بكم في فايب.", "ar") == "أهلًا بكم في Vibe."
 
 
-def test_arabic_brand_uses_explicit_english_voice_without_changing_captions(monkeypatch):
-    monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
-    monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
-
-    class FakeResponse:
-        def __enter__(self): return self
-        def __exit__(self, *args): pass
-        def read(self, size): return b"fake-mp3"
-
-    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
-        assert synthesize("أهلًا بكم في VYBE & فايب.", "ar") == b"fake-mp3"
-    body = mocked.call_args.args[0].data.decode("utf-8")
-    assert 'name="ar-EG-SalmaNeural"' in body
-    assert body.count('name="en-US-GuyNeural"') == 2
-    assert body.count('name="ar-EG-SalmaNeural"') == 3
-    assert "<lang " not in body
-    import xml.etree.ElementTree as ET
-    root = ET.fromstring(body)
-    ns = {"s": "http://www.w3.org/2001/10/synthesis"}
-    voices = root.findall("s:voice", ns)
-    assert len(voices) == 5
-    assert all(not v.findall("s:voice", ns) for v in voices)
-    assert "&amp;" in body
-    assert _spoken_text("أهلًا بكم في VYBE.", "ar") == "أهلًا بكم في ڤايب."
-
-
-def test_mixed_voice_preserves_escaping_and_rate(monkeypatch):
+def test_arabic_single_voice_and_escaping(monkeypatch):
     monkeypatch.setenv("VYBE_AZURE_SPEECH_KEY", "test-key")
     monkeypatch.setenv("VYBE_AZURE_SPEECH_REGION", "germanywestcentral")
     class FakeResponse:
@@ -184,10 +158,22 @@ def test_mixed_voice_preserves_escaping_and_rate(monkeypatch):
         def __exit__(self, *args): pass
         def read(self, size): return b"fake-mp3"
     with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
-        synthesize("VYBE < & > فايب", "ar", 1.5)
+        assert synthesize("VYBE < & > فايب", "ar", 1.5) == b"fake-mp3"
     body = mocked.call_args.args[0].data.decode("utf-8")
-    assert body.count('name="en-US-GuyNeural"') == 2
-    assert body.count('rate="+50%"') == 3
-    assert "&lt; &amp; &gt;" in body
+    assert body.count("<voice ") == 1
+    assert 'name="en-US-EvelynMultilingualNeural"' in body
+    assert "GuyNeural" not in body and "SalmaNeural" not in body
+    assert body.count('rate="+50%"') == 1
+    assert "Vibe" in body and "&lt; &amp; &gt;" in body
     import xml.etree.ElementTree as ET
     ET.fromstring(body)
+
+
+def test_tested_names_and_wording_are_audio_only():
+    source = "Aurora FC ضد Harbor United، ثم Chelsea United. جوووول! هدف رائع في شباك هاربور يونايتد."
+    result = _spoken_text(source, "ar")
+    assert result == "أورورا إِفْ سِي ضد هاربور United، ثم Chelsea United. هدف! هدف رائع في مرمى هاربور United."
+    assert "Aurora FC" in source and "Harbor United" in source
+    assert _spoken_text("هز الشباك", "ar") == "سجّل هدفًا"
+    assert _spoken_text("هز الشباك", "en") == "هز الشباك"
+    assert _spoken_text("هز الشباك", "cs") == "هز الشباك"

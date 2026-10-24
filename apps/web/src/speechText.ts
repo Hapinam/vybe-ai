@@ -34,8 +34,17 @@ export function effectiveSpeechRate(rate: number, language: FanLanguage): number
 }
 
 export function browserSpeechText(text: string, language: FanLanguage): string {
-  text = text.replace(/\bVYBE\b/gi, language === "ar" ? "ڤايب" : "Vibe");
-  if (language === "ar") text = text.replace(/(^|[^\p{L}\p{N}_])فايب(?=$|[^\p{L}\p{N}_])/gu, "$1ڤايب");
+  text = text.replace(/\bVYBE\b/gi, "Vibe");
+  if (language === "ar") {
+    text = text.replace(/(^|[^\p{L}\p{N}_])(?:فايب|ڤايب)(?=$|[^\p{L}\p{N}_])/gu, "$1Vibe");
+    text = text.replace(/\bAurora\s+FC\b/gi, "أورورا إِفْ سِي");
+    text = text.replace(/\bHarbor\s+United\b/gi, "هاربور United");
+    text = text.replace(/(^|[^\p{L}\p{N}_])أورورا\s+إف\s+سي(?=$|[^\p{L}\p{N}_])/gu, "$1أورورا إِفْ سِي");
+    text = text.replace(/(^|[^\p{L}\p{N}_])هاربور\s+يونايتد(?=$|[^\p{L}\p{N}_])/gu, "$1هاربور United");
+    text = text.replace(/هدف رائع في شباك/g, "هدف رائع في مرمى");
+    text = text.replace(/هز الشباك/g, "سجّل هدفًا");
+    text = text.replace(/(^|[^\p{L}\p{N}_])(?:جوووول|جووول|جوول|جول|جوون)(?=$|[^\p{L}\p{N}_])/gu, "$1هدف");
+  }
   const clock = (original: string, mm: string, ss: string): string => {
     const minute = Number(mm), second = Number(ss);
     if (second > 59) return original;
