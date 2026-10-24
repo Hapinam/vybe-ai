@@ -34,7 +34,7 @@ if os.environ.get("CONFIRM_AZURE_DEPLOY") == "YES" and missing:
     raise SystemExit("Missing required Foundry configuration variable(s): " + ", ".join(missing))
 for prefix in ("VYBE_FOUNDRY_MODEL", "VYBE_AZURE_OPENAI"):
     deployment = os.environ.get(prefix + "_DEPLOYMENT")
-    if deployment and not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", deployment):
+    if deployment and not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", deployment):
         raise SystemExit("Invalid model deployment name: " + prefix)
     if not os.environ.get(prefix + "_ENDPOINT"):
         continue

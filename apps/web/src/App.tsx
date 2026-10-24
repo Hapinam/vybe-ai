@@ -3,6 +3,7 @@ import AskTheMatch from "./AskTheMatch";
 import BroadcastStudio from "./BroadcastStudio";
 import "./broadcast-studio.css";
 import { store } from "./storage";
+import { requestSpeechAudio } from "./cloudSpeech";
 import { Activity, ArrowRight, AudioLines, BarChart3, CheckCircle2, CircleHelp, Heart, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { demoMatch, formatClock, postJson, type Explanation, type MatchState, type Persona } from "./match";
 import { eventCaption, languageNames, matchRecap, spokenMatchIntro, spokenMatchOutro, type FanLanguage } from "./localization";
@@ -41,6 +42,20 @@ export default function App() {
   const [audioPaused, setAudioPaused] = useState(false);
   const [narrating, setNarrating] = useState(false);
   const speechQueue = useRef<string[]>([]);
+  const cloudAudio = useRef<HTMLAudioElement | null>(null);
+  const cloudAbort = useRef<AbortController | null>(null);
+  const cloudObjectUrl = useRef<string | null>(null);
+  const cloudEnabled = useRef(true);
+  const audioPausedRef = useRef(false);
+  audioPausedRef.current = audioPaused;
+  const releaseCloudAudio = () => {
+    cloudAbort.current?.abort();
+    cloudAbort.current = null;
+    if (cloudAudio.current) { cloudAudio.current.pause(); cloudAudio.current.removeAttribute("src"); cloudAudio.current.load(); cloudAudio.current = null; }
+    if (cloudObjectUrl.current) { URL.revokeObjectURL(cloudObjectUrl.current); cloudObjectUrl.current = null; }
+  };
+  const pauseSpeech = () => { audioPausedRef.current = true; cloudAudio.current?.pause(); if ("speechSynthesis" in window) window.speechSynthesis.pause(); setAudioPaused(true); };
+  const resumeSpeech = () => { audioPausedRef.current = false; if (cloudAudio.current) void cloudAudio.current.play().catch(() => {}); if ("speechSynthesis" in window) window.speechSynthesis.resume(); setAudioPaused(false); };
   const [speechCompletedStep, setSpeechCompletedStep] = useState(0);
   const speechQueuedStep = useRef(0);
   const activeSpeechStep = useRef(0);
@@ -57,15 +72,17 @@ export default function App() {
   speechRateRef.current = speechRate;
 
   const speakNext = () => {
-    if (speechActive.current || speechQueue.current.length === 0 || !("speechSynthesis" in window)) return;
+    if (speechActive.current || speechQueue.current.length === 0) return;
     const narrative = speechQueue.current.shift();
     if (!narrative) return;
     speechActive.current = true;
     setNarrating(true);
     const generation = ++speechGeneration.current;
-    const utterance = new SpeechSynthesisUtterance(narrative);
-    utterance.rate = speechRateRef.current;
-    utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
+    const utterance = "speechSynthesis" in window ? new SpeechSynthesisUtterance(narrative) : null;
+    if (utterance) {
+      utterance.rate = speechRateRef.current;
+      utterance.lang = language === "ar" ? "ar-EG" : language === "cs" ? "cs-CZ" : "en-US";
+    }
     let lastProgress = Date.now();
     const clearWatchdog = () => {
       if (speechWatchdog.current !== null) window.clearInterval(speechWatchdog.current);
@@ -80,16 +97,50 @@ export default function App() {
       if (speechQueue.current.length === 0) setSpeechCompletedStep(activeSpeechStep.current);
       speakNext();
     };
-    utterance.onstart = () => { lastProgress = Date.now(); };
-    utterance.onboundary = () => { lastProgress = Date.now(); };
-    utterance.onend = finish;
-    utterance.onerror = finish;
+    if (utterance) {
+      utterance.onstart = () => { lastProgress = Date.now(); };
+      utterance.onboundary = () => { lastProgress = Date.now(); };
+      utterance.onend = finish;
+      utterance.onerror = finish;
+    }
+    // Fall back to browser speech if cloud synthesis or MP3 playback fails.
+    const fallbackFromCloud = () => {
+      if (generation !== speechGeneration.current) return;
+      // Detach callbacks before resetting audio to avoid recursive error events.
+      if (cloudAudio.current) {
+        cloudAudio.current.onended = null;
+        cloudAudio.current.onerror = null;
+      }
+      releaseCloudAudio();
+      cloudEnabled.current = false;
+      if (utterance) window.speechSynthesis.speak(utterance);
+      else finish();
+    };
+    // Prefer a server-generated voice; retain browser TTS as a no-cost fallback.
+    if (cloudEnabled.current) {
+      const controller = new AbortController();
+      cloudAbort.current = controller;
+      void requestSpeechAudio(narrative, language, speechRateRef.current, controller.signal)
+        .then(async url => {
+          if (generation !== speechGeneration.current) { URL.revokeObjectURL(url); return; }
+          cloudAbort.current = null;
+          cloudObjectUrl.current = url;
+          const audio = new Audio(url);
+          cloudAudio.current = audio;
+          audio.onended = () => { releaseCloudAudio(); finish(); };
+          audio.onerror = fallbackFromCloud;
+          if (!audioPausedRef.current) await audio.play();
+        })
+        .catch(fallbackFromCloud);
+      return;
+    }
+    if (!utterance) { finish(); return; }
     window.speechSynthesis.speak(utterance);
     // Chrome can report speaking=true even when speech has silently stalled.
     // Recover once after 12 seconds without a speech boundary; never override a user pause.
     speechWatchdog.current = window.setInterval(() => {
       if (generation !== speechGeneration.current) { clearWatchdog(); return; }
-      if (window.speechSynthesis.paused) { lastProgress = Date.now(); return; }
+      if (audioPausedRef.current || window.speechSynthesis.paused) { lastProgress = Date.now(); return; }
       if (Date.now() - lastProgress < 12000 || retriedNarrative.current === narrative) return;
       retriedNarrative.current = narrative;
       clearWatchdog();
@@ -173,7 +224,7 @@ export default function App() {
   // One immutable narration per event. Persona/language changes update the UI
   // immediately but affect spoken commentary only when the next event starts.
   useEffect(() => {
-    if (!playing || !audioEnabled || !("speechSynthesis" in window)) return;
+    if (!playing || !audioEnabled) return;
     if (speechQueuedStep.current === step) return;
     speechQueuedStep.current = step;
     activeSpeechStep.current = step;
@@ -242,8 +293,8 @@ export default function App() {
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
       const target=event.target as HTMLElement|null;
       if(target?.closest("button,input,select,textarea,a,[contenteditable]"))return;
-      if(event.code==="Space"){event.preventDefault();if(audioEnabled && "speechSynthesis" in window){if(playing){window.speechSynthesis.pause();setAudioPaused(true);}else if(audioPaused){window.speechSynthesis.resume();setAudioPaused(false);}}setPlaying(v=>!v);}
-      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
+      if(event.code==="Space"){event.preventDefault();if(audioEnabled){if(playing){pauseSpeech();}else if(audioPaused){resumeSpeech();}}setPlaying(v=>!v);}
+      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled){++speechGeneration.current;releaseCloudAudio();if ("speechSynthesis" in window) window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
       if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.max(1,v-1));}
     };
     window.addEventListener("keydown",onKey);
@@ -257,6 +308,7 @@ export default function App() {
   const stopAudio = (disable = true, preserveProgress = false) => {
     if (disable) setAudioEnabled(false);
     setAudioPaused(false);
+    audioPausedRef.current = false;
     speechQueue.current = [];
     ++speechGeneration.current;
     retriedNarrative.current = null;
@@ -272,6 +324,7 @@ export default function App() {
       introStarted.current = false;
       outroStarted.current = false;
     }
+    releaseCloudAudio();
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     previewSpeech.current = null;
   };
@@ -319,7 +372,7 @@ export default function App() {
               </>}
             </div>}
             <div className="controls">
-              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && "speechSynthesis" in window && window.speechSynthesis.speaking) { window.speechSynthesis.pause(); setAudioPaused(true); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused && "speechSynthesis" in window) { if (window.speechSynthesis.speaking && window.speechSynthesis.paused) { window.speechSynthesis.resume(); } else { window.speechSynthesis.cancel(); speechActive.current = false; setNarrating(false); } setAudioPaused(false); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
+              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled) { pauseSpeech(); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused) { resumeSpeech(); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
               <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
@@ -392,7 +445,7 @@ export default function App() {
             {persona==="accessible" && <div className="persona-extra" role="group" aria-label="Accessibility preferences"><strong>Accessibility preferences</strong><label className="access-choice"><input type="checkbox" checked={highContrast} onChange={e=>setHighContrast(e.target.checked)}/> High contrast</label><label className="access-choice"><input type="checkbox" checked={largeText} onChange={e=>setLargeText(e.target.checked)}/> Large text</label><p className="muted">With spoken commentary enabled, every match event is described, including shots and passes.</p><p className="muted">Keyboard: Space play/pause, arrows move events when focus is outside controls; Tab navigates controls.</p></div>}
             {<div role="group" aria-label="Spoken commentary controls"><p className="muted">Spoken commentary follows your selected fan experience. Persona and language changes take effect in speech from the next event; the current commentary finishes uninterrupted.</p>
               <button type="button" className="audio-toggle" onClick={() => audioEnabled ? stopAudio() : (spokenGoalIds.current.clear(), setAudioEnabled(true))} aria-pressed={audioEnabled}>{audioEnabled ? <VolumeX size={18} /> : <Volume2 size={18} />}{audioEnabled ? "Stop spoken commentary" : "Enable spoken commentary"}</button>
-              {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (!("speechSynthesis" in window)) return; if (audioPaused) { window.speechSynthesis.resume(); setAudioPaused(false); } else { window.speechSynthesis.pause(); setAudioPaused(true); } }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
+              {audioEnabled && <button type="button" className="audio-toggle" onClick={() => { if (audioPaused) resumeSpeech(); else pauseSpeech(); }} aria-pressed={audioPaused}>{audioPaused ? <Play size={18} /> : <Pause size={18} />}{audioPaused ? "Resume commentary" : "Pause commentary"}</button>}
               <label htmlFor="speech-rate" className="progress-label">Commentary voice speed</label>
               <select id="speech-rate" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} style={{ color: "inherit", background: "#25243e", border: "1px solid #8171bc", borderRadius: "0.5rem", padding: "0.45rem 0.65rem", margin: "0.5rem", font: "inherit" }}>
                 <option value={0.5}>0.5× · Very slow</option>
