@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 from .director_tools import TOOL_NAMES, call_director_tool
 from .models import MatchDefinition
-from .questions import ask_match
+from .questions import ask_match, is_temporal_question
 
 # Explicitly unsupported causal questions must not be reinterpreted as factual answers.
 # Match causal word families at word starts, without matching information/because/Whyte.
@@ -126,6 +126,11 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
         fallback["answer"] = ("The recorded synthetic events do not establish tactical causes, "
                               "formations, strategy or real-world momentum. They can only confirm "
                               "score changes and recorded actions.")
+        return fallback
+    # The model's tools expose whole-match facts only. Preserve the exact
+    # deterministic answer (and its time-bounded evidence) for temporal queries,
+    # including unsupported cases with missing period markers.
+    if is_temporal_question(question):
         return fallback
     try:
         config = _configuration()
