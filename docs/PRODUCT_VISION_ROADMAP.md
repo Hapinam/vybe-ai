@@ -10,6 +10,25 @@
 
 VYBE aims to grow from a single-match accessibility and personalization demonstration into an inclusive football companion: multilingual commentary, fan-selected perspectives, resilient event delivery, and personalized post-match stories. The product would remain transparent about what is simulated, AI-generated, or verified from licensed data.
 
+## Future architecture decision: scalable multilingual commentary
+
+**Status:** Architectural backlog item only; **not implemented in the current Egyptian Arabic speech-fix PR**. Keep the existing three-language implementation and focused pronunciation/clock normalization for now.
+
+**Current limitation:** Speech output is split between Azure AI Speech (text-to-speech) and browser TTS fallback, while some spoken strings, match-clock formatting, number words, and localized introductions are hardcoded separately in Python and TypeScript. Azure Speech reads supplied text; it does **not** generate the football commentary itself. Adding languages by copying these rules would increase duplication and regression risk.
+
+**Future target architecture:**
+
+1. Consume validated, structured match events (including score, team, player, match minute and second), never free-form invented match facts.
+2. Use a single language-agnostic commentary contract. Generate localized, persona-aware commentary using the existing grounded AI narrative adapter when available, with deterministic localized templates as an offline/failed-AI fallback.
+3. Configure language, locale, Azure Speech voice, speech rate and optional pronunciation lexicon centrally; keep voice and text generation responsibilities separate.
+4. Apply a small, language-aware speech-pronunciation layer only for exceptions such as brand names and player names. Prefer provider-supported SSML/phonemes where validated, rather than embedding complete translations and number grammars in both frontend and backend.
+5. Share or contract-test normalization behavior between Azure TTS and browser fallback. Preserve readable captions, accessibility, RTL layout and the original match facts.
+6. Roll out additional languages behind explicit availability checks for Azure voices, native-speaker reviews, football terminology tests, boundary-clock tests, voice playback tests, latency and cost monitoring.
+
+**Acceptance criteria for the future refactor:** Adding a supported language should normally require configuration, localized UI resources and validation—not duplicate clock/number implementations in multiple services. Existing English, Egyptian Arabic and Czech experiences must retain regression coverage. The fallback must remain functional when Foundry or Azure Speech is unavailable.
+
+**Non-goal for the current PR:** Do not redesign the commentary pipeline, introduce new Azure resources, or expand the supported language list while fixing Egyptian pronunciation.
+
 ## Proposed roadmap
 
 | Horizon | Proposed fan-facing capability | Potential Microsoft Azure technology | Success criteria |
