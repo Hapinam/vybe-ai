@@ -22,6 +22,27 @@ VYBE aims to grow from a single-match accessibility and personalization demonstr
 
 These are **candidate technologies**, not commitments to deploy every service. Each phase requires an explicit cost, security, accessibility and reliability review.
 
+## Future roadmap: real-match selection and live feeder
+
+VYBE's long-term goal is to let fans choose **real football matches**, rather than expanding the demo with more fictional fixtures. A Match Center would list real upcoming, live, and completed matches from competitions supported by a licensed football-data provider.
+
+After selecting a match, the fan could see its verified teams, kickoff, score, events, and available statistics. Young Fan, Accessible Fan, and Analyst Fan modes would adapt their commentary and insights to the selected real match, with multilingual text and speech. Completed matches could offer replays and recaps where licensing permits.
+
+### Proposed data flow
+
+1. A **licensed football-data API** provides fixtures and authorized live match events.
+2. **Azure Functions** validates and processes incoming updates, with safeguards against duplicates and out-of-order events.
+3. **Azure Cosmos DB** could store permitted match catalogs, state, and opt-in fan preferences.
+4. A managed **Redis cache** could reduce repeated requests and latency for frequently viewed fixtures.
+5. **Azure AI Foundry** and **Azure AI Speech** could deliver grounded, personalized commentary without inventing match facts.
+6. **Azure Monitor Alerts** could flag feed failures, stale events, unusual latency, and operational cost issues.
+
+Before implementation, the team would assess provider licensing, league coverage, redistribution rights, attribution, update limits, accuracy, latency, privacy, and ongoing costs. If the live feed is delayed or unavailable, VYBE should disclose that rather than presenting simulated events as live.
+
+**Scope:** This is a post-hackathon vision, not a feature available in today's single-synthetic-match demo. No real-data subscription or additional Azure infrastructure is required for the current submission.
+
+**For judges:** “Today VYBE demonstrates inclusive AI commentary on a synthetic match. Our future Match Center will let fans choose real football fixtures and enjoy the same personalized experience on matches they care about, supported by licensed live data and a phased Azure architecture.”
+
 ## How the future system could work
 
 ```mermaid
