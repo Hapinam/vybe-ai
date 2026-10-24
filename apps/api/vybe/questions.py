@@ -13,7 +13,7 @@ _FINAL_WINDOW_TERMS = ("last 15 minutes", "final 15 minutes")
 
 
 def _normalized_question(question: str) -> str:
-    return " ".join(re.sub(r"[^a-z0-9\\s]", " ", question.casefold()).split())
+    return " ".join(re.sub(r"[^a-z0-9\s]", " ", question.casefold()).split())
 
 
 def is_temporal_question(question: str) -> bool:
