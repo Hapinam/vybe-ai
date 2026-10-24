@@ -44,4 +44,4 @@ No keys or resource deployment templates should be committed to GitHub.
 - [ ] Confirm new image provenance and deploy an explicitly approved revision with rollback plan
 - [ ] Run live end-to-end checks against the public URL before calling the feature released
 
-**Deployment caution:** `infra/azure/deploy-ghcr.sh` creates a new Container App and intentionally refuses to replace an existing app. Do **not** use it to upgrade the live `vybe-app`. An existing-app revision update requires a separately reviewed deployment procedure that preserves current Foundry settings, secrets, scaling, and rollback capability.
+**Deployment caution:** The active `.github/workflows/deploy-azure-containerapp.yml` updates the existing `vybe-app` using a healthy new revision and switches traffic after a smoke test. Merging into `main` can trigger this deployment chain automatically. Preserve current Foundry/Speech settings, secrets, scaling, and rollback capability.
