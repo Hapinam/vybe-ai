@@ -5,7 +5,7 @@ export const languageNames: Record<FanLanguage, string> = { en: "English", ar: "
 type Messages = { kickoff: string; halftime: string; fulltime: string; goal: string; shot: string; pass: string; intro: string; final: string; recap: string; noGoals: string };
 const messages: Record<FanLanguage, Messages> = {
   en: { kickoff:"The match kicks off.",halftime:"It's half-time.",fulltime:"The match is over.",goal:"Goal",shot:"Shot",pass:"Completed pass",intro:"Welcome to VYBE. Aurora FC faces Harbor United.",final:"Final score",recap:"Match story",noGoals:"No goals recorded yet." },
-  ar: { kickoff:"بدأت المباراة.",halftime:"انتهى الشوط الأول.",fulltime:"انتهت المباراة.",goal:"هدف",shot:"تسديدة",pass:"تمريرة ناجحة",intro:"أهلًا بكم في فايب. أورورا إف سي يواجه هاربور يونايتد.",final:"النتيجة النهائية",recap:"قصة المباراة",noGoals:"لم تُسجَّل أهداف بعد." },
+  ar: { kickoff:"بدأت المباراة.",halftime:"انتهى الشوط الأول.",fulltime:"انتهت المباراة.",goal:"هدف",shot:"تسديدة",pass:"تمريرة ناجحة",intro:"أهلًا بكم في ڤايب. أورورا إف سي يواجه هاربور يونايتد.",final:"النتيجة النهائية",recap:"قصة المباراة",noGoals:"لم تُسجَّل أهداف بعد." },
   cs: { kickoff:"Zápas začíná.",halftime:"Je poločas.",fulltime:"Zápas skončil.",goal:"Gól",shot:"Střela",pass:"Úspěšná přihrávka",intro:"Vítejte ve VYBE. Aurora FC hraje proti Harbor United.",final:"Konečné skóre",recap:"Příběh zápasu",noGoals:"Zatím nepadl žádný gól." }
 };
 export function spokenMatchIntro(lang: FanLanguage): string {
