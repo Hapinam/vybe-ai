@@ -14,6 +14,10 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 2. **Accessible Fan:** English/Arabic/Czech captions, larger text, contrast, keyboard and step-by-step playback.
 3. **Analyst Fan:** recorded match statistics, 15-minute weighted event activity and timeline filters.
 
+### Product vision and future roadmap
+
+- **[Future vision for judges: multilingual expansion, caching, personalization, event processing and reliability](docs/PRODUCT_VISION_ROADMAP.md)** — proposed capabilities only; not implemented in the current demo.
+
 ### Deployment preparation
 
 - [Mandatory Foundry launch and live proof gates](docs/FOUNDRY_REQUIRED_LAUNCH.md)
