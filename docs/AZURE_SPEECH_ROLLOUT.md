@@ -1,6 +1,6 @@
 # Azure Speech rollout for VYBE
 
-**Status:** Backend implementation in draft PR only. Do not deploy until frontend integration, CI, and live tests pass. The current Container App is unchanged.
+**Status (2026-10-24):** Backend and frontend integration are implemented on draft PR #88. All nine GitHub Actions checks passed on commit `cca46e5`, including API, web build, E2E, container, security, and full-stack smoke. **Azure Speech itself has not been provisioned or tested against a real Speech resource; no deployment or merge has occurred.**
 
 ## Architecture
 
@@ -22,8 +22,8 @@ No keys or resource deployment templates should be committed to GitHub.
 1. Check whether a free Speech F0 resource is available for the subscription and chosen region. **Do not assume free capacity is available.**
 2. Create one Speech resource in `rg-vybe-hackathon` only if the quota/pricing are acceptable.
 3. Configure the two backend environment variables; use a Container App secret reference for the key.
-4. Integrate the React playback queue with the MP3 endpoint, including mobile user gesture, pause/resume, cancellation, retry, and a clear unavailable state.
-5. Run unit and frontend tests; verify Arabic match minutes, goal pronunciation, voice consistency, and iPhone Safari/Chrome behavior.
+4. Review the integrated React MP3 playback queue, mobile autoplay handling, pause/resume, cancellation and browser fallback. GitHub CI passing is not equivalent to a real iPhone test.
+5. CI tests have passed; still verify Arabic match minutes, goal pronunciation, voice consistency, and iPhone Safari/Chrome behavior **with a configured Azure Speech resource**.
 6. Build a new Docker image, deploy a new revision of existing `vybe-app`, test the public URL, and keep the previous revision available for rollback.
 
 ## Cost and safety
@@ -32,3 +32,16 @@ No keys or resource deployment templates should be committed to GitHub.
 - Speech requests are bounded to 1,200 characters; no arbitrary voice, SSML, or Speech URL can be supplied by clients.
 - Azure Speech may incur charges even when Container Apps scales to zero.
 - Do not publish a new production image until the frontend consumes MP3 and deployment has been verified.
+
+## Release decision gate
+
+- [x] Backend Speech endpoint and server-side key isolation implemented in PR #88
+- [x] Frontend MP3 playback and browser fallback implemented in PR #88
+- [x] Nine GitHub Actions checks successful on commit `cca46e5`
+- [ ] Verify Speech F0 eligibility, quota, and expected charges in the target Azure subscription
+- [ ] Provision Speech only after explicit cost review; store key as a Container Apps secret
+- [ ] Validate real Azure TTS output and iPhone behavior, including Arabic minute pronunciation
+- [ ] Confirm new image provenance and deploy an explicitly approved revision with rollback plan
+- [ ] Run live end-to-end checks against the public URL before calling the feature released
+
+**Deployment caution:** `infra/azure/deploy-ghcr.sh` creates a new Container App and intentionally refuses to replace an existing app. Do **not** use it to upgrade the live `vybe-app`. An existing-app revision update requires a separately reviewed deployment procedure that preserves current Foundry settings, secrets, scaling, and rollback capability.
