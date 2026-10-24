@@ -18,11 +18,47 @@ VOICES = {
 MAX_TEXT = 1200
 MAX_AUDIO = 2_000_000
 
+_ARABIC_NUMBERS = {
+    0: "صفر", 1: "واحد", 2: "اتنين", 3: "تلاتة", 4: "أربعة",
+    5: "خمسة", 6: "ستة", 7: "سبعة", 8: "تمانية", 9: "تسعة",
+    10: "عشرة", 11: "حداشر", 12: "اتناشر", 13: "تلتاشر",
+    14: "أربعتاشر", 15: "خمستاشر", 16: "ستاشر", 17: "سبعتاشر",
+    18: "تمنتاشر", 19: "تسعتاشر", 20: "عشرين", 30: "تلاتين",
+    40: "أربعين", 50: "خمسين", 60: "ستين", 70: "سبعين",
+    80: "تمانين", 90: "تسعين",
+}
+
+
+def _arabic_cardinal(value: int) -> str:
+    """Render a football-clock number as words for Egyptian Arabic TTS."""
+    if value in _ARABIC_NUMBERS:
+        return _ARABIC_NUMBERS[value]
+    if 21 <= value <= 99:
+        units, tens = value % 10, (value // 10) * 10
+        return f"{_ARABIC_NUMBERS[units]} و{_ARABIC_NUMBERS[tens]}"
+    if 100 <= value <= 120:
+        return "مية" if value == 100 else f"مية و{_arabic_cardinal(value - 100)}"
+    # Keep unexpected but valid numeric text readable rather than failing synthesis.
+    return str(value)
+
 
 def _spoken_text(text: str, language: str) -> str:
-    # Spell out football minutes before synthesis, avoiding 24:00 -> midnight.
+    # Convert football-clock timestamps to spoken language, not colon-separated
+    # digits. Arabic commentary retains seconds and spells both numbers out.
     if language == "ar":
-        text = re.sub(r"في الدقيقة\s+(\d{1,3}):\d{2}", r"في الدقيقة \1", text)
+        def arabic_time(match: re.Match[str]) -> str:
+            minute, second = int(match.group(1)), int(match.group(2))
+            spoken_minute = _arabic_cardinal(minute)
+            if second == 0:
+                return f"في الدقيقة {spoken_minute}"
+            seconds_unit = "ثواني" if 3 <= second <= 10 else "ثانية"
+            if second == 1:
+                seconds_unit = "ثانية"
+            elif second == 2:
+                seconds_unit = "ثانيتين"
+            return f"في الدقيقة {spoken_minute} و{_arabic_cardinal(second)} {seconds_unit}"
+
+        text = re.sub(r"في الدقيقة\s+(\d{1,3}):(\d{2})", arabic_time, text)
     else:
         text = re.sub(r"\bGOOO+A+L\b|\bGOAL\b", "Goal", text, flags=re.I)
     return text
