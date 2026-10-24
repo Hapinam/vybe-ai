@@ -120,22 +120,34 @@ def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
 
     locale, voice = VOICES[language]
     spoken = escape(_spoken_text(text, language))
-    if language == "ar":
-        # Arabic voices may drop the initial V in ڤايب. Try language-tagged
-        # English pronunciation while retaining the Arabic voice/context.
-        # This is an SSML candidate: audible Azure validation is still required.
-        spoken = re.sub(
-            r"(?<!\w)ڤايب(?!\w)",
-            '<lang xml:lang="en-US">Vibe</lang>',
-            spoken,
-        )
     effective_rate = rate * (0.9 if language == "cs" else 1.0)
     percentage = round((effective_rate - 1) * 100)
+    if language == "ar":
+        # <lang> within an Arabic voice did not preserve the initial English V.
+        # Use sibling <voice> elements: no nested voices or unescaped user text.
+        # Preserve the surrounding Egyptian narration and speech rate.
+        parts = re.split(r"(ڤايب)", spoken)
+        segments = []
+        for part in parts:
+            if not part:
+                continue
+            segment_voice = "en-US-GuyNeural" if part == "ڤايب" else voice
+            segment_text = "Vibe" if part == "ڤايب" else part
+            segments.append(
+                f'<voice name="{segment_voice}">'
+                f'<prosody rate="{percentage:+d}%">{segment_text}</prosody>'
+                '</voice>'
+            )
+        voice_body = "".join(segments)
+    else:
+        voice_body = (
+            f'<voice name="{voice}">'
+            f'<prosody rate="{percentage:+d}%">{spoken}</prosody>'
+            '</voice>'
+        )
     ssml = (
         f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" '
-        f'xml:lang="{locale}"><voice name="{voice}">'
-        f'<prosody rate="{percentage:+d}%">{spoken}</prosody>'
-        '</voice></speak>'
+        f'xml:lang="{locale}">{voice_body}</speak>'
     )
     request = Request(
         f"https://{region}.tts.speech.microsoft.com/cognitiveservices/v1",
