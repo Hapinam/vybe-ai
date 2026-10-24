@@ -1,5 +1,6 @@
 """Azure Speech adapter tests: no real Azure calls or secrets required."""
 from unittest.mock import patch
+
 from fastapi import HTTPException
 import pytest
 
@@ -10,8 +11,20 @@ def test_goal_is_a_word_not_an_acronym():
     assert _spoken_text("GOOOAL! GOAL!", "en") == "Goal! Goal!"
 
 
-def test_arabic_match_minute_is_not_midnight():
-    assert _spoken_text("هدف في الدقيقة 24:00.", "ar") == "هدف في الدقيقة 24."
+def test_arabic_match_minute_includes_seconds_as_spoken_words():
+    assert _spoken_text("هدف! Alex في الدقيقة 24:35.", "ar") == (
+        "هدف! Alex في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية."
+    )
+
+
+def test_arabic_exact_minute_does_not_speak_zero_seconds():
+    assert _spoken_text("هدف في الدقيقة 24:00.", "ar") == "هدف في الدقيقة أربعة وعشرين."
+
+
+def test_arabic_early_match_time_is_not_confused_with_another_minute():
+    assert _spoken_text("هدف في الدقيقة 12:10.", "ar") == (
+        "هدف في الدقيقة اتناشر وعشرة ثواني."
+    )
 
 
 def test_missing_credentials_fail_closed(monkeypatch):
