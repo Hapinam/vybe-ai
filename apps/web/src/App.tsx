@@ -280,8 +280,8 @@ export default function App() {
       if(persona!=="accessible"||event.altKey||event.ctrlKey||event.metaKey)return;
       const target=event.target as HTMLElement|null;
       if(target?.closest("button,input,select,textarea,a,[contenteditable]"))return;
-      if(event.code==="Space"){event.preventDefault();if(audioEnabled && "speechSynthesis" in window){if(playing){pauseSpeech();}else if(audioPaused){resumeSpeech();}}setPlaying(v=>!v);}
-      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){releaseCloudAudio();window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
+      if(event.code==="Space"){event.preventDefault();if(audioEnabled){if(playing){pauseSpeech();}else if(audioPaused){resumeSpeech();}}setPlaying(v=>!v);}
+      if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled){releaseCloudAudio();if ("speechSynthesis" in window) window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
       if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.max(1,v-1));}
     };
     window.addEventListener("keydown",onKey);
@@ -358,7 +358,7 @@ export default function App() {
               </>}
             </div>}
             <div className="controls">
-              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled && (cloudAudio.current || ("speechSynthesis" in window && window.speechSynthesis.speaking))) { pauseSpeech(); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused) { resumeSpeech(); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
+              {!(persona === "accessible" && stepByStep) && <button className="primary" onClick={() => { if (playing) { setPlaying(false); if (audioEnabled) { pauseSpeech(); } else { setAudioPaused(false); } } else { if (step === demoMatch.events.length) { stopAudio(false); setStep(1); } else if (audioPaused) { resumeSpeech(); } setPlaying(true); } }}><span>{playing ? <Pause size={16} /> : <Play size={16} />}</span>{playing ? "Pause" : step === demoMatch.events.length ? "Replay" : "Play match"}</button>}
               <button className="secondary" onClick={() => { setPlaying(false); stopAudio(false); setStep(1); }}><RotateCcw size={15} /> Restart</button>
               <span className="playback-info">Event {step} of {demoMatch.events.length}</span>
             </div>
