@@ -12,7 +12,7 @@ from fastapi import HTTPException
 
 VOICES = {
     "en": ("en-US", "en-US-GuyNeural"),
-    "ar": ("ar-EG", "ar-EG-SalmaNeural"),
+    "ar": ("ar-EG", "en-US-EvelynMultilingualNeural"),
     "cs": ("cs-CZ", "cs-CZ-AntoninNeural"),
 }
 MAX_TEXT = 1200
@@ -65,11 +65,19 @@ def _english_number(n: int) -> str:
 
 def _spoken_text(text: str, language: str) -> str:
     """Prepare audio-only text; captions keep the original spelling and clock."""
-    text = re.sub(r"\bVYBE\b", "ڤايب" if language == "ar" else "Vibe",
+    text = re.sub(r"\bVYBE\b", "Vibe",
                   text, flags=re.I)
 
     if language == "ar":
-        text = re.sub(r"(?<![\w])فايب(?![\w])", "ڤايب", text)
+        text = re.sub(r"(?<![\w])(?:فايب|ڤايب)(?![\w])", "Vibe", text)
+        # Exact, tested demo names only; unknown names stay unchanged.
+        text = re.sub(r"\bAurora\s+FC\b", "أورورا إِفْ سِي", text, flags=re.I)
+        text = re.sub(r"\bHarbor\s+United\b", "هاربور United", text, flags=re.I)
+        text = re.sub(r"(?<![\w])أورورا\s+إف\s+سي(?![\w])", "أورورا إِفْ سِي", text)
+        text = re.sub(r"(?<![\w])هاربور\s+يونايتد(?![\w])", "هاربور United", text)
+        text = text.replace("هدف رائع في شباك", "هدف رائع في مرمى")
+        text = text.replace("هز الشباك", "سجّل هدفًا")
+        text = re.sub(r"(?<![\w])(?:جوووول|جووول|جوول|جول|جوون)(?![\w])", "هدف", text)
 
     def clock(match: re.Match[str]) -> str:
         minute, second = int(match.group(1)), int(match.group(2))
@@ -122,29 +130,12 @@ def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
     spoken = escape(_spoken_text(text, language))
     effective_rate = rate * (0.9 if language == "cs" else 1.0)
     percentage = round((effective_rate - 1) * 100)
-    if language == "ar":
-        # <lang> within an Arabic voice did not preserve the initial English V.
-        # Use sibling <voice> elements: no nested voices or unescaped user text.
-        # Preserve the surrounding Egyptian narration and speech rate.
-        parts = re.split(r"(ڤايب)", spoken)
-        segments = []
-        for part in parts:
-            if not part:
-                continue
-            segment_voice = "en-US-GuyNeural" if part == "ڤايب" else voice
-            segment_text = "Vibe" if part == "ڤايب" else part
-            segments.append(
-                f'<voice name="{segment_voice}">'
-                f'<prosody rate="{percentage:+d}%">{segment_text}</prosody>'
-                '</voice>'
-            )
-        voice_body = "".join(segments)
-    else:
-        voice_body = (
-            f'<voice name="{voice}">'
-            f'<prosody rate="{percentage:+d}%">{spoken}</prosody>'
-            '</voice>'
-        )
+    # One continuous voice: no male voice inserts.
+    voice_body = (
+        f'<voice name="{voice}">'
+        f'<prosody rate="{percentage:+d}%">{spoken}</prosody>'
+        '</voice>'
+    )
     ssml = (
         f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" '
         f'xml:lang="{locale}">{voice_body}</speak>'

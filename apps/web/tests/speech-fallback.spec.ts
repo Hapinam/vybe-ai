@@ -29,8 +29,33 @@ test("Egyptian Arabic brand and match seconds are spoken naturally", async ({ pa
       other: browserSpeechText("هدف في الدقيقة 24:35.", "ar"),
     };
   });
-  expect(actual.brand).toBe("ڤايب! ڤايب.");
-  expect(actual.legacyBrand).toBe("أهلًا بكم في ڤايب.");
+  expect(actual.brand).toBe("Vibe! Vibe.");
+  expect(actual.legacyBrand).toBe("أهلًا بكم في Vibe.");
   expect(actual.clock).toBe("هدف في الدقيقة أربعة وعشرين واتناشر ثانية.");
   expect(actual.other).toBe("هدف في الدقيقة أربعة وعشرين وخمسة وتلاتين ثانية.");
+});
+
+
+test("Arabic fallback keeps unknown teams and normalizes demo names", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { browserSpeechText } = await import("/src/speechText.ts");
+    return browserSpeechText("VYBE: Aurora FC ضد Harbor United، وChelsea United. جوووول! هدف رائع في شباك هاربور يونايتد.", "ar");
+  });
+  expect(result).toBe("Vibe: أورورا إِفْ سِي ضد هاربور United، وChelsea United. هدف! هدف رائع في مرمى هاربور United.");
+});
+
+test("browser fallback rewrites football net idiom only for Arabic", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { browserSpeechText } = await import("/src/speechText.ts");
+    return {
+      arabic: browserSpeechText("هز الشباك! هدف رائع في شباك هاربور يونايتد.", "ar"),
+      english: browserSpeechText("هز الشباك", "en"),
+      czech: browserSpeechText("هز الشباك", "cs"),
+    };
+  });
+  expect(result.arabic).toBe("سجّل هدفًا! هدف رائع في مرمى هاربور United.");
+  expect(result.english).toBe("هز الشباك");
+  expect(result.czech).toBe("هز الشباك");
 });
