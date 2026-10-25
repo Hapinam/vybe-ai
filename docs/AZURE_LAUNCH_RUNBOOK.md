@@ -1,5 +1,8 @@
 # VYBE Azure launch and judging runbook
 
+> **Document status (October 25, 2026):** This document preserves historical checks and planning. Earlier references to future deployment or unverified production tests are historical, not current release status. The current deployment is in [Architecture](ARCHITECTURE.md); owner-observed production responses are in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final video was uploaded to https://youtu.be/-pfgaeGjSN8. No CI check alone certifies Azure inference, cost, WCAG, or all devices.
+
+
 **Prepared October 18, 2026. No Azure resources are provisioned by this document.**
 
 ## Deployment decision
@@ -89,7 +92,7 @@ Avoid putting subscription IDs, keys, or access tokens into public issues or log
 ## Final submission verification
 
 - Public Innovation Studio project listing: confirmed visible October 18.
-- Project description, 53-second video, public GitHub repo, judges guide: present.
-- Live URL: pending Azure deployment and public smoke test.
+- Project description, final 75-second video (https://youtu.be/-pfgaeGjSN8), public GitHub repo and judges guide: available. Portal submission confirmation remains separate.
+- Live URL: https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — October 24 deployment CI passed; October 25 owner-observed production AI responses recorded.
 - Submission/judging acceptance status: not independently confirmed by a dedicated platform status.
 - Never claim live Foundry, managed Agent Service, WCAG certification, or production security certification without actual validation.

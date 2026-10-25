@@ -1,5 +1,8 @@
 # PR 62 — Full-stack smoke and Foundry/Azure validation gates
 
+> **Document status (October 25, 2026):** This file preserves historical planning, review, or test steps. Its older statements about future Azure deployment, unmerged features, or pending Foundry production tests are snapshots, **not current deployment status**. The deployed system and setup are described in [Architecture](ARCHITECTURE.md), [root README](../README.md), and [owner-observed production evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final demo was uploaded to https://youtu.be/-pfgaeGjSN8. A passed CI job does not independently verify all Azure services, WCAG, cost, or browser audio.
+
+
 This PR adds a **separate** CI job that runs a real FastAPI process, Vite and Chromium. Unlike existing mocked Playwright E2E tests, the smoke test calls actual replay/insights/Director endpoints through the Vite proxy. The new test uses deterministic fallback with all Foundry model environment variables explicitly empty. It does **not** prove a real Azure or Foundry deployment.
 
 ## Local verification

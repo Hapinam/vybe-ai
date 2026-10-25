@@ -1,6 +1,6 @@
-# VYBE: optional Azure OpenAI narration
+# VYBE: grounded Azure OpenAI-compatible narration
 
-The match replay engine and score are deterministic. Azure AI is **optional**, and the planned Azure Container Apps deployment does **not** automatically provision or configure an Azure OpenAI model.
+The match replay engine and score are deterministic. Azure AI narration has a safe fallback when not configured or unavailable. The application is deployed to Azure Container Apps, but deployment alone does not prove a model call. Owner-observed production response evidence from October 25 is in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md); independent Azure inference traces remain unverified.
 
 ## Integration
 
@@ -21,4 +21,4 @@ The model **cannot** freely invent football commentary. Player names and tactica
 
 ## Deployment boundary
 
-The current `infra/azure/deploy.sh` does not configure Azure OpenAI credentials or deploy a model. Do not enable paid Azure AI or add secrets without explicit approval. For local smoke tests, run `pytest -q` in `apps/api`. Do not claim live Azure AI operation until it is separately verified.
+The legacy `infra/azure/deploy.sh` is not the current production update path. The deployed app is updated via GitHub Actions, private GHCR and Azure Container Apps; secrets are provisioned separately and must remain server-side. For local smoke tests, run `pytest -q` in `apps/api`. Do not present owner-observed API modes as independent Azure resource logs.

@@ -1,5 +1,8 @@
 # PR 3 — Evidence-grounded insights and Ask the Match
 
+> **Document status (October 25, 2026):** This file preserves historical planning, review, or test steps. Its older statements about future Azure deployment, unmerged features, or pending Foundry production tests are snapshots, **not current deployment status**. The deployed system and setup are described in [Architecture](ARCHITECTURE.md), [root README](../README.md), and [owner-observed production evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final demo was uploaded to https://youtu.be/-pfgaeGjSN8. A passed CI job does not independently verify all Azure services, WCAG, cost, or browser audio.
+
+
 ## New endpoint
 
 `POST /v1/matches/insights?persona=young|accessible|analyst` accepts the same validated synthetic match JSON as the replay endpoints.
@@ -17,7 +20,7 @@ All claims come from the server-side validated event stream. A goal's `impact` m
 
 ## What this PR does not do
 
-This PR does **not** introduce a free-form generative recap, Microsoft Foundry managed Agent Service, or UI wiring. The new endpoint is ready for the upcoming Broadcast Studio/AI Personalization UI PR. The model tool-selection integration is still not live-verified. No Azure resource or paid API call is created by this PR.
+This PR did **not** introduce a free-form generative recap or Microsoft Foundry managed Agent Service. **The Broadcast Studio and Ask the Match UI are now wired in the deployed application.** The owner supplied production API response evidence on October 25; independent Azure inference logs remain unverified. No Azure resource or paid API call is created by this PR.
 
 ## Review checklist
 

@@ -10,7 +10,7 @@ This adapter is **not** a deployed Microsoft Foundry Agent Service agent. It use
 - With valid model configuration and a valid tool selection, it returns `generation_mode=foundry_model_tool_call`, `selected_tool` and `evidence_event_ids`.
 - Invalid tool calls, invalid arguments, malformed model replies, network failures and timeouts fall back safely. No arbitrary tool URLs, dynamic code or model-provided match facts are executed.
 - The existing `/v1/matches/ask` endpoint is unchanged.
-- Tool calls are capped at **one per request** and model output is capped at 100 tokens, 8192 response bytes and 6 seconds network timeout. These limits are **not** a monetary spending cap.
+- Tool calls are capped at **one per request** and model output is capped at 400 completion tokens, 8192 response bytes and 6 seconds network timeout. These limits are **not** a monetary spending cap.
 
 ## Optional server-side configuration
 
@@ -18,8 +18,8 @@ This adapter is **not** a deployed Microsoft Foundry Agent Service agent. It use
 - `VYBE_FOUNDRY_MODEL_DEPLOYMENT`: approved model deployment name
 - `VYBE_FOUNDRY_MODEL_KEY`: secret; never commit, log or expose in browser
 
-These settings are **not** added to the Azure deployment script. No paid services are provisioned by this PR. Before live use, verify model compatibility with `tool_choice=required`, quota, price, Azure policy and deployment permissions. A real model call and managed Foundry Agent Service integration remain **unverified**.
+These settings are **not** added to the Azure deployment script. No paid services are provisioned by this PR. Before live use, verify model compatibility with `tool_choice=required`, quota, price, Azure policy and deployment permissions. Owner-observed production API output on October 25 reported a valid Foundry model tool selection; upstream Azure inference traces were not independently checked. Managed Foundry Agent Service is not implemented. See [evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
-## Next steps
+## Historical implementation notes
 
 PR 3 should integrate the agent response into Ask the Match and add a stronger evidence-grounded recap/insights contract. If the hackathon requires **managed Foundry Agent Service**, implement and validate that separately rather than describing this model tool-calling adapter as a managed agent.

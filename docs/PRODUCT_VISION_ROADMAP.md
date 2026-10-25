@@ -2,7 +2,7 @@
 
 > **For hackathon judges — proposed future work, not shipped functionality.**
 >
-> VYBE's current demo uses a **synthetic football match** and three fan experiences: Young Fan, Accessible Fan, and Analyst Fan. Its existing React/FastAPI architecture, deterministic match engine, and evidence-constrained Azure AI Foundry integration provide a foundation for expansion. Cloud-generated speech is being developed separately and must not be presented as live until verified.
+> VYBE's current demo uses a **synthetic football match** and three fan experiences: Young Fan, Accessible Fan, and Analyst Fan. Its existing React/FastAPI architecture, deterministic match engine, and evidence-constrained Azure AI Foundry integration provide a foundation for expansion. Azure AI Speech is implemented and deployed; the owner reports successful Evelyn Arabic production playback, but this is not a comprehensive device-level audio test.
 
 ## Vision
 

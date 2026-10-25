@@ -6,7 +6,7 @@
 - `apps/api/vybe/director_agent.py`: Azure OpenAI-compatible Chat Completions call selects one of three read-only match data tools or a fourth explicit decline tool. Valid data-tool responses report `generation_mode=foundry_model_tool_call`; model-selected declines report `model_declined=true` with deterministic text. This is **model tool calling**, **not** managed Microsoft Foundry Agent Service.
 - `apps/api/vybe/ai.py`: Azure OpenAI-compatible grounded goal narration. Valid responses report `generation_mode=azure_ai`.
 - Both integrations require a compatible Azure OpenAI resource endpoint ending in `.openai.azure.com`; arbitrary Foundry project endpoints are not supported by these adapters.
-- No real Foundry resource, model deployment, paid call or end-to-end Azure verification has been demonstrated. Do not claim otherwise.
+- **October 25 update:** The owner supplied production browser Network responses reporting `foundry_model_tool_call` and `azure_ai`. See [evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These do not independently corroborate upstream Azure inference traces, token billing or resource identity.
 
 ## Recommended low-cost design (subject to portal availability and owner approval)
 1. Use a Microsoft Foundry resource and a compatible **serverless Standard / Global Standard** small chat model supporting tool calls, such as `gpt-4.1-mini` if available to the subscription. Avoid provisioned throughput, dedicated GPU, managed hosted agents and paid tool sessions for this budget.
@@ -23,8 +23,8 @@
 - [ ] Separate explicit owner approval obtained before any Azure resource creation, paid inference or secret provisioning.
 - [ ] Read-only Azure inventory and preflight succeed; private GHCR remains private.
 - [ ] Approved Foundry model deployment is live and reachable from the Container App.
-- [ ] `/v1/matches/director/ask` returns `foundry_model_tool_call`, a permitted `selected_tool` and evidence IDs for a supported factual question.
-- [ ] A supported goal narration returns `azure_ai` with validated fact IDs; unsafe or unavailable model responses fall back deterministically.
+- [x] Owner-observed production `/v1/matches/director/ask` response reported `foundry_model_tool_call`, `get_key_moments` and evidence IDs (October 25).
+- [x] Owner-observed production goal narration reported `azure_ai` with validated fact IDs (October 25); real-outage fallback remains untested.
 - [ ] At least one live request is demonstrated without leaking secrets, plus an intentionally disconnected fallback test.
 - [ ] Live demo and documentation accurately distinguish Foundry **model integration** from managed **Agent Service**. If the judging rules explicitly require Agent Service, implement and test it separately.
 - [ ] Recheck spending daily and remove resources after judging with separate deletion approval.
@@ -41,7 +41,7 @@
 
 The API middleware now uses two **per-process, ASGI-peer-address** sliding-window
 limits: 240 requests/minute across match endpoints and 30 requests/minute
-shared by `/v1/matches/director/ask` and `/v1/matches/narrate/{event_id}`.
+shared by `/v1/matches/director/ask`, `/v1/matches/narrate/{event_id}` and `/v1/matches/speech`.
 The latter applies before a model call and also counts toward the overall 240/minute bucket, so model traffic can reduce the available replay capacity.
 `X-Forwarded-For` is deliberately ignored to avoid client-supplied spoofing.
 

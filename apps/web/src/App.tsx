@@ -318,7 +318,7 @@ export default function App() {
       if(target?.closest("button,input,select,textarea,a,[contenteditable]"))return;
       if(event.code==="Space"){event.preventDefault();if(audioEnabled){if(playing){pauseSpeech();}else if(audioPaused){resumeSpeech();}}setPlaying(v=>!v);}
       if(event.code==="ArrowRight"){event.preventDefault();setPlaying(false);if(audioEnabled){++speechGeneration.current;releaseCloudAudio();if ("speechSynthesis" in window) window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.min(demoMatch.events.length,v+1));}
-      if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);if(audioEnabled && "speechSynthesis" in window){window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.max(1,v-1));}
+      if(event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);if(audioEnabled){++speechGeneration.current;releaseCloudAudio();if ("speechSynthesis" in window) window.speechSynthesis.cancel();speechQueue.current=[];speechActive.current=false;setNarrating(false);setAudioPaused(false);}setStep(v=>Math.max(1,v-1));}
     };
     window.addEventListener("keydown",onKey);
     return ()=>window.removeEventListener("keydown",onKey);
