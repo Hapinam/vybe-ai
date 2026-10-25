@@ -76,7 +76,7 @@
 
 This document is an **evidence snapshot**, not the authoritative current release checklist. The responses below are preserved as observed on October 25 and should not be overwritten by subsequent tests; newer observations belong in a new dated evidence section/file. For current setup, see [the main README](../README.md), [judges' guide](JUDGES_TESTING_GUIDE.md) and [release plan](DELIVERY_PLAN.md).
 
-The demo video has since been exported and uploaded to YouTube (https://youtu.be/-pfgaeGjSN8), but YouTube playback is not independently checked by this evidence pack. Documentation updates are proposed in draft PR #107; they are not yet merged into `main`.
+The demo video has since been exported and uploaded to YouTube (https://youtu.be/-pfgaeGjSN8), but YouTube playback is not independently checked by this evidence pack. Documentation updates were merged into `main` via PR #107.
 
 ## Checklist at the time of the October 25 observation (historical)
 
@@ -87,7 +87,7 @@ The demo video has since been exported and uploaded to YouTube (https://youtu.be
 - [ ] Review Azure Speech tier, spend, and budget alerts.
 - [ ] Confirm iPhone audio if required for judging.
 - [x] Final demo video was produced and uploaded to YouTube; processing/playback verification was still pending when last reported.
-- [x] Documentation updates proposed in draft PR #107 (not yet merged to `main`).
+- [x] Documentation updates merged into `main` via PR #107.
 - [ ] Freeze judge-facing production after final approval.
 
-**Release control:** Originally prepared as a local observation pack, this document is now committed on a documentation-only branch in draft PR #107. It has not been merged into `main` and does not itself prove a new production deployment.
+**Release control:** Originally prepared as a local observation pack, this document was committed with documentation-only PR #107, which is now merged into `main`. It does not itself prove a new production deployment.
