@@ -1,8 +1,8 @@
-# VYBE — Final hackathon demo storyboard (draft, pending live Azure verification)
+# VYBE — Final hackathon demo storyboard (working plan)
 
-**Target:** public English video under 2 minutes; final capture must show the **real deployed VYBE app**, not a mock Foundry response. **Existing 53-second video:** https://youtu.be/c717qul116M — historical preview, not live Foundry evidence.
+**Final produced demo:** 75-second narrated MP4 uploaded by the owner to https://youtu.be/-pfgaeGjSN8. The storyboard below is the earlier 110-second planning script, **not** the running order of the final video. The 53-second preview at https://youtu.be/c717qul116M is historical.
 
-## 110-second storyboard
+## Historical 110-second planning storyboard (superseded)
 
 | Time | Screen | Suggested voice-over |
 | --- | --- | --- |
@@ -16,7 +16,7 @@
 
 ## Recording and proof requirements
 
-1. After separately approved Azure deployment, open the actual public HTTPS URL without login. Check /health and real UI.
+1. Open the deployed public HTTPS URL without login. Check `/health` and real UI; the October 24 main deployment CI passed.
 2. Show one supported Ask the Match question (e.g. “Who scored?”) and independently capture the **actual** backend response with `generation_mode=foundry_model_tool_call`, `selected_tool`, and `evidence_event_ids`. The UI may show a user-friendly model label; do not paste developer tokens or API keys.
 3. Verify one grounded goal narration response has `generation_mode=azure_ai`; display it only if genuinely returned from the live model.
 4. Capture a separate fallback test for evidence; **do not** portray deterministic mode as live Foundry.
@@ -28,9 +28,9 @@
 ## Current status
 
 - [x] Script/storyboard written.
-- [ ] Live Microsoft Foundry model and Container Apps verified.
-- [ ] New browser capture and English narration produced.
-- [ ] Final video exported, uploaded and URL verified.
+- [x] Azure Container Apps deployment health passed; owner supplied October 25 production API responses reporting Foundry tool calling and Azure AI narration. See [evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). Independent Azure inference logs remain pending.
+- [x] New browser capture and English narration assets prepared by the owner; final synchronization/export still needs acceptance.
+- [x] Final video exported and uploaded: https://youtu.be/-pfgaeGjSN8 (owner-reported; public playback not independently tested).
 - [ ] README, judges guide and hackathon project page updated with verified live URL and video.
 - [ ] Full judging and submission acceptance pass completed.
 

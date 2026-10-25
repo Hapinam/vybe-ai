@@ -1,12 +1,12 @@
 # VYBE — Judges' Testing Guide
 
-**Feel the Game. Your Way.**
+**Every Fan Belongs.**
 
 VYBE presents one fictional football match through three personalized experiences. This guide takes approximately **3–5 minutes**.
 
-- **Demo video (53 seconds):** https://youtu.be/c717qul116M
+- **Final demo video (75 seconds; owner-uploaded):** https://youtu.be/-pfgaeGjSN8
 - **Source code:** https://github.com/Hapinam/vybe-ai
-- **Live application:** https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — GitHub Actions deployment and revision health checks succeeded; interactive speech and Foundry behavior still require manual validation.
+- **Live application:** https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — GitHub Actions deployment and revision health checks succeeded; owner-observed Foundry-related production responses are documented in [the 25 October evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## 1. Young Fan (about 45 seconds)
 
@@ -27,7 +27,7 @@ VYBE presents one fictional football match through three personalized experience
 
 **Look for:** user-controlled presentation, multilingual event text, and keyboard-friendly navigation.
 
-**Important:** Spoken commentary first requests server-side Azure Speech and falls back to installed browser/OS voices if unavailable. The Arabic VYBE pronunciation is under live audio validation; do not claim it is fixed from automated tests alone. Arabic/Czech browser voices may not be available; captions remain usable. Captions are synchronized to events, not word-level speech transcription. This prototype has not undergone a full WCAG audit.
+**Important:** Spoken commentary first requests server-side Azure Speech and falls back to installed browser/OS voices if unavailable. The owner reported production Evelyn Arabic speech acceptance on October 25; this is a manual observation, not automated cross-device certification. Arabic/Czech browser voices may not be available; captions remain usable. Captions are synchronized to events, not word-level speech transcription. This prototype has not undergone a full WCAG audit.
 
 ## 3. Analyst Fan (about 60 seconds)
 
@@ -47,7 +47,7 @@ VYBE presents one fictional football match through three personalized experience
 2. Inspect the returned **evidence event IDs**.
 3. Select **Why did momentum change?** to see the explicit limits of the recorded evidence.
 
-**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. The code can use a Foundry-hosted Azure OpenAI-compatible model to select one of three allowlisted read-only data tools or a fourth explicit decline tool; without verified live configuration it uses deterministic event queries. A managed Foundry Agent Service agent is **not** implemented. It asks about the complete synthetic fixture, independent of playback position.
+**Look for:** a useful, interactive question-and-answer panel that declines unsupported claims. The code can use a Foundry-hosted Azure OpenAI-compatible model to select one of three allowlisted read-only data tools or a fourth explicit decline tool; when a compatible model is unavailable or validation fails it uses deterministic event queries. A managed Foundry Agent Service agent is **not** implemented. It asks about the complete synthetic fixture, independent of playback position.
 
 ## 5. Technical approach (about 30 seconds)
 
@@ -59,15 +59,15 @@ The challenge pipeline is **Ingest → Interpret → Explain → Render → Pers
 - Preferences persist in the current browser when storage is permitted; blocked storage does not prevent use.
 - Docker and Azure Container Apps deployment infrastructure are active; the latest main image passed the deployment workflow's health and traffic-switch checks.
 
-**Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but live Foundry inference remains unverified until tested. Deterministic fallback remains the source of safe answers during model failure. Successful Container Apps deployment does not establish live Foundry behavior.
+**Microsoft Foundry is required for the final live demo.** The repository has bounded model adapters for narration and tool selection, but owner-observed production responses reported Foundry tool selection and Azure AI narration on October 25; independent Azure-side inference logs have not been inspected. Deterministic fallback remains the source of safe answers during model failure. Successful Container Apps deployment does not establish live Foundry behavior.
 
-## 6. Foundry live proof (required before submission)
+## 6. Foundry production evidence and remaining checks
 
 1. In the deployed app, ask a supported factual question and verify the backend reports `generation_mode=foundry_model_tool_call`, an allowlisted `selected_tool`, and event evidence IDs.
 2. Trigger a supported goal narration and verify `generation_mode=azure_ai` with validated facts.
 3. Ask an off-topic question and verify `model_declined=true` when the live model selects the decline tool (distinct from unconfigured/failed model access). Confirm no API keys or credentials are exposed in the browser.
 4. Test the fallback separately; it must not be represented as live Foundry.
-5. **Pending:** record live Foundry evidence from the deployed public HTTPS app after owner-approved inference.
+5. **Observed:** owner-supplied production Network responses for tool selection and goal narration are preserved in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). **Pending:** independent Azure-side inference corroboration and wider fallback/device tests.
 
 See [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).
 
@@ -77,7 +77,7 @@ The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_A
 
 - GitHub Actions runs backend, Playwright, frontend/container and dependency checks; see the latest workflow results for current status.
 - **24/24** manual end-to-end acceptance checks were previously recorded; these do not cover subsequent changes.
-- GitHub Actions confirmed a healthy Container Apps revision and successful traffic switch; manual browser speech and Foundry verification remain pending.
+- GitHub Actions confirmed a healthy Container Apps revision and successful traffic switch; owner reports Evelyn Arabic speech acceptance and supplied production API response evidence; independent Azure logs and full device coverage remain pending.
 
 These checks are not a production security certification or a full accessibility audit.
 

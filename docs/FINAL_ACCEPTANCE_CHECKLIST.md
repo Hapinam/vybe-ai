@@ -1,5 +1,8 @@
 # VYBE — Final Acceptance Checklist
 
+> **Document status (October 25, 2026):** This document preserves historical checks and planning. Earlier references to future deployment or unverified production tests are historical, not current release status. The current deployment is in [Architecture](ARCHITECTURE.md); owner-observed production responses are in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final video was uploaded to https://youtu.be/-pfgaeGjSN8. No CI check alone certifies Azure inference, cost, WCAG, or all devices.
+
+
 This checklist records historical targeted checks plus the **completed 24/24 manual E2E acceptance run** and later local validation. The older unchecked item-level template below remains a reference for regression coverage, **not a claim that those items failed or were individually re-run on this audit date**. Passing CI and manual acceptance do not establish WCAG compliance or production security.
 
 ## Verified progress (October 12, 2026)
@@ -113,7 +116,7 @@ This checklist records historical targeted checks plus the **completed 24/24 man
 - [x] Frontend production dependency audit: 0 known vulnerabilities.
 - [x] Python dependency audit: no known vulnerabilities in audited external packages; local unpublished package skipped.
 - [x] Frontend API requests use a 10-second timeout and provide retry controls for replay and commentary failures.
-- [ ] Live Azure OpenAI integration and deployed Container Apps validation remain pending.
+- [x] Azure Container Apps deployment health passed October 24; owner-supplied October 25 API responses reported Foundry tool selection and Azure AI narration. Independent Azure inference logs remain unverified.
 - [ ] Final source-code security review, cross-browser accessibility audit, and production readiness sign-off remain pending.
 
 These checks establish local pre-deployment readiness only. They do not establish WCAG certification, a comprehensive security audit, or successful live Azure operation.
@@ -123,11 +126,11 @@ These checks establish local pre-deployment readiness only. They do not establis
 - [ ] Confirm Foundry deployment and supported model tool-calling capability; capture actual model, region and deployment name without exposing secrets.
 - [ ] Confirm explicit owner approval and combined Azure forecast remain within 500 CZK **total** through judging.
 - [ ] Confirm private GHCR package, server-side secret references and public HTTPS Container Apps endpoint.
-- [ ] Verify a real supported `/v1/matches/director/ask` request returns `generation_mode=foundry_model_tool_call`, allowlisted `selected_tool`, and valid `evidence_event_ids`.
+- [x] Owner-observed production response returned `generation_mode=foundry_model_tool_call`, `selected_tool=get_key_moments` and valid evidence IDs (October 25).
 - [ ] Verify a real goal narration request returns `generation_mode=azure_ai` with only validated fact IDs.
 - [ ] Verify deliberate Foundry outage produces deterministic fallback; do not mislabel it as live AI.
 - [ ] Re-run continuous spoken narration: persona/language switch must finish current utterance before the next event.
-- [ ] Re-record or validate the final English video (under 2 minutes) from the verified deployed app; existing 53-second video is historical and does not prove Foundry.
+- [x] Final 75-second narrated demo produced and uploaded to https://youtu.be/-pfgaeGjSN8 (owner-reported; public playback not independently checked).
 - [ ] Verify judge access without sign-in, and link the actual tested URL in README and judges' guide.
 - [ ] Confirm submission deadline/timezone from the official portal and capture successful submission confirmation.
 

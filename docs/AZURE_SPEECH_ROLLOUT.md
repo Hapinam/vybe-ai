@@ -1,6 +1,6 @@
 # Azure Speech rollout for VYBE
 
-**Status (2026-10-24):** Backend and frontend integration are implemented on draft PR #88. All nine GitHub Actions checks passed on commit `cca46e5`, including API, web build, E2E, container, security, and full-stack smoke. **Azure Speech itself has not been provisioned or tested against a real Speech resource; no deployment or merge has occurred.**
+**Status update (2026-10-25):** Azure Speech endpoint and frontend playback are in the deployed code; the owner reports production acceptance of Evelyn Arabic speech. This is an owner-observed manual result, not an independent Azure resource log or iPhone audio certification. See [production evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). Earlier PR #88 checks described below are historical.
 
 ## Architecture
 
@@ -40,8 +40,9 @@ No keys or resource deployment templates should be committed to GitHub.
 - [x] Nine GitHub Actions checks successful on commit `cca46e5`
 - [ ] Verify Speech F0 eligibility, quota, and expected charges in the target Azure subscription
 - [ ] Provision Speech only after explicit cost review; store key as a Container Apps secret
-- [ ] Validate real Azure TTS output and iPhone behavior, including Arabic minute pronunciation
-- [ ] Confirm new image provenance and deploy an explicitly approved revision with rollback plan
-- [ ] Run live end-to-end checks against the public URL before calling the feature released
+- [x] Owner reports production Evelyn Arabic speech acceptance (October 25); independent device/audio evidence remains limited
+- [ ] Validate iPhone behavior and cross-device Arabic minute pronunciation
+- [x] Current main image was published and deployed by successful GitHub Actions workflow on October 24; retain rollback checks for future releases
+- [x] Owner reports production Speech acceptance; wider end-to-end and iPhone tests remain pending
 
 **Deployment caution:** The active `.github/workflows/deploy-azure-containerapp.yml` updates the existing `vybe-app` using a healthy new revision and switches traffic after a smoke test. Merging into `main` can trigger this deployment chain automatically. Preserve current Foundry/Speech settings, secrets, scaling, and rollback capability.

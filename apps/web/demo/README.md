@@ -1,4 +1,4 @@
-# VYBE automated demo recorder (draft)
+# VYBE automated browser capture utility (not the final video)
 
 This records the actual browser interface using Playwright's built-in video capture. It does **not** fabricate Azure AI behavior or mock backend responses.
 
@@ -14,7 +14,7 @@ From Windows CMD in `C:\Users\hapin\Codes\vybe-ai\apps\web`:
 npx.cmd playwright test --config=demo/playwright.demo.config.ts
 ```
 
-The raw **WebM** browser recording is saved in `apps/web/demo-output/` under the test's output directory (look for `video.webm`). The script captures roughly 26–30 seconds of the live application and validates that the backend is responding. It does **not** capture speech/system audio. A narrated MP4 under two minutes requires a separate voice-over and editing/export pass; this is not the finished submission video.
+The raw **WebM** browser recording is saved in `apps/web/demo-output/` under the test's output directory (look for `video.webm`). The script captures roughly 26–30 seconds of the live application and validates that the backend is responding. It does **not** capture speech/system audio. This utility produces raw footage only; the separately edited final narrated MP4 was produced and uploaded by the owner.
 
 ## Draft narration / storyboard (English)
 
@@ -35,4 +35,4 @@ The raw **WebM** browser recording is saved in `apps/web/demo-output/` under the
 
 ## Final submission video
 
-Follow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The current 53-second published video is an earlier demo, not proof of a deployed Foundry model. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.
+Follow [the final demo storyboard](../../../docs/FINAL_DEMO_STORYBOARD.md). The 53-second video is an earlier preview. The final 75-second narrated demo was uploaded by the owner to https://youtu.be/-pfgaeGjSN8. This recording utility is not the source of the final edited soundtrack and does not itself prove upstream Azure model execution. Do not replace it with a fabricated cloud demonstration. After Azure validation, capture the real interface, evidence-backed Foundry tool call, and required narration mode; export an English video under two minutes.

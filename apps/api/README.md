@@ -22,10 +22,13 @@ Open http://127.0.0.1:8000/docs for the OpenAPI explorer.
 - `POST /v1/matches/explain/{event_id}?persona=young|accessible|analyst`: grounded goal explanation.
 - `POST /v1/matches/narrate/{event_id}?persona=young|accessible|analyst`: narration with optional Azure-assisted selection of strictly verified fact segments, with deterministic fallback.
 
-- `POST /v1/matches/ask`: deterministic, evidence-backed questions about the supplied synthetic match.
+- `POST /v1/matches/ask`: legacy deterministic, evidence-backed questions about the supplied synthetic match.
+- `POST /v1/matches/director/ask`: Ask the Match model-directed allowlisted tool selection with deterministic fallback.
+- `POST /v1/matches/insights`: grounded persona-specific match insights.
+- `POST /v1/matches/speech`: Azure AI Speech MP3 when configured; browser speech is a frontend fallback.
 
-All `/v1/matches/*` routes share a per-process, peer-IP limit of 60 requests per minute and a 256 KiB request-body limit. The guard is not a distributed quota.
+All `/v1/matches/*` routes share a per-process ASGI-peer limit of **240 requests/minute** and a **256 KiB** request-body limit. `/v1/matches/director/ask`, `/v1/matches/narrate/*` and `/v1/matches/speech` additionally share a **30 requests/minute** bucket. These are not distributed per-user quotas or cost caps.
 
 POST endpoints take a synthetic match definition as JSON. Do not use real match claims or disclose Azure secrets in code. The deterministic event engine remains the source of truth for scores and counts.
 
-See [project README](../../README.md) for frontend setup, personas and known limitations.
+For optional model configuration see [Foundry launch notes](../../docs/FOUNDRY_REQUIRED_LAUNCH.md); for owner-observed production evidence see [October 25 evidence pack](../../docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). See [project README](../../README.md) for frontend setup, personas and known limitations.

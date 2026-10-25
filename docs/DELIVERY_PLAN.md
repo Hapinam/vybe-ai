@@ -1,5 +1,8 @@
 # VYBE — Delivery Plan (updated 18 October 2026)
 
+> **Document status (October 25, 2026):** This document preserves historical checks and planning. Earlier references to future deployment or unverified production tests are historical, not current release status. The current deployment is in [Architecture](ARCHITECTURE.md); owner-observed production responses are in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final video was uploaded to https://youtu.be/-pfgaeGjSN8. No CI check alone certifies Azure inference, cost, WCAG, or all devices.
+
+
 **Project:** VYBE — Every Fan Belongs · *Feel the Game. Your Way.*  
 **Challenge:** Microsoft × Premier League Inside the Game — Synthetic Match Insights Engine.  
 **Official submission target:** 27 October 2026 (portal lists 11:59 PM Pacific in the earlier plan; reverify on the event portal).  
@@ -19,9 +22,9 @@
 ## Current evidence (as of 18 October)
 - Main includes PR #72: continuous event narration and persona/language handoff; automated CI passed and user confirmed local experience.
 - Main includes PR #73: required Foundry launch gate and acceptance checklist.
-- Container image and deployment script exist, but **no live Azure Container Apps deployment or Foundry model call is verified**.
+- Historical October 18 status: deployment not yet verified. October 24 CI subsequently deployed to Azure; October 25 owner-observed Foundry-related production responses are preserved in the evidence pack.
 - Existing `apps/api/vybe/director_agent.py` selects one read-only tool via Azure OpenAI-compatible chat completions; `apps/api/vybe/ai.py` selects verified narration facts. Both require a compatible endpoint, deployment and secret; neither is proof of managed Agent Service.
-- Demo recording (approximately 53 seconds) was prepared earlier; re-record or validate against the final Azure build before submission.
+- The historical 53-second preview was superseded by the 75-second narrated demo, uploaded to https://youtu.be/-pfgaeGjSN8.
 - Previously completed local QA does not substitute for a full live end-to-end acceptance pass.
 
 ## Milestones

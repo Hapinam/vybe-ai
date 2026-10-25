@@ -1,6 +1,6 @@
 # VYBE — Product Vision
 
-**Tagline:** Feel the Game. Your Way.
+**Tagline:** Every Fan Belongs.
 
 ## Mission
 Make football understandable, engaging, and accessible to fans of different ages, abilities, languages, and levels of expertise.
@@ -14,7 +14,7 @@ One synthetic match event produces consistent, grounded narratives tailored to d
 ## Initial personas
 1. **Young Fan:** friendly explanations without jargon or patronizing language.
 2. **Accessible Commentary:** clear, structured, screen-reader-friendly updates with optional text-to-speech.
-3. **Analyst:** data-backed tactical interpretations, with evidence and uncertainty.
+3. **Analyst:** recorded-event insights with evidence and uncertainty; no unsupported tactical interpretation.
 
 ## Trust and inclusion principles
 - All match events are synthetic; never imply real live Premier League data.

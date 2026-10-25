@@ -1,34 +1,58 @@
-# VYBE — Technical Architecture (MVP)
+# VYBE — Deployed Technical Architecture (October 2026)
+
+VYBE serves **one fictional match** to three browser personas: Young Fan, Accessible Fan and Analyst Fan. Match state, scores and evidence IDs come from a deterministic Python engine, not the language model.
+
+## Current deployed system
 
 ```mermaid
-flowchart LR
-  A[Synthetic Event Generator] --> B[FastAPI Ingestion]
-  B --> C[Deterministic Match State]
-  C --> D[Insight Rules and Evidence]
-  D --> E[AI Narrative Adapter]
-  E --> F[Persona and Language Layer]
-  F --> G[React Live Fan Experience]
-  C --> G
+flowchart TD
+  U["Fan browser — Young / Accessible / Analyst"] --> UI["React + TypeScript web UI"]
+  UI -->|"HTTPS /v1 and /health"| ACA["Azure Container Apps: vybe-app"]
+  ACA -->|"Single Docker image: static web + API"| API["FastAPI / Uvicorn"]
+  API --> ENGINE["Deterministic replay and insights"]
+  ENGINE --> FIXTURE["Bundled fictional match events"]
+  API --> DIRECTOR["Ask the Match: bounded read-only tool selection"]
+  API --> NARR["Grounded goal narration"]
+  DIRECTOR -->|"Server-side Azure OpenAI-compatible API"| FOUNDRY["Microsoft Foundry-hosted model"]
+  NARR -->|"Server-side Azure OpenAI-compatible API"| FOUNDRY
+  DIRECTOR --> FALLBACK["Deterministic fallback"]
+  NARR --> FALLBACK
+  API --> SPEECH["Azure AI Speech: MP3 synthesis"]
+  SPEECH -->|"Audio response"| UI
+  UI --> BROWSER["Browser SpeechSynthesis fallback"]
+  UI --> PREFS["Browser localStorage preferences"]
 ```
 
-## Design principles
-- **Facts first:** deterministic state computes score, possession proxies, shots, and event sequences.
-- **Narratives second:** the AI layer receives only validated structured facts, evidence, and persona guidance.
-- **Graceful fallback:** templates produce usable narratives if cloud AI is unavailable.
-- **Streamable:** start with polling or Server-Sent Events; add messaging services only if load requires them.
-- **Cloud-native:** containerized Python FastAPI API and React TypeScript UI; deploy to Azure Container Apps.
-- **Observable:** structured logs, correlation IDs, latency and error metrics; Azure Monitor / Application Insights.
-- **Secure:** no secrets in git; environment configuration and least-privilege Azure access.
+The same container serves the built frontend and FastAPI; there is no separate production Vite server. The frontend makes relative API requests. The Docker image uses a Node build stage and a Python 3.11 runtime with a non-root user.
 
-## Agentic roadmap
-Introduce specialized agents for event interpretation, narrative composition, and factual verification. Use Microsoft Foundry when the deterministic MVP is working; measure accuracy and latency before adding more orchestration.
+## What each component actually does
 
-## Initial repository layout
-- `apps/api/` — ingestion, match state, insight generation, tests
-- `apps/web/` — accessible live fan interface
-- `data/` — synthetic match fixtures
-- `infra/` — Azure deployment and Terraform
-- `docs/` — product, architecture, evaluation and demo plan
+| Component | Implementation | Evidence and limits |
+| --- | --- | --- |
+| Frontend | React, TypeScript, Vite; three personas; English, Arabic and Czech UI | Accessible preferences stored locally, not synchronized to a cloud account |
+| Replay | FastAPI + ordered synthetic events | Source of truth for 2–2 score, shots, passes and evidence IDs |
+| Ask the Match | `POST /v1/matches/director/ask` | Model selects an allowlisted read-only data tool; validated output or deterministic fallback |
+| Goal narration | `POST /v1/matches/narrate/{event_id}` | Model may select exact verified fact segments; invalid output falls back |
+| Speech | `POST /v1/matches/speech` | Server-side Azure AI Speech MP3 with browser voice fallback; availability depends on configuration |
+| Deployment | Private GHCR image tagged by commit SHA, deployed to existing Azure Container App | Deployment workflow checks revision health and `/health` before shifting traffic |
 
-## Out of scope for first MVP
-Real match feeds, copyrighted broadcast footage, automated video recognition, unsupported predictions, and unnecessary Kubernetes complexity.
+**AI boundary:** Microsoft Foundry-hosted Azure OpenAI-compatible model calls are used; this is **not** a managed Foundry Agent Service agent. The model is not authoritative for scores, player facts or tactical causation. Captions and translations are based on synthetic event templates; they are not AI-generated live translation or speech-to-text.
+
+## Production evidence
+
+On **25 October 2026**, the application owner copied two production browser Network responses: Ask the Match reported `generation_mode=foundry_model_tool_call` with `selected_tool=get_key_moments` and evidence IDs; goal narration reported `generation_mode=azure_ai` and validated fact IDs. See [the full evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md) for exact payloads and provenance. These observations do **not** independently establish upstream Azure inference traces, model billing, or all-browser acceptance.
+
+## Local and cloud execution
+
+- **Local:** Start FastAPI on port 8000, then Vite on 5173. The Vite development proxy forwards `/v1` and `/health` to FastAPI. See [root README](../README.md).
+- **Production:** GitHub Actions verifies `main`, publishes the SHA-tagged image to private GHCR, updates the existing `vybe-app` revision, tests its health endpoint, and shifts traffic. See [Azure deployment README](../infra/azure/README.md).
+- **Configuration:** Foundry tool selection uses `VYBE_FOUNDRY_MODEL_*`; goal narration uses `VYBE_AZURE_OPENAI_*`. Azure Speech is separately configured on the server. Never expose credentials to the browser or commit them.
+- **Rollback and cost:** Preserve the prior Container Apps revision and existing secrets. Budgets and in-process rate limits are **not** hard spending caps. The legacy Azure provisioning script is not the production update path.
+
+## Safety and scope
+
+No real Premier League match feed, broadcast footage, live ingestion, event generator service, queue, Terraform-managed infrastructure, or managed agent orchestration is claimed. The analytics show weighted recorded event activity, not xG, possession or tactical inference. The API rate guard is in-process and peer-based, not a distributed per-user limit.
+
+## Future possibilities (not deployed)
+
+Streaming ingestion, richer telemetry, distributed rate limiting, multilingual expansion and specialized agents are roadmap ideas. See [product roadmap](PRODUCT_VISION_ROADMAP.md); do not confuse these with the current deployment.

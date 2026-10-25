@@ -26,7 +26,7 @@ Open the localhost URL printed by Vite (normally http://localhost:5173). The dev
 ## Personas
 
 - **Young Fan:** goal celebrations, football vocabulary, interactive goal quiz, friendly event explanations.
-- **Accessible:** optional browser speech synthesis, voice speeds, expanded shot/pass descriptions, contrast and font controls, keyboard shortcuts.
+- **Accessible:** server-side Azure Speech with browser fallback, voice speeds, expanded shot/pass descriptions, contrast and font controls, keyboard shortcuts.
 - **Analyst:** recorded event totals, half comparisons, weighted 15-minute momentum and goal-based turning points.
 
 Keyboard shortcuts in Accessible mode, outside focused interactive controls: **Space** play/pause; **Left/Right** previous/next event. **Tab** navigates interactive elements. Voice availability varies by browser and operating system.
@@ -64,4 +64,4 @@ In Windows **CMD**, **Git Bash**, **Linux**, and **macOS**, use `npm` and `npx` 
 
 ## Important caveats
 
-The match is synthetic. Momentum is weighted event activity, not xG or possession. Azure integration is optional and is not proof of a live deployed service. The final browser and accessibility acceptance test is still pending.
+The match is synthetic. Momentum is weighted event activity, not xG or possession. The app is deployed to Azure Container Apps. The owner supplied October 25 production responses reporting Foundry tool selection and Azure AI narration, and reported Evelyn Arabic speech acceptance. These observations are not independent Azure inference logs or a full accessibility certification. See [evidence](../../docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
