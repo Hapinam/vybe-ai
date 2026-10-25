@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740" role="img" aria-label="VYBE — Application architecture">
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#667b98"/></marker></defs>
+<rect width="1200" height="740" fill="#f8fafd"/>
+<text x="50" y="62" font-family="Arial,sans-serif" font-size="31" font-weight="bold" fill="#20324b">VYBE — Application architecture</text>
+<text x="50" y="93" font-family="Arial,sans-serif" font-size="17" fill="#506078">One fictional match. Three fan experiences. One deployed web application.</text>
+<path d="M295,222.5 L390,222.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<path d="M690,222.5 L795,222.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<path d="M962.5,270 L962.5,360" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<path d="M795,222.5 L690,407.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<path d="M795,222.5 L690,592.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<path d="M962.5,270 L962.5,545" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
+<rect x="50" y="175" width="245" height="95" rx="14" fill="#e7f3ff" stroke="#71849c" stroke-width="1.4"/>
+<text x="172.5" y="216.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">Fan browser</text>
+<text x="172.5" y="240.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">Young · Accessible · Analyst</text>
+<rect x="390" y="175" width="300" height="95" rx="14" fill="#e7f3ff" stroke="#71849c" stroke-width="1.4"/>
+<text x="540" y="216.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">React + TypeScript</text>
+<text x="540" y="240.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">User interface</text>
+<rect x="795" y="175" width="335" height="95" rx="14" fill="#e7f3ff" stroke="#71849c" stroke-width="1.4"/>
+<text x="962.5" y="216.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">FastAPI on Azure</text>
+<text x="962.5" y="240.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">Container Apps</text>
+<rect x="795" y="360" width="335" height="95" rx="14" fill="#eeeaff" stroke="#71849c" stroke-width="1.4"/>
+<text x="962.5" y="401.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">Deterministic replay</text>
+<text x="962.5" y="425.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">Synthetic match facts</text>
+<rect x="390" y="360" width="300" height="95" rx="14" fill="#fff1e4" stroke="#71849c" stroke-width="1.4"/>
+<text x="540" y="401.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">Microsoft Foundry</text>
+<text x="540" y="425.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">Grounded AI responses</text>
+<rect x="390" y="545" width="300" height="95" rx="14" fill="#fff1e4" stroke="#71849c" stroke-width="1.4"/>
+<text x="540" y="586.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">Azure AI Speech</text>
+<text x="540" y="610.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">MP3 narration</text>
+<rect x="795" y="545" width="335" height="95" rx="14" fill="#eeeaff" stroke="#71849c" stroke-width="1.4"/>
+<text x="962.5" y="586.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#20324b">Deterministic fallback</text>
+<text x="962.5" y="610.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#20324b">Verified event evidence</text>
+</svg>
