@@ -18,15 +18,12 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 - **[Future vision for judges: multilingual expansion, caching, personalization, event processing and reliability](docs/PRODUCT_VISION_ROADMAP.md)** — proposed capabilities only; not implemented in the current demo.
 
-### Deployment preparation
+### Demo links
 
-- [Mandatory Foundry launch and live proof gates](docs/FOUNDRY_REQUIRED_LAUNCH.md)
-- [Updated delivery milestones](docs/DELIVERY_PLAN.md)
-- [Final demo storyboard and evidence checklist](docs/FINAL_DEMO_STORYBOARD.md)
-
-- [Azure cost and security preflight](docs/AZURE_DEPLOYMENT_PREFLIGHT.md)
-- [Azure launch runbook](docs/AZURE_LAUNCH_RUNBOOK.md)
-- [Validation evidence and limitations](docs/FINAL_ACCEPTANCE_CHECKLIST.md)
+- [Live application](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)
+- [Final 75-second demo](https://youtu.be/-pfgaeGjSN8)
+- [Judges' guide](docs/JUDGES_TESTING_GUIDE.md)
+- [Deployed architecture](docs/ARCHITECTURE.md)
 
 ## Experiences
 
@@ -49,23 +46,9 @@ The Vite development server proxies `/v1` and `/health` to the FastAPI service o
 
 ## Architecture diagram
 
-See also the [deployed architecture document](docs/ARCHITECTURE.md). This diagram summarizes the application data flows; the React build and FastAPI run in the same Azure Container App image. The owner-observed production API evidence is linked below; Azure resource-side inference traces remain unverified.
+See also the [deployed architecture document](docs/ARCHITECTURE.md). This diagram summarizes the application data flows; the React build and FastAPI run in the same Azure Container App image. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
 
-```mermaid
-flowchart TD
-    FAN["Fan in browser"] --> WEB["React / TypeScript / Vite — Young, Accessible, Analyst"]
-    WEB -->|"HTTP /v1"| API["FastAPI backend"]
-    WEB --> SPEECH["Optional browser speech synthesis"]
-    WEB --> PREFS["Browser localStorage preferences"]
-    API --> ENGINE["Deterministic replay engine"]
-    ENGINE --> EVENTS["Synthetic match events"]
-    API --> NARR["Event-grounded narration"]
-    NARR --> FALLBACK["Deterministic fallback"]
-    NARR -. "Validated model-selected fact segments" .-> AZURE["Microsoft Foundry-hosted Azure OpenAI-compatible model"]
-    API -. "Bounded read-only tool selection" .-> AZURE
-    API --> TTS["Azure AI Speech synthesis"]
-    TTS -. "MP3 when available" .-> WEB
-```
+![VYBE application architecture](docs/images/README_ARCHITECTURE.svg)
 
 **Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. Azure Container Apps is deployed. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
@@ -96,39 +79,9 @@ npm.cmd run dev
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Validation (automated and manual checks)
+## Existing implementation evidence
 
-```powershell
-cd apps/web
-npm.cmd run build
-```
-
-```powershell
-cd apps/api
-.\.venv\Scripts\python.exe -m pytest tests -q
-```
-
-**Windows PowerShell vs Command Prompt (CMD):** PowerShell may block the `npm.ps1` or `npx.ps1` script with an execution-policy error. Use the `.cmd` launchers instead; no execution-policy change or administrator access is needed. In **CMD**, **Git Bash**, and **Linux/macOS** shells, use the normal `npm` and `npx` commands (on Git Bash, `.cmd` is generally unnecessary). The commands below assume you are inside `apps/web`:
-
-```powershell
-# Windows PowerShell
-npm.cmd ci
-npm.cmd run dev
-npm.cmd run build
-npx.cmd playwright test
-```
-
-```sh
-# Windows CMD, Git Bash, Linux or macOS
-npm ci
-npm run dev
-npm run build
-npx playwright test
-```
-
-Playwright browser setup (first time): `npx.cmd playwright install chromium` in PowerShell, or `npx playwright install chromium` in other shells. The Playwright configuration starts the Vite dev server automatically during tests. Browser speech is mocked in the automated full-time test; audible speech still requires manual browser/OS verification.
-
-**Validation:** CI runs backend tests, browser tests, builds and dependency checks; consult GitHub Actions for current results. Earlier manual acceptance checks recorded 24/24 passes; these are historical, not a substitute for deployment smoke tests. Current PR checks must be reviewed separately. Azure Container Apps deployment and automated health checks succeeded. On October 25 the owner supplied production API responses reporting Foundry tool calling and Azure AI narration and reported Evelyn Arabic speech acceptance. Independent Azure inference logs, full WCAG audit and comprehensive security certification remain unverified. See the [full validation history and scope](docs/FINAL_ACCEPTANCE_CHECKLIST.md).
+The project includes development checks and historical validation results. Production Foundry and speech observations are documented in the [October 25 evidence summary](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These are records of completed work, not extra submission requirements.
 
 ## New fan experiences
 
@@ -148,11 +101,11 @@ In Accessible mode, **Tab** navigates controls. When focus is not inside an inte
 
 ## Deploying to Azure
 
-The current release path is **GitHub Actions quality gate → private GHCR SHA-tagged image → existing Azure Container App `vybe-app`**. The container serves both the built React UI and FastAPI on port 8000. Merging into `main` can trigger a deployment, so review environment approvals, workflow status and costs before merging. **Do not use the legacy `infra/azure/deploy.sh` to update the running app.** See [Azure deployment README](infra/azure/README.md) and [GHCR deployment](docs/GHCR_DEPLOYMENT.md).
+The current release path is **GitHub Actions quality gate → private GHCR SHA-tagged image → existing Azure Container App `vybe-app`**. The container serves both the built React UI and FastAPI on port 8000. Merging into `main` can trigger a production deployment; do not merge during judging without owner approval. **Do not use the legacy `infra/azure/deploy.sh` to update the running app.** See [Azure deployment README](infra/azure/README.md) and [GHCR deployment](docs/GHCR_DEPLOYMENT.md).
 
-## Azure readiness
+## Azure integration
 
-The application can run locally without paid Azure resources. **Microsoft Foundry integration is mandatory for the final hackathon demo**; deterministic fallback is for resilience, not a substitute. The owner supplied [production response evidence dated October 25](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md); independent Azure-side corroboration, cost review and wider device validation are still separate checks. Never commit secrets or Azure API keys. The UI distinguishes deterministic narration from Azure-assisted selection and ordering of verbatim verified fact segments when the backend reports that mode. Do not equate response mode alone with independent Azure trace evidence.
+The submitted demo uses Microsoft Foundry-hosted model integration and Azure AI Speech. See [Foundry implementation](docs/FOUNDRY_REQUIRED_LAUNCH.md) and [production evidence](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The deterministic engine remains the source of match facts.
 
 ## Limitations and responsible use
 
@@ -160,7 +113,7 @@ The application can run locally without paid Azure resources. **Microsoft Foundr
 - AI-generated or AI-assisted descriptions are experimental; the deterministic event engine is the source of truth for match scores.
 - Browser speech voices vary, and expanded narration needs manual timing/accessibility validation.
 - Goal-based turning points are illustrative, not causal tactical analysis.
-- This is a hackathon prototype; production readiness, WCAG compliance, security review and Azure integration are **not** yet certified.
+- This is a hackathon prototype, not a certified production football-data service.
 
 ## Project layout
 

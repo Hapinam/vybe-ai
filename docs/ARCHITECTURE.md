@@ -4,24 +4,7 @@ VYBE serves **one fictional match** to three browser personas: Young Fan, Access
 
 ## Current deployed system
 
-```mermaid
-flowchart TD
-  U["Fan browser — Young / Accessible / Analyst"] --> UI["React + TypeScript web UI"]
-  UI -->|"HTTPS /v1 and /health"| ACA["Azure Container Apps: vybe-app"]
-  ACA -->|"Single Docker image: static web + API"| API["FastAPI / Uvicorn"]
-  API --> ENGINE["Deterministic replay and insights"]
-  ENGINE --> FIXTURE["Bundled fictional match events"]
-  API --> DIRECTOR["Ask the Match: bounded read-only tool selection"]
-  API --> NARR["Grounded goal narration"]
-  DIRECTOR -->|"Server-side Azure OpenAI-compatible API"| FOUNDRY["Microsoft Foundry-hosted model"]
-  NARR -->|"Server-side Azure OpenAI-compatible API"| FOUNDRY
-  DIRECTOR --> FALLBACK["Deterministic fallback"]
-  NARR --> FALLBACK
-  API --> SPEECH["Azure AI Speech: MP3 synthesis"]
-  SPEECH -->|"Audio response"| UI
-  UI --> BROWSER["Browser SpeechSynthesis fallback"]
-  UI --> PREFS["Browser localStorage preferences"]
-```
+![Current deployed VYBE architecture](images/ARCHITECTURE.svg)
 
 The same container serves the built frontend and FastAPI; there is no separate production Vite server. The frontend makes relative API requests. The Docker image uses a Node build stage and a Python 3.11 runtime with a non-root user.
 
@@ -47,7 +30,7 @@ On **25 October 2026**, the application owner copied two production browser Netw
 - **Local:** Start FastAPI on port 8000, then Vite on 5173. The Vite development proxy forwards `/v1` and `/health` to FastAPI. See [root README](../README.md).
 - **Production:** GitHub Actions verifies `main`, publishes the SHA-tagged image to private GHCR, updates the existing `vybe-app` revision, tests its health endpoint, and shifts traffic. See [Azure deployment README](../infra/azure/README.md).
 - **Configuration:** Foundry tool selection uses `VYBE_FOUNDRY_MODEL_*`; goal narration uses `VYBE_AZURE_OPENAI_*`. Azure Speech is separately configured on the server. Never expose credentials to the browser or commit them.
-- **Rollback and cost:** Preserve the prior Container Apps revision and existing secrets. Budgets and in-process rate limits are **not** hard spending caps. The legacy Azure provisioning script is not the production update path.
+- **Release control:** Keep the previous Container Apps revision available for rollback. Merging to `main` may trigger deployment.
 
 ## Safety and scope
 
