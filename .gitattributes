@@ -1,0 +1,4 @@
+﻿# Keep source and configuration files consistent across Windows and Linux.
+*.py text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
