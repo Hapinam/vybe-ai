@@ -5,7 +5,7 @@ type MatchAnswer = {
   answer: string;
   supported: boolean;
   synthetic: true;
-  generation_mode: "deterministic" | "foundry_model_tool_call";
+  generation_mode: "deterministic" | "foundry_model_tool_call" | "ollama_model_tool_call";
   selected_tool?: string | null;
   model_declined?: boolean;
   evidence_event_ids: string[];
@@ -84,7 +84,7 @@ export default function AskTheMatch({ persona }: { persona: Persona }) {
           <div className="insight-card">
             <strong>{answer.supported ? "Verified match answer" : "Not established by the events"}</strong>
             <p>{answer.answer}</p>
-            <p className="muted">Source: synthetic event data · {answer.generation_mode === "foundry_model_tool_call" ? "Model-selected tool, deterministic answer" : answer.model_declined ? "Model reviewed the question and chose no data tool; deterministic answer" : "Deterministic fallback; no model tool call"}</p>
+            <p className="muted">Source: synthetic event data · {answer.generation_mode === "ollama_model_tool_call" ? "Ollama-selected tool, deterministic answer" : answer.generation_mode === "foundry_model_tool_call" ? "Azure AI Foundry-selected tool, deterministic answer" : answer.model_declined ? "Model reviewed the question and chose no data tool; deterministic answer" : "Deterministic fallback; no model tool call"}</p>
             {answer.selected_tool && <p className="muted">Selected tool: <code>{answer.selected_tool}</code></p>}
             {answer.evidence_event_ids.length > 0 && (
               <p className="evidence">Evidence event IDs: <code>{answer.evidence_event_ids.join(", ")}</code></p>
