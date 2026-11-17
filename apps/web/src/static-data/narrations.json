@@ -1,0 +1,176 @@
+{
+  "young": {
+    "e2": {
+      "event_id": "e2",
+      "persona": "young",
+      "narrative": "Goal! Aurora FC scored at 12:10. The score is now 1-0. What a big moment!",
+      "evidence_event_ids": [
+        "e2"
+      ],
+      "score": {
+        "home": 1,
+        "away": 0
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e3": {
+      "event_id": "e3",
+      "persona": "young",
+      "narrative": "Goal! Harbor United scored at 24:35. The score is now 1-1. What a big moment!",
+      "evidence_event_ids": [
+        "e3"
+      ],
+      "score": {
+        "home": 1,
+        "away": 1
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e5": {
+      "event_id": "e5",
+      "persona": "young",
+      "narrative": "Goal! Harbor United scored at 55:08. The score is now 1-2. What a big moment!",
+      "evidence_event_ids": [
+        "e5"
+      ],
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e8": {
+      "event_id": "e8",
+      "persona": "young",
+      "narrative": "Goal! Aurora FC scored at 87:24. The score is now 2-2. What a big moment!",
+      "evidence_event_ids": [
+        "e8"
+      ],
+      "score": {
+        "home": 2,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    }
+  },
+  "accessible": {
+    "e2": {
+      "event_id": "e2",
+      "persona": "accessible",
+      "narrative": "Goal for Aurora FC at minute 12, 10 seconds. Current score: Aurora FC 1, Harbor United 0.",
+      "evidence_event_ids": [
+        "e2"
+      ],
+      "score": {
+        "home": 1,
+        "away": 0
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e3": {
+      "event_id": "e3",
+      "persona": "accessible",
+      "narrative": "Goal for Harbor United at minute 24, 35 seconds. Current score: Aurora FC 1, Harbor United 1.",
+      "evidence_event_ids": [
+        "e3"
+      ],
+      "score": {
+        "home": 1,
+        "away": 1
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e5": {
+      "event_id": "e5",
+      "persona": "accessible",
+      "narrative": "Goal for Harbor United at minute 55, 8 seconds. Current score: Aurora FC 1, Harbor United 2.",
+      "evidence_event_ids": [
+        "e5"
+      ],
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e8": {
+      "event_id": "e8",
+      "persona": "accessible",
+      "narrative": "Goal for Aurora FC at minute 87, 24 seconds. Current score: Aurora FC 2, Harbor United 2.",
+      "evidence_event_ids": [
+        "e8"
+      ],
+      "score": {
+        "home": 2,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    }
+  },
+  "analyst": {
+    "e2": {
+      "event_id": "e2",
+      "persona": "analyst",
+      "narrative": "Confirmed goal by Aurora FC at 12:10; match score is 1-0. The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created.",
+      "evidence_event_ids": [
+        "e2"
+      ],
+      "score": {
+        "home": 1,
+        "away": 0
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e3": {
+      "event_id": "e3",
+      "persona": "analyst",
+      "narrative": "Confirmed goal by Harbor United at 24:35; match score is 1-1. The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created.",
+      "evidence_event_ids": [
+        "e3"
+      ],
+      "score": {
+        "home": 1,
+        "away": 1
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e5": {
+      "event_id": "e5",
+      "persona": "analyst",
+      "narrative": "Confirmed goal by Harbor United at 55:08; match score is 1-2. The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created.",
+      "evidence_event_ids": [
+        "e5"
+      ],
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    },
+    "e8": {
+      "event_id": "e8",
+      "persona": "analyst",
+      "narrative": "Confirmed goal by Aurora FC at 87:24; match score is 2-2. The available match data confirms the goal, but doesn't provide enough detail to explain how the chance was created.",
+      "evidence_event_ids": [
+        "e8"
+      ],
+      "score": {
+        "home": 2,
+        "away": 2
+      },
+      "synthetic": true,
+      "generation_mode": "deterministic"
+    }
+  }
+}

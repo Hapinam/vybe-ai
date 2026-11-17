@@ -32,3 +32,6 @@ crash.log
 
 # Local backup files
 *.bak
+
+# Local development and generated test artifacts
+/.local/

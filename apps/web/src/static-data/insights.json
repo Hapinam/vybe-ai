@@ -1,0 +1,236 @@
+{
+  "young": {
+    "match_id": "vybe-demo-01",
+    "persona": "young",
+    "recap": "Here's the story of the game! Final recorded score: Aurora FC 2–2 Harbor United.",
+    "recap_evidence_event_ids": [
+      "e2",
+      "e3",
+      "e5",
+      "e8",
+      "e9"
+    ],
+    "insights": [
+      {
+        "event_id": "e2",
+        "headline": "Goal! What a moment!",
+        "explanation": "Aurora FC scored at 12:10 and put their team ahead!",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 0
+        },
+        "evidence_event_ids": [
+          "e2"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e3",
+        "headline": "Goal! What a moment!",
+        "explanation": "Harbor United scored at 24:35 and levelled the recorded score!",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 1,
+          "away": 1
+        },
+        "evidence_event_ids": [
+          "e3"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e5",
+        "headline": "Goal! What a moment!",
+        "explanation": "Harbor United scored at 55:08 and put their team ahead!",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e5"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e8",
+        "headline": "Goal! What a moment!",
+        "explanation": "Aurora FC scored at 87:24 and levelled the recorded score!",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 2,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e8"
+        ],
+        "synthetic": true
+      }
+    ],
+    "score": {
+      "home": 2,
+      "away": 2
+    },
+    "fulltime_confirmed": true,
+    "generation_mode": "deterministic",
+    "synthetic": true,
+    "limitations": "Fictional event feed; recorded facts only, not tactical causation."
+  },
+  "accessible": {
+    "match_id": "vybe-demo-01",
+    "persona": "accessible",
+    "recap": "Match recap. Final recorded score: Aurora FC 2–2 Harbor United. 4 goals recorded.",
+    "recap_evidence_event_ids": [
+      "e2",
+      "e3",
+      "e5",
+      "e8",
+      "e9"
+    ],
+    "insights": [
+      {
+        "event_id": "e2",
+        "headline": "Goal at 12:10",
+        "explanation": "Goal for Aurora FC at minute 12, 10 seconds. This put their team ahead.",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 0
+        },
+        "evidence_event_ids": [
+          "e2"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e3",
+        "headline": "Goal at 24:35",
+        "explanation": "Goal for Harbor United at minute 24, 35 seconds. This levelled the recorded score.",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 1,
+          "away": 1
+        },
+        "evidence_event_ids": [
+          "e3"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e5",
+        "headline": "Goal at 55:08",
+        "explanation": "Goal for Harbor United at minute 55, 8 seconds. This put their team ahead.",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e5"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e8",
+        "headline": "Goal at 87:24",
+        "explanation": "Goal for Aurora FC at minute 87, 24 seconds. This levelled the recorded score.",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 2,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e8"
+        ],
+        "synthetic": true
+      }
+    ],
+    "score": {
+      "home": 2,
+      "away": 2
+    },
+    "fulltime_confirmed": true,
+    "generation_mode": "deterministic",
+    "synthetic": true,
+    "limitations": "Fictional event feed; recorded facts only, not tactical causation."
+  },
+  "analyst": {
+    "match_id": "vybe-demo-01",
+    "persona": "analyst",
+    "recap": "Event-grounded match recap. Final recorded score: Aurora FC 2–2 Harbor United. Recorded shots: 3–2. No xG, possession or tactical causation is inferred.",
+    "recap_evidence_event_ids": [
+      "e2",
+      "e3",
+      "e5",
+      "e8",
+      "e9"
+    ],
+    "insights": [
+      {
+        "event_id": "e2",
+        "headline": "Recorded goal: Aurora FC at 12:10",
+        "explanation": "Score became 1–0; this put their team ahead. The events do not establish a tactical cause.",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 0
+        },
+        "evidence_event_ids": [
+          "e2"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e3",
+        "headline": "Recorded goal: Harbor United at 24:35",
+        "explanation": "Score became 1–1; this levelled the recorded score. The events do not establish a tactical cause.",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 1,
+          "away": 1
+        },
+        "evidence_event_ids": [
+          "e3"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e5",
+        "headline": "Recorded goal: Harbor United at 55:08",
+        "explanation": "Score became 1–2; this put their team ahead. The events do not establish a tactical cause.",
+        "impact": "took_lead",
+        "score_after": {
+          "home": 1,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e5"
+        ],
+        "synthetic": true
+      },
+      {
+        "event_id": "e8",
+        "headline": "Recorded goal: Aurora FC at 87:24",
+        "explanation": "Score became 2–2; this levelled the recorded score. The events do not establish a tactical cause.",
+        "impact": "equalizer",
+        "score_after": {
+          "home": 2,
+          "away": 2
+        },
+        "evidence_event_ids": [
+          "e8"
+        ],
+        "synthetic": true
+      }
+    ],
+    "score": {
+      "home": 2,
+      "away": 2
+    },
+    "fulltime_confirmed": true,
+    "generation_mode": "deterministic",
+    "synthetic": true,
+    "limitations": "Fictional event feed; recorded facts only, not tactical causation."
+  }
+}

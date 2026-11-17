@@ -124,7 +124,7 @@ export default function BroadcastStudio({
           </> : <p className="studio-muted" role="status">Full match recap unlocks after the final whistle. Keep watching for verified moments.</p>}
         </aside>
       </div>}
-      <p className="studio-disclaimer">Studio insights are deterministic, not AI-generated commentary. Model-based tool selection is optional in Ask the Match and is only active when configured on the server.</p>
+      <p className="studio-disclaimer">{import.meta.env.VITE_DEMO_MODE === "static" ? "This static portfolio demo uses pre-recorded, deterministic synthetic match insights. No AI model or backend server is used." : "Studio insights are deterministic, not AI-generated commentary. Model-based tool selection is optional in Ask the Match and is only active when configured on the server."}</p>
     </section>
   );
 }
