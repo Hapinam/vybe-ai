@@ -10,3 +10,11 @@
 **/*.pyc
 *.tfstate
 *.tfstate.*
+
+# Exclude documentation, tests, and demo tooling from runtime images
+**/README.md
+**/CONTRIBUTING.md
+docs/
+**/tests/
+apps/web/demo/
+**/playwright*.config.ts

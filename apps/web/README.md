@@ -17,7 +17,7 @@ Start Vite in a second terminal:
 
 ```powershell
 cd apps/web
-npm.cmd install
+npm.cmd ci
 npm.cmd run dev
 ```
 
@@ -61,6 +61,23 @@ npx.cmd playwright test
 ```
 
 In Windows **CMD**, **Git Bash**, **Linux**, and **macOS**, use `npm` and `npx` without `.cmd` (for example, `npx playwright test`). You do **not** need to change the PowerShell execution policy or run as administrator. Playwright starts the Vite development server automatically when running tests. The automated spoken-commentary test mocks browser speech; it does not verify audible output.
+
+## Static portfolio mode
+
+The frontend supports a static portfolio build using pre-recorded synthetic match data, including replay states, persona-specific narrations, insights and five suggested Ask the Match questions.
+
+Other questions receive a static-demo limitation response. No FastAPI backend, Ollama model, Foundry inference or Azure services are used in this mode.
+
+```powershell
+npm.cmd ci
+$env:VITE_DEMO_MODE = "static"
+npm.cmd run build
+npm.cmd run preview
+```
+
+The production base path is `/vybe-ai/`, matching the GitHub Pages repository path.
+
+Do not describe this mode as a live AI experience.
 
 ## Important caveats
 

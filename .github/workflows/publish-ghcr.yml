@@ -10,8 +10,129 @@ permissions:
   contents: read
 
 jobs:
-  publish:
+  verify-image-changes:
+    name: Verify image publication decision
     if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      publish: ${{ steps.verify.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download decision from tested workflow run
+        uses: actions/download-artifact@v4
+        with:
+          name: image-publication-decision
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: image-decision
+
+      - name: Verify decision and changed files
+        id: verify
+        shell: bash
+        env:
+          EXPECTED_RUN_ID: ${{ github.event.workflow_run.id }}
+          EXPECTED_HEAD: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          path = Path("image-decision/image-publication-decision.json")
+          if not path.is_file() or path.stat().st_size > 4096:
+              raise SystemExit("Missing or oversized publication decision")
+
+          decision = json.loads(path.read_text(encoding="utf-8"))
+
+          if type(decision) is not dict or set(decision) != {
+              "event", "before", "head", "run_id", "publish"
+          }:
+              raise SystemExit("Invalid publication decision schema")
+
+          before = decision["before"]
+          head = decision["head"]
+          expected_head = os.environ["EXPECTED_HEAD"]
+
+          if decision["event"] != "push":
+              raise SystemExit("Unexpected event")
+
+          if type(decision["run_id"]) is not int or (
+              decision["run_id"] != int(os.environ["EXPECTED_RUN_ID"])
+          ):
+              raise SystemExit("Workflow run ID mismatch")
+
+          if type(head) is not str or head != expected_head:
+              raise SystemExit("Tested commit mismatch")
+
+          if type(before) is not str or not re.fullmatch(r"[0-9a-f]{40}", before):
+              raise SystemExit("Invalid push baseline")
+
+          if before == "0" * 40:
+              raise SystemExit("Missing push baseline")
+
+          if type(decision["publish"]) is not bool:
+              raise SystemExit("Invalid publish decision")
+
+          subprocess.run(
+              ["git", "cat-file", "-e", f"{before}^{{commit}}"],
+              check=True,
+          )
+          subprocess.run(
+              ["git", "cat-file", "-e", f"{head}^{{commit}}"],
+              check=True,
+          )
+
+          subprocess.run(
+              ["git", "merge-base", "--is-ancestor", before, head],
+              check=True,
+          )
+
+          result = subprocess.run(
+              ["git", "diff", "--name-only", "-z", "--no-renames", before, head],
+              check=True,
+              stdout=subprocess.PIPE,
+          )
+
+          paths = [p.decode("utf-8") for p in result.stdout.split(b"\0") if p]
+
+          def documentation_only(path):
+              return (
+                  path.startswith("docs/")
+                  or path in {"README.md", "CONTRIBUTING.md"}
+                  or path in {
+                      "apps/api/README.md",
+                      "apps/web/README.md",
+                      "apps/web/demo/README.md",
+                      "infra/azure/README.md",
+                  }
+              )
+
+          calculated = any(not documentation_only(p) for p in paths)
+
+          if calculated != decision["publish"]:
+              raise SystemExit("Publication decision mismatch")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"publish={str(calculated).lower()}\n")
+
+          print(f"Verified {len(paths)} changed files")
+          print(f"Publish image: {calculated}")
+          PY
+
+  publish:
+    needs: [verify-image-changes]
+    if: needs.verify-image-changes.result == 'success' && needs.verify-image-changes.outputs.publish == 'true'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -59,7 +180,7 @@ jobs:
           test "$TESTED_SHA" = "$CURRENT_SHA"
 
       - name: Sign in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
