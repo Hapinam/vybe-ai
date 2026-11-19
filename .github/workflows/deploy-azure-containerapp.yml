@@ -1,10 +1,16 @@
 name: Deploy verified VYBE image to Azure Container Apps
 
 on:
-  workflow_run:
-    workflows: ["Publish VYBE image to GHCR"]
-    types: [completed]
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_sha:
+        description: "Full 40-character SHA of the GHCR image to deploy"
+        required: true
+        type: string
+      confirmation:
+        description: "Type DEPLOY to confirm Azure deployment"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -15,20 +21,47 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     environment: azure-demo
     permissions:
       contents: read
+      packages: read
     steps:
-      - name: Verify published commit is still main
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Validate manual deployment request
         env:
-          GH_TOKEN: ${{ github.token }}
-          IMAGE_SHA: ${{ github.event.workflow_run.head_sha }}
+          IMAGE_SHA: ${{ inputs.image_sha }}
+          CONFIRMATION: ${{ inputs.confirmation }}
         run: |
           set -euo pipefail
-          current_sha="$(gh api repos/${GITHUB_REPOSITORY}/git/ref/heads/main --jq .object.sha)"
-          test "$IMAGE_SHA" = "$current_sha"
+          [[ "$CONFIRMATION" == "DEPLOY" ]] || {
+            echo "Explicit DEPLOY confirmation required." >&2
+            exit 1
+          }
+          [[ "$IMAGE_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "Image SHA must be 40 lowercase hexadecimal characters." >&2
+            exit 1
+          }
+      - name: Verify image commit belongs to main
+        env:
+          IMAGE_SHA: ${{ inputs.image_sha }}
+        run: |
+          set -euo pipefail
+          git cat-file -e "${IMAGE_SHA}^{commit}"
+          git merge-base --is-ancestor "$IMAGE_SHA" origin/main
+
+      - name: Verify GHCR image exists
+        env:
+          IMAGE_SHA: ${{ inputs.image_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "$GH_TOKEN" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          docker manifest inspect "ghcr.io/hapinam/vybe-ai:${IMAGE_SHA}" >/dev/null
 
       - name: Sign in to Azure
         uses: azure/login@v2
@@ -38,7 +71,7 @@ jobs:
       - name: Create a new revision from the verified image
         id: deploy
         env:
-          IMAGE_SHA: ${{ github.event.workflow_run.head_sha }}
+          IMAGE_SHA: ${{ inputs.image_sha }}
           RESOURCE_GROUP: rg-vybe-hackathon
           APP_NAME: vybe-app
         run: |
