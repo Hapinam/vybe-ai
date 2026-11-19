@@ -1,0 +1,215 @@
+{
+  "young": {
+    "Who scored?": {
+      "answer": "Recorded goals: Maya (Aurora FC, 12:10); Alex (Harbor United, 24:35); Sam (Harbor United, 55:08); Maya (Aurora FC, 87:24).",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "young",
+      "selected_tool": null
+    },
+    "What was the halftime score?": {
+      "answer": "At halftime: Aurora FC 1–1 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e4"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "young",
+      "selected_tool": null
+    },
+    "What was the final score?": {
+      "answer": "Final recorded score: Aurora FC 2–2 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "young",
+      "selected_tool": null
+    },
+    "What happened in the last 15 minutes?": {
+      "answer": "Recorded events in the final 15 minutes: 1 fulltime, 1 goal, 6 pass completed.",
+      "evidence_event_ids": [
+        "p18",
+        "p19",
+        "p20",
+        "e7",
+        "e8",
+        "p21",
+        "p22",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "young",
+      "selected_tool": null
+    },
+    "Why did momentum change?": {
+      "answer": "The recorded synthetic events do not establish tactical causes, formations, strategy or real-world momentum. They can only confirm score changes and recorded actions.",
+      "evidence_event_ids": [],
+      "supported": false,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "young",
+      "selected_tool": null
+    }
+  },
+  "accessible": {
+    "Who scored?": {
+      "answer": "Recorded goals: Maya (Aurora FC, 12:10); Alex (Harbor United, 24:35); Sam (Harbor United, 55:08); Maya (Aurora FC, 87:24).",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "accessible",
+      "selected_tool": null
+    },
+    "What was the halftime score?": {
+      "answer": "At halftime: Aurora FC 1–1 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e4"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "accessible",
+      "selected_tool": null
+    },
+    "What was the final score?": {
+      "answer": "Final recorded score: Aurora FC 2–2 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "accessible",
+      "selected_tool": null
+    },
+    "What happened in the last 15 minutes?": {
+      "answer": "Recorded events in the final 15 minutes: 1 fulltime, 1 goal, 6 pass completed.",
+      "evidence_event_ids": [
+        "p18",
+        "p19",
+        "p20",
+        "e7",
+        "e8",
+        "p21",
+        "p22",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "accessible",
+      "selected_tool": null
+    },
+    "Why did momentum change?": {
+      "answer": "The recorded synthetic events do not establish tactical causes, formations, strategy or real-world momentum. They can only confirm score changes and recorded actions.",
+      "evidence_event_ids": [],
+      "supported": false,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "accessible",
+      "selected_tool": null
+    }
+  },
+  "analyst": {
+    "Who scored?": {
+      "answer": "Recorded goals: Maya (Aurora FC, 12:10); Alex (Harbor United, 24:35); Sam (Harbor United, 55:08); Maya (Aurora FC, 87:24).",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "analyst",
+      "selected_tool": null
+    },
+    "What was the halftime score?": {
+      "answer": "At halftime: Aurora FC 1–1 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e4"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "analyst",
+      "selected_tool": null
+    },
+    "What was the final score?": {
+      "answer": "Final recorded score: Aurora FC 2–2 Harbor United.",
+      "evidence_event_ids": [
+        "e2",
+        "e3",
+        "e5",
+        "e8",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "analyst",
+      "selected_tool": null
+    },
+    "What happened in the last 15 minutes?": {
+      "answer": "Recorded events in the final 15 minutes: 1 fulltime, 1 goal, 6 pass completed.",
+      "evidence_event_ids": [
+        "p18",
+        "p19",
+        "p20",
+        "e7",
+        "e8",
+        "p21",
+        "p22",
+        "e9"
+      ],
+      "supported": true,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "analyst",
+      "selected_tool": null
+    },
+    "Why did momentum change?": {
+      "answer": "The recorded synthetic events do not establish tactical causes, formations, strategy or real-world momentum. They can only confirm score changes and recorded actions.",
+      "evidence_event_ids": [],
+      "supported": false,
+      "generation_mode": "deterministic",
+      "synthetic": true,
+      "persona": "analyst",
+      "selected_tool": null
+    }
+  }
+}

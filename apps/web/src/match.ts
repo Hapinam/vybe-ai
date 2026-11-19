@@ -78,6 +78,10 @@ export const formatClock = (event: MatchEvent) =>
   `${event.minute}:${String(event.second ?? 0).padStart(2, "0")}`;
 
 export async function postJson<T>(path: string, body: unknown): Promise<T> {
+  if (import.meta.env.VITE_DEMO_MODE === "static") {
+    const { staticPostJson } = await import("./staticApi");
+    return staticPostJson<T>(path, body);
+  }
   const response = await fetch(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

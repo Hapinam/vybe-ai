@@ -29,3 +29,9 @@ crash.log
 # Build metadata
 *.tsbuildinfo
 *.egg-info/
+
+# Local backup files
+*.bak
+
+# Local development and generated test artifacts
+/.local/

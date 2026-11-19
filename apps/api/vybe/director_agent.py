@@ -13,7 +13,13 @@ from urllib.parse import urlparse
 
 from .director_tools import TOOL_NAMES, call_director_tool
 from .models import MatchDefinition
-from .questions import ask_match, is_temporal_question
+from .questions import (
+    _has_explicit_historical_time,
+    ask_match,
+    is_shootout_question,
+    is_regular_penalty_question,
+    is_temporal_question,
+)
 
 # Explicitly unsupported causal questions must not be reinterpreted as factual answers.
 # Match causal word families at word starts, without matching information/because/Whyte.
@@ -130,13 +136,29 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
     # The model's tools expose whole-match facts only. Preserve the exact
     # deterministic answer (and its time-bounded evidence) for temporal queries,
     # including unsupported cases with missing period markers.
-    if is_temporal_question(question):
+    if (
+        is_shootout_question(question)
+        or is_regular_penalty_question(question)
+        or is_temporal_question(question)
+        or _has_explicit_historical_time(question)
+    ):
         return fallback
     try:
-        config = _configuration()
-        if config is None:
+        provider = os.getenv("VYBE_DIRECTOR_PROVIDER", "foundry").strip().lower()
+        if provider == "deterministic":
             return fallback
-        name = _select_tool(question, config)
+        if provider == "foundry":
+            config = _configuration()
+            if config is None:
+                return fallback
+            name = _select_tool(question, config)
+            generation_mode = "foundry_model_tool_call"
+        elif provider == "ollama":
+            from .director_ollama import _select_tool as select_ollama_tool
+            name = select_ollama_tool(question)
+            generation_mode = "ollama_model_tool_call"
+        else:
+            raise ValueError("Unsupported Match Director provider")
         if name == DECLINE_TOOL:
             # Model was consulted and explicitly declined; distinguish from an unavailable model.
             fallback["model_declined"] = True
@@ -152,7 +174,7 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
             "answer": _render_tool(name, result, persona),
             "evidence_event_ids": evidence,
             "supported": True,
-            "generation_mode": "foundry_model_tool_call",
+            "generation_mode": generation_mode,
             "selected_tool": name,
             "persona": persona,
             "synthetic": True,

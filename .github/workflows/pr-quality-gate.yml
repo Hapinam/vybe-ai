@@ -11,6 +11,114 @@ permissions:
   contents: read
 
 jobs:
+  image-changes:
+    name: Detect image-relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.detect.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Detect changes across entire push
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "$EVENT_NAME" != "push" ]]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ ! "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] ||
+             [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            echo "Cannot establish push baseline." >&2
+            exit 1
+          fi
+
+          git cat-file -e "${BEFORE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          git merge-base --is-ancestor "$BEFORE_SHA" "$HEAD_SHA"
+
+          python3 - <<'PY'
+          import os
+          import subprocess
+          import sys
+
+          before = os.environ["BEFORE_SHA"]
+          head = os.environ["HEAD_SHA"]
+
+          result = subprocess.run(
+              ["git", "diff", "--name-only", "-z", "--no-renames", before, head],
+              check=True,
+              stdout=subprocess.PIPE,
+          )
+
+          paths = [p.decode("utf-8") for p in result.stdout.split(b"\0") if p]
+
+          def documentation_only(path):
+              return (
+                  path.startswith("docs/")
+                  or path in {"README.md", "CONTRIBUTING.md"}
+                  or path in {
+                      "apps/api/README.md",
+                      "apps/web/README.md",
+                      "apps/web/demo/README.md",
+                      "infra/azure/README.md",
+                  }
+              )
+
+          publish = any(not documentation_only(path) for path in paths)
+
+          if not paths:
+              print("No changed paths; skipping image publication.")
+          else:
+              print(f"Changed files: {len(paths)}")
+              print(f"Image publication required: {publish}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"publish={str(publish).lower()}\n")
+          PY
+
+      - name: Save image publication decision
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          PUBLISH: ${{ steps.detect.outputs.publish }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+
+          decision = {
+              "event": os.environ["EVENT_NAME"],
+              "before": os.environ.get("BEFORE_SHA", ""),
+              "head": os.environ["HEAD_SHA"],
+              "run_id": int(os.environ["RUN_ID"]),
+              "publish": os.environ["PUBLISH"] == "true",
+          }
+
+          with open("image-publication-decision.json", "w", encoding="utf-8") as file:
+              json.dump(decision, file, sort_keys=True)
+          PY
+
+      - name: Upload image publication decision
+        uses: actions/upload-artifact@v7
+        with:
+          name: image-publication-decision
+          path: image-publication-decision.json
+          if-no-files-found: error
+          retention-days: 7
   api:
     name: API tests
     runs-on: ubuntu-latest
@@ -174,7 +282,7 @@ jobs:
   quality-gate:
     name: quality-gate
     if: always()
-    needs: [api, frontend, playwright, integration, container, security, dependency-audit]
+    needs: [image-changes, api, frontend, playwright, integration, container, security, dependency-audit]
     runs-on: ubuntu-latest
     steps:
       - name: Verify all required jobs passed
