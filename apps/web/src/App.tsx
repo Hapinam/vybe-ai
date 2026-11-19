@@ -46,7 +46,7 @@ export default function App() {
   const cloudAudio = useRef<HTMLAudioElement | null>(null);
   const cloudAbort = useRef<AbortController | null>(null);
   const cloudObjectUrl = useRef<string | null>(null);
-  const cloudEnabled = useRef(true);
+  const cloudEnabled = useRef(import.meta.env.VITE_DEMO_MODE !== "static");
   const audioPausedRef = useRef(false);
   audioPausedRef.current = audioPaused;
   const releaseCloudAudio = () => {
@@ -192,6 +192,13 @@ export default function App() {
       utterance.rate = effectiveSpeechRate(speechRateRef.current, language);
       window.speechSynthesis.speak(utterance);
     };
+    if (import.meta.env.VITE_DEMO_MODE === "static") {
+      fallback();
+      return () => {
+        disposed = true;
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      };
+    }
     void requestSpeechAudio(intro, language, speechRateRef.current, controller.signal)
       .then(async (url) => {
         if (disposed) { URL.revokeObjectURL(url); return; }

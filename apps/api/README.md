@@ -14,6 +14,26 @@ python -m venv .venv
 
 Open http://127.0.0.1:8000/docs for the OpenAPI explorer.
 
+## Local Ollama Match Director
+
+Ask the Match supports optional Ollama-based tool selection through a locally running Ollama server.
+
+The model selects from allowlisted, read-only tools. The deterministic synthetic match engine provides verified facts and evidence.
+
+Configure the API terminal:
+
+```powershell
+$env:VYBE_DIRECTOR_PROVIDER = "ollama"
+$env:VYBE_OLLAMA_BASE_URL = "http://127.0.0.1:11434"
+$env:VYBE_OLLAMA_MODEL = "qwen3-coder:30b"
+```
+
+Start Ollama and ensure the configured model is available before starting FastAPI.
+
+The default provider is `foundry`. Use `deterministic` to disable model-based tool selection. Provider failures fall back to deterministic answers.
+
+The Ollama adapter restricts configured endpoints to local loopback HTTP addresses.
+
 ## Endpoints
 
 - `GET /health`: readiness check.

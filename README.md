@@ -99,9 +99,44 @@ In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to
 
 In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
 
+## Local Ollama Director
+
+VYBE supports optional local Ollama tool selection for Ask the Match. The model selects from allowlisted, read-only tools. The deterministic match engine remains the source of truth for answers and evidence.
+
+Start Ollama and ensure the configured model is available. In the API terminal, set:
+
+```powershell
+$env:VYBE_DIRECTOR_PROVIDER = "ollama"
+$env:VYBE_OLLAMA_BASE_URL = "http://127.0.0.1:11434"
+$env:VYBE_OLLAMA_MODEL = "qwen3-coder:30b"
+```
+
+Then start FastAPI using the local setup instructions above.
+
+The default provider is `foundry`. Set `VYBE_DIRECTOR_PROVIDER=deterministic` to disable model-based tool selection. Provider failures use deterministic fallback.
+
+## Static portfolio demo (GitHub Pages)
+
+VYBE includes a frontend-only portfolio build using recorded synthetic replay states, narrations, insights and answers to the five suggested Ask the Match questions.
+
+This mode does not run FastAPI, Ollama, Microsoft Foundry or Azure AI inference. Other questions receive a static-demo limitation response.
+
+From `apps/web` in Windows PowerShell:
+
+```powershell
+npm.cmd ci
+$env:VITE_DEMO_MODE = "static"
+npm.cmd run build
+npm.cmd run preview
+```
+
+The static build uses `/vybe-ai/` as its GitHub Pages base path.
+
+This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. Publishing requires separate owner approval.
+
 ## Deploying to Azure
 
-The current release path is **GitHub Actions quality gate → private GHCR SHA-tagged image → existing Azure Container App `vybe-app`**. The container serves both the built React UI and FastAPI on port 8000. Merging into `main` can trigger a production deployment; do not merge during judging without owner approval. **Do not use the legacy `infra/azure/deploy.sh` to update the running app.** See [Azure deployment README](infra/azure/README.md) and [GHCR deployment](docs/GHCR_DEPLOYMENT.md).
+The current release path is **GitHub Actions quality gate → private GHCR SHA-tagged image → existing Azure Container App `vybe-app`**. The container serves both the built React UI and FastAPI on port 8000. Azure deployment is manual-only through the `workflow_dispatch` workflow, requiring an image SHA and explicit deployment confirmation. The quality gate and GHCR image publication have separate change-detection rules. **Do not use the legacy `infra/azure/deploy.sh` to update the running app.** See [Azure deployment README](infra/azure/README.md) and [GHCR deployment](docs/GHCR_DEPLOYMENT.md).
 
 ## Azure integration
 
