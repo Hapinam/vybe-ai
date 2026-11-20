@@ -4,7 +4,7 @@
 
 VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Microsoft Foundry integration is implemented. Production API responses observed by the owner on 25 October reported Foundry tool selection and Azure AI narration; independent Azure inference traces have not been inspected.**
 
-**[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Live VYBE demo](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)** (CI deployment health verified; see owner-observed [production Foundry evidence](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
+**[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Static portfolio demo](https://hapinam.github.io/vybe-ai/)** (historical Azure deployment evidence: [production Foundry observations](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
 
 > **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
 
@@ -20,7 +20,7 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 ### Demo links
 
-- [Live application](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)
+- [Static portfolio demo](https://hapinam.github.io/vybe-ai/)
 - [Final 75-second demo](https://youtu.be/-pfgaeGjSN8)
 - [Judges' guide](docs/JUDGES_TESTING_GUIDE.md)
 - [Deployed architecture](docs/ARCHITECTURE.md)
@@ -46,11 +46,11 @@ The Vite development server proxies `/v1` and `/health` to the FastAPI service o
 
 ## Architecture diagram
 
-See also the [deployed architecture document](docs/ARCHITECTURE.md). This diagram summarizes the application data flows; the React build and FastAPI run in the same Azure Container App image. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
+See also the [deployed architecture document](docs/ARCHITECTURE.md). This diagram summarizes the application data flows; the original hackathon deployment packaged React and FastAPI in the same Azure Container App image; the current static portfolio runs frontend-only. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
 
 ![VYBE application architecture](docs/images/README_ARCHITECTURE.svg)
 
-**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. Azure Container Apps is deployed. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. The Azure Container Apps deployment has been retired; the recorded static portfolio is the intended public demonstration. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## Run locally (Windows PowerShell)
 
@@ -132,11 +132,15 @@ npm.cmd run preview
 
 The static build uses `/vybe-ai/` as its GitHub Pages base path.
 
-This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. Publishing requires separate owner approval.
+This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. GitHub Pages publication is configured through a dedicated workflow and remains subject to owner approval and successful deployment.
 
-## Deploying to Azure
+## Deployment status
 
-The current release path is **GitHub Actions quality gate → private GHCR SHA-tagged image → existing Azure Container App `vybe-app`**. The container serves both the built React UI and FastAPI on port 8000. Azure deployment is manual-only through the `workflow_dispatch` workflow, requiring an image SHA and explicit deployment confirmation. The quality gate and GHCR image publication have separate change-detection rules. **Do not use the legacy `infra/azure/deploy.sh` to update the running app.** See [Azure deployment README](infra/azure/README.md) and [GHCR deployment](docs/GHCR_DEPLOYMENT.md).
+The original hackathon deployment used Azure Container Apps, Microsoft Foundry and Azure AI Speech. The Azure resources have since been deleted, and the former live application URL is no longer active.
+
+The public portfolio version is a frontend-only static demonstration intended for GitHub Pages publication. It uses recorded synthetic match data and does not require a backend, Azure services or Ollama.
+
+The historical deployment architecture and implementation evidence remain documented in [Azure deployment README](infra/azure/README.md), [GHCR deployment](docs/GHCR_DEPLOYMENT.md) and [production Foundry evidence](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## Azure integration
 
