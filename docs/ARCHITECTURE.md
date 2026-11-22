@@ -1,41 +1,42 @@
-# VYBE — Deployed Technical Architecture (October 2026)
+# VYBE — Technical Architecture (November 2026)
 
-VYBE serves **one fictional match** to three browser personas: Young Fan, Accessible Fan and Analyst Fan. Match state, scores and evidence IDs come from a deterministic Python engine, not the language model.
+VYBE presents **one fictional match** through Young Fan, Accessible Fan, and Analyst Fan experiences. All match scores, events, and evidence IDs derive from synthetic, deterministic data.
 
-## Current deployed system
+## Current public deployment: GitHub Pages
 
-![Current deployed VYBE architecture](images/ARCHITECTURE.svg)
+**Public portfolio:** https://hapinam.github.io/vybe-ai/
 
-The same container serves the built frontend and FastAPI; there is no separate production Vite server. The frontend makes relative API requests. The Docker image uses a Node build stage and a Python 3.11 runtime with a non-root user.
+The public version is a **static React/TypeScript/Vite frontend** built with `VITE_DEMO_MODE=static`. It uses recorded synthetic replay states, insights, narrations, and five predefined Ask the Match answers. Other questions receive a static-demo limitation response.
 
-## What each component actually does
+There is **no live FastAPI backend, Ollama, Microsoft Foundry inference, Azure AI Speech service, or live sports feed** behind the public Pages site. Browser voice capabilities depend on installed browser/OS voices. This is a recorded demonstration, not a live AI service.
 
-| Component | Implementation | Evidence and limits |
-| --- | --- | --- |
-| Frontend | React, TypeScript, Vite; three personas; English, Arabic and Czech UI | Accessible preferences stored locally, not synchronized to a cloud account |
-| Replay | FastAPI + ordered synthetic events | Source of truth for 2–2 score, shots, passes and evidence IDs |
-| Ask the Match | `POST /v1/matches/director/ask` | Model selects an allowlisted read-only data tool; validated output or deterministic fallback |
-| Goal narration | `POST /v1/matches/narrate/{event_id}` | Model may select exact verified fact segments; invalid output falls back |
-| Speech | `POST /v1/matches/speech` | Server-side Azure AI Speech MP3 with browser voice fallback; availability depends on configuration |
-| Deployment | Private GHCR image tagged by commit SHA, deployed to existing Azure Container App | Deployment workflow checks revision health and `/health` before shifting traffic |
+## Local full-stack execution (optional)
 
-**AI boundary:** Microsoft Foundry-hosted Azure OpenAI-compatible model calls are used; this is **not** a managed Foundry Agent Service agent. The model is not authoritative for scores, player facts or tactical causation. Captions and translations are based on synthetic event templates; they are not AI-generated live translation or speech-to-text.
+- **Frontend:** React, TypeScript, Vite; local Vite dev server normally on port 5173.
+- **Backend:** Python FastAPI, synthetic match replay, grounded insights, narration and Ask the Match endpoints; normally port 8000.
+- **Director:** Optional locally running Ollama for allowlisted read-only tool selection; deterministic fallback remains available. Foundry integration remains in source but requires separately configured services and credentials.
+- **Source of truth:** deterministic synthetic event engine, never the language model.
 
-## Production evidence
+See [project setup](../README.md), [API README](../apps/api/README.md), and [web README](../apps/web/README.md).
 
-On **25 October 2026**, the application owner copied two production browser Network responses: Ask the Match reported `generation_mode=foundry_model_tool_call` with `selected_tool=get_key_moments` and evidence IDs; goal narration reported `generation_mode=azure_ai` and validated fact IDs. See [the full evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md) for exact payloads and provenance. These observations do **not** independently establish upstream Azure inference traces, model billing, or all-browser acceptance.
+## Historical hackathon deployment — retired
 
-## Local and cloud execution
+![Historical Azure Container Apps architecture, October 2026](images/ARCHITECTURE.svg)
 
-- **Local:** Start FastAPI on port 8000, then Vite on 5173. The Vite development proxy forwards `/v1` and `/health` to FastAPI. See [root README](../README.md).
-- **Production:** GitHub Actions verifies `main`, publishes the SHA-tagged image to private GHCR, updates the existing `vybe-app` revision, tests its health endpoint, and shifts traffic. See [Azure deployment README](../infra/azure/README.md).
-- **Configuration:** Foundry tool selection uses `VYBE_FOUNDRY_MODEL_*`; goal narration uses `VYBE_AZURE_OPENAI_*`. Azure Speech is separately configured on the server. Never expose credentials to the browser or commit them.
-- **Release control:** Keep the previous Container Apps revision available for rollback. Merging to `main` may trigger deployment.
+In October 2026, a single Azure Container App served the built React frontend and FastAPI backend. The backend used a Foundry-hosted Azure OpenAI-compatible model for bounded tool selection and narration, with deterministic fallbacks, plus Azure AI Speech when configured. This was **not** a managed Foundry Agent Service agent.
 
-## Safety and scope
+The Azure Container Apps deployment and associated resources have since been retired. The diagram above is **historical**, not the current hosting architecture. The manual Azure deployment workflow is disabled operationally and the former GitHub `azure-demo` environment and credentials were removed. Do not run historical provisioning scripts.
 
-No real Premier League match feed, broadcast footage, live ingestion, event generator service, queue, Terraform-managed infrastructure, or managed agent orchestration is claimed. The analytics show weighted recorded event activity, not xG, possession or tactical inference. The API rate guard is in-process and peer-based, not a distributed per-user limit.
+The owner recorded production API responses on October 25, 2026 reporting `foundry_model_tool_call` and `azure_ai` modes. These are owner-observed response records, **not independent Azure-side request traces**. See [immutable historical evidence](archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
-## Future possibilities (not deployed)
+## Build and release distinction
 
-Streaming ingestion, richer telemetry, distributed rate limiting, multilingual expansion and specialized agents are roadmap ideas. See [product roadmap](PRODUCT_VISION_ROADMAP.md); do not confuse these with the current deployment.
+- GitHub Pages publishes the static portfolio frontend.
+- The [GHCR workflow](GHCR_DEPLOYMENT.md) can publish a SHA-tagged container image after a successful `main` quality gate **when non-documentation changes warrant it**.
+- GHCR publishing **does not automatically deploy to Azure**. The Azure workflow is `workflow_dispatch` only and is not operational after retirement.
+
+## Scope and limits
+
+No real Premier League feed, live ingestion, broadcast video, xG, possession calculation, independent inference trace, accessibility certification, or production-grade distributed rate limiting is claimed. Weighted momentum is recorded synthetic event activity, not tactical causation.
+
+Historical implementation plans, acceptance documents, and infrastructure instructions are indexed in [the documentation index](DOCUMENTATION_INDEX.md) and [archive](archive/README.md).

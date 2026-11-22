@@ -1,5 +1,9 @@
 # VYBE AI Grounding — Current implementation
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 ## Verified facts first
 
 Match scores and event data come from the deterministic replay engine. Optional Azure OpenAI narration never calculates scores or supplies new match facts. The backend builds a small set of server-authored, evidence-backed sentences (goal, score, synthetic context).

@@ -1,5 +1,9 @@
 # VYBE: grounded Azure OpenAI-compatible narration
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 The match replay engine and score are deterministic. Azure AI narration has a safe fallback when not configured or unavailable. The application is deployed to Azure Container Apps, but deployment alone does not prove a model call. Owner-observed production response evidence from October 25 is in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md); independent Azure inference traces remain unverified.
 
 ## Integration

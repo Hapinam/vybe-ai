@@ -1,5 +1,9 @@
 # VYBE — Judges' Testing Guide
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 **Every Fan Belongs.**
 
 VYBE presents one fictional football match through three personalized experiences. This guide takes approximately **3–5 minutes**.
@@ -73,7 +77,7 @@ See [Final Demo Storyboard](FINAL_DEMO_STORYBOARD.md).
 
 ## 7. Validation evidence
 
-The repository's [README](../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
+The repository's [README](../../README.md) and [Final Acceptance Checklist](FINAL_ACCEPTANCE_CHECKLIST.md) document the tested scope:
 
 - GitHub Actions runs backend, Playwright, frontend/container and dependency checks; see the latest workflow results for current status.
 - **24/24** manual end-to-end acceptance checks were previously recorded; these do not cover subsequent changes.

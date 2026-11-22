@@ -1,6 +1,10 @@
 # PR 61 — Launch readiness audit and no-cost deployment preflight
 
-> **Document status (October 25, 2026):** This file preserves historical planning, review, or test steps. Its older statements about future Azure deployment, unmerged features, or pending Foundry production tests are snapshots, **not current deployment status**. The deployed system and setup are described in [Architecture](ARCHITECTURE.md), [root README](../README.md), and [owner-observed production evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final demo was uploaded to https://youtu.be/-pfgaeGjSN8. A passed CI job does not independently verify all Azure services, WCAG, cost, or browser audio.
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
+> **Document status (October 25, 2026):** This file preserves historical planning, review, or test steps. Its older statements about future Azure deployment, unmerged features, or pending Foundry production tests are snapshots, **not current deployment status**. The deployed system and setup are described in [Architecture](../ARCHITECTURE.md), [root README](../../README.md), and [owner-observed production evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final demo was uploaded to https://youtu.be/-pfgaeGjSN8. A passed CI job does not independently verify all Azure services, WCAG, cost, or browser audio.
 
 
 **Review date:** October 18, 2026. **No Azure resources created.**

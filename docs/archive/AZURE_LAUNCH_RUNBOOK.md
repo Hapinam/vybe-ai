@@ -1,5 +1,9 @@
 # VYBE — live demo runbook
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 ## Judge-facing links
 
 - [Live application](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)
@@ -20,4 +24,4 @@ The app does not consume live Premier League data. Its deterministic replay engi
 
 The existing production release uses GitHub Actions, private GHCR and Azure Container Apps. **A merge into `main` can deploy to production even when only documentation changes.** Leave the production release unchanged during judging unless the owner explicitly authorizes it.
 
-See [architecture](ARCHITECTURE.md) and [production Foundry evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+See [architecture](../ARCHITECTURE.md) and [production Foundry evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).

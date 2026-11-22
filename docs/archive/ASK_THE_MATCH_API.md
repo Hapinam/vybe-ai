@@ -1,5 +1,9 @@
 # Ask the Match — deterministic legacy endpoint and model-directed UI
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 The **legacy** `POST /v1/matches/ask` endpoint is deterministic and remains available. The **current React Ask the Match UI** uses `POST /v1/matches/director/ask`, which can invoke a Foundry-hosted Azure OpenAI-compatible model to select an allowlisted read-only tool. Valid model responses are evidence-grounded; unavailable or invalid model results fall back safely. This is model tool calling, **not** managed Foundry Agent Service. Both paths use synthetic match facts.
 
 POST `/v1/matches/ask`

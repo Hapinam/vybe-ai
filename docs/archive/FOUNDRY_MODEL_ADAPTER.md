@@ -1,5 +1,9 @@
 # Foundry-hosted model tool calling (PR 2)
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 This adapter is **not** a deployed Microsoft Foundry Agent Service agent. It uses an Azure OpenAI-compatible chat-completions model deployment, which may be managed through Microsoft Foundry. The model **selects one tool**, and VYBE executes only the allowlisted read-only tool; the final answer is rendered deterministically from verified tool data. The model does **not** generate free-form final text. This distinction matters for accurate hackathon claims.
 
 ## Endpoint

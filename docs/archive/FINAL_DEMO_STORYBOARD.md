@@ -1,5 +1,9 @@
 # VYBE — final demo
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 **Final video:** [Watch the 75-second VYBE demo](https://youtu.be/-pfgaeGjSN8)
 
 The video is the submitted demo artifact. Earlier longer storyboard drafts and recording task lists are superseded.

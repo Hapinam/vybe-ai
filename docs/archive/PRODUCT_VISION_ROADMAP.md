@@ -1,5 +1,9 @@
 # VYBE — Product Vision & Future Roadmap
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 > **For hackathon judges — proposed future work, not shipped functionality.**
 >
 > VYBE's current demo uses a **synthetic football match** and three fan experiences: Young Fan, Accessible Fan, and Analyst Fan. Its existing React/FastAPI architecture, deterministic match engine, and evidence-constrained Azure AI Foundry integration provide a foundation for expansion. Azure AI Speech is implemented and deployed; the owner reports successful Evelyn Arabic production playback, but this is not a comprehensive device-level audio test.
@@ -44,7 +48,7 @@ After selecting a match, the fan could see its verified teams, kickoff, score, e
 
 ## How the future system could work
 
-![Proposed future VYBE architecture](images/PRODUCT_VISION_ROADMAP.svg)
+![Proposed future VYBE architecture](../images/PRODUCT_VISION_ROADMAP.svg)
 
 ## Product principles
 

@@ -1,5 +1,9 @@
 # VYBE — submission summary
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 This document summarizes the available submission artifacts. It is **not** an outstanding test checklist.
 
 ## Delivered
