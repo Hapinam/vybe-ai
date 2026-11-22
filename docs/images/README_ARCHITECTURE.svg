@@ -2,7 +2,7 @@
 <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#667b98"/></marker></defs>
 <rect width="1200" height="740" fill="#f8fafd"/>
 <text x="50" y="62" font-family="Arial,sans-serif" font-size="31" font-weight="bold" fill="#20324b">VYBE — Application architecture</text>
-<text x="50" y="93" font-family="Arial,sans-serif" font-size="17" fill="#506078">One fictional match. Three fan experiences. One deployed web application.</text>
+<text x="50" y="93" font-family="Arial,sans-serif" font-size="17" fill="#506078">Historical full-stack design; current public portfolio is static.</text>
 <path d="M295,222.5 L390,222.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
 <path d="M690,222.5 L795,222.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
 <path d="M962.5,270 L962.5,360" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>

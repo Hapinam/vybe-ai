@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740" role="img" aria-label="VYBE — Deployed architecture">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740" role="img" aria-label="VYBE — Historical Azure architecture">
 <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#667b98"/></marker></defs>
 <rect width="1200" height="740" fill="#f8fafd"/>
-<text x="50" y="62" font-family="Arial,sans-serif" font-size="31" font-weight="bold" fill="#20324b">VYBE — Deployed architecture</text>
-<text x="50" y="93" font-family="Arial,sans-serif" font-size="17" fill="#506078">The React frontend and FastAPI backend run in the same Azure Container App.</text>
+<text x="50" y="62" font-family="Arial,sans-serif" font-size="31" font-weight="bold" fill="#20324b">VYBE — Historical Azure architecture</text>
+<text x="50" y="93" font-family="Arial,sans-serif" font-size="17" fill="#506078">October 2026 hackathon deployment (retired November 2026).</text>
 <path d="M310,222.5 L420,222.5" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
 <path d="M180,270 L180,365" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>
 <path d="M587.5,270 L587.5,365" fill="none" stroke="#667b98" stroke-width="2.5" marker-end="url(#a)"/>

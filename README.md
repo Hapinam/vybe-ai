@@ -4,7 +4,7 @@
 
 VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Microsoft Foundry integration is implemented. Production API responses observed by the owner on 25 October reported Foundry tool selection and Azure AI narration; independent Azure inference traces have not been inspected.**
 
-**[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Judges' 3–5 minute testing guide](docs/JUDGES_TESTING_GUIDE.md)** · **[Static portfolio demo](https://hapinam.github.io/vybe-ai/)** (historical Azure deployment evidence: [production Foundry observations](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
+**[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Archived judges' testing guide](docs/archive/JUDGES_TESTING_GUIDE.md)** · **[Static portfolio demo](https://hapinam.github.io/vybe-ai/)** (historical Azure deployment evidence: [production Foundry observations](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
 
 > **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
 
@@ -16,47 +16,47 @@ VYBE turns a **fictional football match** into three accessible, personalized fa
 
 ### Product vision and future roadmap
 
-- **[Future vision for judges: multilingual expansion, caching, personalization, event processing and reliability](docs/PRODUCT_VISION_ROADMAP.md)** — proposed capabilities only; not implemented in the current demo.
+- **[Archived future vision: multilingual expansion, caching, personalization, event processing and reliability](docs/archive/PRODUCT_VISION_ROADMAP.md)** — proposed capabilities only; not implemented in the current demo.
 
 ### Demo links
 
 - [Static portfolio demo](https://hapinam.github.io/vybe-ai/)
 - [Final 75-second demo](https://youtu.be/-pfgaeGjSN8)
-- [Judges' guide](docs/JUDGES_TESTING_GUIDE.md)
-- [Deployed architecture](docs/ARCHITECTURE.md)
+- [Archived judges' guide](docs/archive/JUDGES_TESTING_GUIDE.md)
+- [Technical architecture](docs/ARCHITECTURE.md)
 
 ## Experiences
 
 | Persona | Features |
 | --- | --- |
 | **Young Fan** | Goal celebration, plain-language football glossary, interactive goal quiz, approachable match commentary |
-| **Accessible** | Azure AI Speech audio with browser fallback, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes, screen-reader-friendly step-by-step event navigation |
+| **Accessible** | Recorded narration in static portfolio; historical Azure AI Speech with browser fallback, adjustable voice speed, high-contrast mode, larger text, keyboard replay shortcuts, optional descriptions of shots and passes, screen-reader-friendly step-by-step event navigation |
 | **Analyst** | Recorded shots/passes, highlights/goals/all-events timeline filters, first-vs-second-half comparison, event-based momentum indicator, goal turning points and evidence-backed narratives |
 
 **Interpreting analytics:** Momentum is a custom weighted event-activity score (goal = 3, shot = 2, completed pass = 1) in 15-minute windows. It is **not** possession, expected goals (xG), or a professional tactical model. Half comparisons use recorded synthetic events only; missing events must not be interpreted as real-world zero activity.
 
 ## Architecture
 
-- **Frontend:** React, TypeScript, Vite, CSS; server-side Azure Speech MP3 for spoken commentary with browser SpeechSynthesis fallback.
+- **Frontend:** React, TypeScript, Vite, CSS. The public static portfolio uses recorded narration and optional browser speech; the historical full-stack implementation supported server-side Azure Speech MP3.
 - **Backend:** Python FastAPI; deterministic replay engine that calculates score, passes and shots from ordered synthetic events.
-- **Narration:** Evidence-based, persona-specific commentary; Foundry-required Azure AI selection and ordering of exact, server-verified fact segments with allowlisted framing and deterministic fallback.
+- **Narration:** Evidence-based, persona-specific commentary. Historical full-stack Foundry integration could select verified fact segments; the public static portfolio plays recorded content, without live AI inference.
 - **Data:** Local synthetic match fixture. No external sports API required.
 
 The Vite development server proxies `/v1` and `/health` to the FastAPI service on port **8000**. Playback requests all validated replay snapshots once via `/v1/matches/replay/states` and then scrubs locally; `/v1/matches/replay` remains available for individual queries.
 
 ## Architecture diagram
 
-See also the [deployed architecture document](docs/ARCHITECTURE.md). This diagram summarizes the application data flows; the original hackathon deployment packaged React and FastAPI in the same Azure Container App image; the current static portfolio runs frontend-only. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
+See also the [technical architecture document](docs/ARCHITECTURE.md). This historical application diagram summarizes the original full-stack data flows; the original hackathon deployment packaged React and FastAPI in the same Azure Container App image; the current static portfolio runs frontend-only. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
 
-![VYBE application architecture](docs/images/README_ARCHITECTURE.svg)
+![Historical VYBE full-stack application architecture](docs/images/README_ARCHITECTURE.svg)
 
-**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. The Azure Container Apps deployment has been retired; the recorded static portfolio is the intended public demonstration. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+**Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. The Azure Container Apps deployment has been retired; the recorded static portfolio is the intended public demonstration. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## Run locally (Windows PowerShell)
 
 **Prerequisites:** Python 3.11+, Node.js and npm. No Azure keys are needed for deterministic replay. Foundry model selection, Azure AI goal narration and Azure Speech require separate server-side configuration; without compatible credentials the app uses safe fallbacks. Do not place keys in `VITE_` variables.
 
-For model-enabled local testing, configure `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY` (Ask the Match), and separately `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY` (goal narration). For speech see [Azure Speech rollout](docs/AZURE_SPEECH_ROLLOUT.md). Never commit secrets.
+For model-enabled local testing, configure `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY` (Ask the Match), and separately `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY` (goal narration). For speech see [Azure Speech rollout](docs/archive/AZURE_SPEECH_ROLLOUT.md). Never commit secrets.
 
 Use two terminals from the repository root.
 
@@ -81,7 +81,7 @@ Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
 ## Existing implementation evidence
 
-The project includes development checks and historical validation results. Production Foundry and speech observations are documented in the [October 25 evidence summary](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These are records of completed work, not extra submission requirements.
+The project includes development checks and historical validation results. Production Foundry and speech observations are documented in the [October 25 evidence summary](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These are records of completed work, not extra submission requirements.
 
 ## New fan experiences
 
@@ -132,19 +132,19 @@ npm.cmd run preview
 
 The static build uses `/vybe-ai/` as its GitHub Pages base path.
 
-This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. GitHub Pages publication is configured through a dedicated workflow and remains subject to owner approval and successful deployment.
+This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. GitHub Pages is the current public static portfolio, published through a dedicated workflow.
 
 ## Deployment status
 
 The original hackathon deployment used Azure Container Apps, Microsoft Foundry and Azure AI Speech. The Azure resources have since been deleted, and the former live application URL is no longer active.
 
-The public portfolio version is a frontend-only static demonstration intended for GitHub Pages publication. It uses recorded synthetic match data and does not require a backend, Azure services or Ollama.
+The public portfolio version is a frontend-only static demonstration hosted on GitHub Pages. It uses recorded synthetic match data and does not require a backend, Azure services or Ollama.
 
-The historical deployment architecture and implementation evidence remain documented in [Azure deployment README](infra/azure/README.md), [GHCR deployment](docs/GHCR_DEPLOYMENT.md) and [production Foundry evidence](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+The historical deployment architecture and implementation evidence remain documented in [Azure deployment README](docs/archive/infra/azure/README.md), [GHCR deployment](docs/GHCR_DEPLOYMENT.md) and [production Foundry evidence](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## Azure integration
 
-The submitted demo uses Microsoft Foundry-hosted model integration and Azure AI Speech. See [Foundry implementation](docs/FOUNDRY_REQUIRED_LAUNCH.md) and [production evidence](docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The deterministic engine remains the source of match facts.
+The historical hackathon submission used Microsoft Foundry-hosted model integration and Azure AI Speech; these cloud services are not running behind the current public portfolio. See [Foundry implementation](docs/archive/FOUNDRY_REQUIRED_LAUNCH.md) and [production evidence](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The deterministic engine remains the source of match facts.
 
 ## Limitations and responsible use
 
@@ -153,6 +153,10 @@ The submitted demo uses Microsoft Foundry-hosted model integration and Azure AI 
 - Browser speech voices vary, and expanded narration needs manual timing/accessibility validation.
 - Goal-based turning points are illustrative, not causal tactical analysis.
 - This is a hackathon prototype, not a certified production football-data service.
+
+## Documentation
+
+See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentation and preserved historical records.
 
 ## Project layout
 

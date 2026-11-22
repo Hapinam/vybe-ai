@@ -51,4 +51,4 @@ All `/v1/matches/*` routes share a per-process ASGI-peer limit of **240 requests
 
 POST endpoints take a synthetic match definition as JSON. Do not use real match claims or disclose Azure secrets in code. The deterministic event engine remains the source of truth for scores and counts.
 
-For optional model configuration see [Foundry launch notes](../../docs/FOUNDRY_REQUIRED_LAUNCH.md); for owner-observed production evidence see [October 25 evidence pack](../../docs/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). See [project README](../../README.md) for frontend setup, personas and known limitations.
+For optional model configuration see [Foundry launch notes](../../docs/archive/FOUNDRY_REQUIRED_LAUNCH.md); for owner-observed production evidence see [October 25 evidence pack](../../docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). See [project README](../../README.md) for frontend setup, personas and known limitations.

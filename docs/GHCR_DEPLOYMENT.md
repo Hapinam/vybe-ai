@@ -1,19 +1,19 @@
-# Private GHCR deployment — current pipeline
+# GHCR image publication — retained, Azure deployment retired
 
-VYBE uses a **private GHCR package** and an existing Azure Container App, `vybe-app`, in resource group `rg-vybe-hackathon` (`germanywestcentral`).
+**Current status (November 2026):** GHCR publishing remains configured. The original Azure Container Apps deployment is retired; publishing a container image does **not** make it publicly accessible as a running Azure service.
 
 ## Build and publish
 
-`.github/workflows/publish-ghcr.yml` is triggered after a successful `main` PR Quality Gate on a push. It reruns backend tests, scans for secrets and vulnerabilities, and publishes `ghcr.io/hapinam/vybe-ai:<full-commit-sha>`. The workflow verifies that the tested SHA is still the current `main` before publishing. Keep the GHCR package private.
+`.github/workflows/publish-ghcr.yml` runs after a successful `PR Quality Gate` workflow run for a push to `main`. It downloads and verifies the tested workflow's image-publication decision. **Documentation-only changes are excluded from image publication**. For qualifying changes, it verifies the tested SHA is still `main`, reruns backend tests, scans for secrets and vulnerabilities, and publishes `ghcr.io/hapinam/vybe-ai:<full-commit-sha>` to the private GHCR package.
 
-## Deploy
+## Azure deployment: historical workflow only
 
-`.github/workflows/deploy-azure-containerapp.yml` runs after a successful publish on `main`, uses the `azure-demo` GitHub environment and `AZURE_CREDENTIALS` secret, verifies the published SHA is still `main`, updates the existing app to a new revision, waits for healthy provisioning, tests `/health`, and then directs 100% traffic to that revision.
+`.github/workflows/deploy-azure-containerapp.yml` uses **manual `workflow_dispatch` only**, requiring a full image SHA and explicit `DEPLOY` confirmation. It is **not** triggered by GHCR publication or merges.
 
-**Merging into `main` may therefore automatically deploy.** Check workflow status and environment protections before approving a merge. Do not run legacy first-time provisioning scripts to update the app. The retired `infra/azure/deploy-ghcr.sh` was removed because the app already exists.
+The Azure app and related resources were deleted after the hackathon; the workflow was disabled operationally and its `azure-demo` environment and credentials removed. **Do not enable or run it** without a separately approved new infrastructure plan and restored safeguards. The retained workflow file does not mean Azure is available.
 
-## Configuration, cost and validation
+## Costs and evidence
 
-Preserve the existing Azure Container App registry credentials and Foundry/Speech configuration; the update workflow is not a secret-provisioning workflow. Keep credentials in Azure/GitHub secrets, never source control or logs. Verify real Foundry model availability and Azure Speech playback separately from CI. The private GHCR image avoids an additional ACR for this path, but inference, speech, Container Apps, logging and network traffic may incur costs. Cost Management budgets are alerts, not hard caps.
+GHCR image storage/publication is distinct from hosting. Provisioning new Azure Container Apps, AI model endpoints, Speech, monitoring, or network services may incur costs. Budgets are alerts, not hard caps.
 
-After deployment, verify the image SHA, active revision, traffic split, HTTPS UI, `/health`, replay, personas, language output and rollback revision. See `docs/FOUNDRY_REQUIRED_LAUNCH.md` for Foundry-specific acceptance criteria.
+Historical Azure deployment documentation is retained in [the archive](archive/infra/azure/README.md). For the active portfolio and local runtime see [architecture](ARCHITECTURE.md) and [root README](../README.md). No live Foundry inference is claimed for the current GitHub Pages portfolio.

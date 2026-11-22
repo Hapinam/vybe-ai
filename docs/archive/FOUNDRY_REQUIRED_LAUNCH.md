@@ -1,5 +1,9 @@
 # Microsoft Foundry — implemented integration
 
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
 Microsoft Foundry integration is part of the VYBE hackathon demo. This document explains what was built, rather than defining pending launch gates.
 
 ## What Foundry does
@@ -14,6 +18,6 @@ VYBE uses a **Foundry-hosted Azure OpenAI-compatible model**, not a managed Foun
 
 The owner captured a production Ask the Match response with `generation_mode=foundry_model_tool_call` and `selected_tool=get_key_moments`, and a goal narration response with `generation_mode=azure_ai` and verified fact IDs. Azure Monitor also showed **53.27k Processed Inference Tokens** at the resource level; this supports activity on the resource but is not a request-level trace.
 
-See [the dated evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md) and [architecture](ARCHITECTURE.md).
+See [the dated evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md) and [architecture](../ARCHITECTURE.md).
 
 These observations are presented with their limits; no additional outage simulation, certification or submission approval is claimed or requested here.

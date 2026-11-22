@@ -1,6 +1,10 @@
 # VYBE — Delivery Plan (updated 18 October 2026)
 
-> **Document status (October 25, 2026):** This document preserves historical checks and planning. Earlier references to future deployment or unverified production tests are historical, not current release status. The current deployment is in [Architecture](ARCHITECTURE.md); owner-observed production responses are in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final video was uploaded to https://youtu.be/-pfgaeGjSN8. No CI check alone certifies Azure inference, cost, WCAG, or all devices.
+> **ARCHIVED — HISTORICAL REFERENCE ONLY (November 2026)**
+>
+> This document describes the original VYBE hackathon implementation, validation, planning, or submission. It is not an active deployment or testing instruction. The Azure deployment has been retired; the current public portfolio is a static GitHub Pages demonstration. See the [current README](../../README.md) and [architecture](../ARCHITECTURE.md).
+
+> **Document status (October 25, 2026):** This document preserves historical checks and planning. Earlier references to future deployment or unverified production tests are historical, not current release status. The current deployment is in [Architecture](../ARCHITECTURE.md); owner-observed production responses are in [the evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The final video was uploaded to https://youtu.be/-pfgaeGjSN8. No CI check alone certifies Azure inference, cost, WCAG, or all devices.
 
 
 **Project:** VYBE — Every Fan Belongs · *Feel the Game. Your Way.*  
@@ -57,4 +61,4 @@
 ## Definition of done
 A judge can access VYBE without payment, replay a fictional match, switch fan personas and languages without losing spoken events, inspect evidence-backed insights, ask a grounded question, and **see proof of a real Microsoft Foundry-hosted model call**. The team can demonstrate the safe fallback and show the architecture, costs and final submission assets.
 
-See [Foundry required launch gate](FOUNDRY_REQUIRED_LAUNCH.md) and [private GHCR deployment](GHCR_DEPLOYMENT.md).
+See [Foundry required launch gate](FOUNDRY_REQUIRED_LAUNCH.md) and [private GHCR deployment](../GHCR_DEPLOYMENT.md).
