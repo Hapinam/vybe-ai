@@ -10,7 +10,7 @@ VYBE presents one fictional football match through three personalized experience
 
 - **Final demo video (75 seconds; owner-uploaded):** https://youtu.be/-pfgaeGjSN8
 - **Source code:** https://github.com/Hapinam/vybe-ai
-- **Live application:** https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — GitHub Actions deployment and revision health checks succeeded; owner-observed Foundry-related production responses are documented in [the 25 October evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+- **Former live application (retired):** https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io — GitHub Actions deployment and revision health checks succeeded; owner-observed Foundry-related production responses are documented in [the 25 October evidence pack](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## 1. Young Fan (about 45 seconds)
 

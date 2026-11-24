@@ -4,7 +4,9 @@
 
 ## Build and publish
 
-`.github/workflows/publish-ghcr.yml` runs after a successful `PR Quality Gate` workflow run for a push to `main`. It downloads and verifies the tested workflow's image-publication decision. **Documentation-only changes are excluded from image publication**. For qualifying changes, it verifies the tested SHA is still `main`, reruns backend tests, scans for secrets and vulnerabilities, and publishes `ghcr.io/hapinam/vybe-ai:<full-commit-sha>` to the private GHCR package.
+`.github/workflows/publish-ghcr.yml` runs after a successful `PR Quality Gate` workflow run for a push to `main`. It downloads and verifies the tested workflow's image-publication decision. **Documentation-only changes are excluded from image publication**. For qualifying changes, it verifies the tested SHA is still `main`, reruns backend tests, scans for secrets and vulnerabilities, and publishes `ghcr.io/hapinam/vybe-ai:<full-commit-sha>` to the GHCR package (historically intended to be private; current visibility must be checked separately).
+
+The exclusion covers `docs/**`, root README and CONTRIBUTING, and the API, web, demo and Azure README files. Quality checks still run. Web README changes may also trigger a Pages rebuild. Gitleaks scans the working tree without Git history; Trivy gates HIGH/CRITICAL findings with fixes available (`--ignore-unfixed`). See [testing and security](TESTING_AND_SECURITY.md).
 
 ## Azure deployment: historical workflow only
 

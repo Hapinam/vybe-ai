@@ -36,7 +36,7 @@ The Ollama adapter restricts configured endpoints to local loopback HTTP address
 
 ## Endpoints
 
-- `GET /health`: readiness check.
+- `GET /health`: liveness check; does not verify provider readiness.
 - `POST /v1/matches/replay?through_event=N`: deterministic match state after N events.
 - `POST /v1/matches/replay/states`: all post-event states in one request (the frontend uses this to avoid rate-limit exhaustion).
 - `POST /v1/matches/explain/{event_id}?persona=young|accessible|analyst`: grounded goal explanation.
@@ -49,6 +49,10 @@ The Ollama adapter restricts configured endpoints to local loopback HTTP address
 
 All `/v1/matches/*` routes share a per-process ASGI-peer limit of **240 requests/minute** and a **256 KiB** request-body limit. `/v1/matches/director/ask`, `/v1/matches/narrate/*` and `/v1/matches/speech` additionally share a **30 requests/minute** bucket. These are not distributed per-user quotas or cost caps.
 
-POST endpoints take a synthetic match definition as JSON. Do not use real match claims or disclose Azure secrets in code. The deterministic event engine remains the source of truth for scores and counts.
+Replay, explain, narrate and insights accept a synthetic match definition directly. Ask accepts `{match, question}`; Director Ask accepts `{match, question, persona}` (persona defaults to analyst). Questions are 1–300 characters. Speech instead accepts `{text, language, rate}`: text 1–1200 characters, language en/ar/cs, rate 0.5–2 (default 1), returning MP3 when configured. The bulk replay excludes the initial pre-event state. The API also supports validated extra-time and penalty-shootout records; the public fixture does not demonstrate them.
+
+The Director has three read-only data tools: `get_match_state`, `get_key_moments`, `get_match_statistics`. Specialized temporal and shootout questions may bypass the model. Unsupported causal claims are declined. Generation modes distinguish deterministic answers, Foundry-selected tools and Ollama-selected tools; `model_declined` records a model choosing no data tool, not necessarily a provider failure. Ollama does not generate goal narration or speech.
+
+See [local development](../../docs/LOCAL_DEVELOPMENT.md) and [testing and security](../../docs/TESTING_AND_SECURITY.md). Do not use real match claims or disclose Azure secrets in code. The deterministic event engine remains the source of truth for scores and counts.
 
 For optional model configuration see [Foundry launch notes](../../docs/archive/FOUNDRY_REQUIRED_LAUNCH.md); for owner-observed production evidence see [October 25 evidence pack](../../docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). See [project README](../../README.md) for frontend setup, personas and known limitations.

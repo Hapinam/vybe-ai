@@ -17,6 +17,7 @@ Start Vite in a second terminal:
 
 ```powershell
 cd apps/web
+Remove-Item Env:VITE_DEMO_MODE -ErrorAction SilentlyContinue
 npm.cmd ci
 npm.cmd run dev
 ```
@@ -39,7 +40,7 @@ The match timeline defaults to highlights and can be switched to all events.
 - Toggle **Live captions** for event-based subtitles (not speech-to-text).
 - The **Match story recap** is recalculated from played events.
 - In Analyst mode, select a **momentum window** to filter timeline events; clear it to see the whole timeline.
-- Persona, language, contrast, font-size, captions, timeline view, event details, expanded narration and speech speed persist locally in the browser.
+- Persona, language, contrast, font-size, captions, timeline view, event details, expanded narration and speech speed persist locally in the browser when storage is available; blocked storage does not prevent playback.
 - **Guided demo** cycles through three persona highlights automatically; stop it from the same control.
 
 ## Build
@@ -66,7 +67,7 @@ In Windows **CMD**, **Git Bash**, **Linux**, and **macOS**, use `npm` and `npx` 
 
 The frontend supports a static portfolio build using pre-recorded synthetic match data, including replay states, persona-specific narrations, insights and five suggested Ask the Match questions.
 
-Other questions receive a static-demo limitation response. No FastAPI backend, Ollama model, Foundry inference or Azure services are used in this mode.
+The four JSON datasets contain 31 post-event snapshots, 12 goal narrations, three persona insight datasets and 15 question/persona entries. Questions must match the five English suggestions exactly after trimming whitespace. Ask the Match uses the complete fixture and may reveal future replay events. Language selection localizes event captions, recap and speech, not the entire interface or Ask the Match. Other questions receive a static-demo limitation response. No FastAPI backend, Ollama model, Foundry inference or Azure services are used in this mode.
 
 ```powershell
 npm.cmd ci
@@ -78,6 +79,10 @@ npm.cmd run preview
 The production base path is `/vybe-ai/`, matching the GitHub Pages repository path.
 
 Do not describe this mode as a live AI experience.
+
+## Test separation
+
+The normal Playwright configuration excludes `fullstack.spec.ts`; the separate full-stack configuration requires a running FastAPI service. See [testing and security](../../docs/TESTING_AND_SECURITY.md) and [local development](../../docs/LOCAL_DEVELOPMENT.md).
 
 ## Important caveats
 

@@ -2,11 +2,23 @@
 
 **One synthetic football match. Three ways to experience it.**
 
-VYBE turns a **fictional football match** into three accessible, personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. Match facts are deterministic; evidence-constrained Azure AI narration and model-directed tool selection are implemented in code. **Microsoft Foundry integration is implemented. Production API responses observed by the owner on 25 October reported Foundry tool selection and Azure AI narration; independent Azure inference traces have not been inspected.**
+VYBE turns a **fictional football match** into three personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. The current public portfolio is a static replay with recorded deterministic content. Local full-stack execution supports optional Ollama tool selection. The retired Azure hackathon integration and its owner-observed evidence are preserved separately.
 
 **[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Archived judges' testing guide](docs/archive/JUDGES_TESTING_GUIDE.md)** · **[Static portfolio demo](https://hapinam.github.io/vybe-ai/)** (historical Azure deployment evidence: [production Foundry observations](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
 
 > **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
+
+## Project status and execution modes
+
+Active hackathon development ended on 24 November 2026. The public portfolio remains available; maintenance is subject to owner review.
+
+| Mode | Runtime | AI |
+| --- | --- | --- |
+| Public portfolio | GitHub Pages, static frontend | Recorded deterministic content; browser speech |
+| Local full-stack | React and FastAPI | Deterministic by default in the recommended setup; optional Ollama |
+| Historical Azure | Retired Container Apps deployment | Foundry model APIs and Azure Speech were configured historically |
+
+See [local development](docs/LOCAL_DEVELOPMENT.md) and [testing and security](docs/TESTING_AND_SECURITY.md).
 
 ### Quick tour
 
@@ -46,17 +58,17 @@ The Vite development server proxies `/v1` and `/health` to the FastAPI service o
 
 ## Architecture diagram
 
-See also the [technical architecture document](docs/ARCHITECTURE.md). This historical application diagram summarizes the original full-stack data flows; the original hackathon deployment packaged React and FastAPI in the same Azure Container App image; the current static portfolio runs frontend-only. The owner-observed production API evidence is linked below; Resource-level Azure Monitor token activity was observed, but request-level inference traces remain unverified.
+The three execution modes are distinct. See [technical architecture](docs/ARCHITECTURE.md) for detailed diagrams and historical evidence.
 
-![Historical VYBE full-stack application architecture](docs/images/README_ARCHITECTURE.svg)
+![VYBE execution modes](docs/images/README_ARCHITECTURE.svg)
 
 **Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. The Azure Container Apps deployment has been retired; the recorded static portfolio is the intended public demonstration. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
 ## Run locally (Windows PowerShell)
 
-**Prerequisites:** Python 3.11+, Node.js and npm. No Azure keys are needed for deterministic replay. Foundry model selection, Azure AI goal narration and Azure Speech require separate server-side configuration; without compatible credentials the app uses safe fallbacks. Do not place keys in `VITE_` variables.
+**Prerequisites:** Python 3.11+ (CI tests 3.11 and 3.13), Node.js 22 and npm. No Azure keys are needed for deterministic replay. Foundry model selection, Azure AI goal narration and Azure Speech require separate server-side configuration; without compatible credentials the app uses safe fallbacks. Do not place keys in `VITE_` variables.
 
-For model-enabled local testing, configure `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY` (Ask the Match), and separately `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY` (goal narration). For speech see [Azure Speech rollout](docs/archive/AZURE_SPEECH_ROLLOUT.md). Never commit secrets.
+For optional cloud-enabled testing (not required for local operation), configure `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY` (Ask the Match), and separately `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY` (goal narration). For speech see [Azure Speech rollout](docs/archive/AZURE_SPEECH_ROLLOUT.md). Never commit secrets.
 
 Use two terminals from the repository root.
 
@@ -66,6 +78,7 @@ Use two terminals from the repository root.
 cd apps/api
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[test]"
+$env:VYBE_DIRECTOR_PROVIDER = "deterministic"
 .\.venv\Scripts\python.exe -m uvicorn vybe.main:app --reload --port 8000
 ```
 
@@ -73,6 +86,7 @@ python -m venv .venv
 
 ```powershell
 cd apps/web
+Remove-Item Env:VITE_DEMO_MODE -ErrorAction SilentlyContinue
 npm.cmd ci
 npm.cmd run dev
 ```
@@ -164,7 +178,7 @@ See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentat
 - `apps/web/` — React replay dashboard and personas
 - `apps/web/src/match.ts` — synthetic match fixture and frontend types
 
-## Hackathon demo outline
+## Historical hackathon demo outline
 
 1. Introduce the same fictional match and the three personas.
 2. Play a goal in Young Fan mode; show the celebration and football word explanation.

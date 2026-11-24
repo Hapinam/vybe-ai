@@ -12,7 +12,7 @@ This document summarizes the available submission artifacts. It is **not** an ou
 - A fictional, deterministic football match with evidence-backed scores and statistics.
 - Server-side Microsoft Foundry model integration for bounded Ask the Match tool selection and grounded narration.
 - Azure AI Speech with browser fallback.
-- [Live application](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io).
+- [Former live application (retired)](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io).
 - [Final 75-second video](https://youtu.be/-pfgaeGjSN8).
 - [Judges' guide](JUDGES_TESTING_GUIDE.md).
 
