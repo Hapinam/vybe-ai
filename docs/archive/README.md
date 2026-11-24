@@ -34,3 +34,7 @@ The current public portfolio is [GitHub Pages](https://hapinam.github.io/vybe-ai
 - [Browser capture README](apps/web/demo/README.md) — original path: `apps/web/demo/README.md`
 
 **Evidence preservation:** The original Foundry evidence document is retained without content edits. Historical statements reflect their original dates, not current cloud availability.
+
+**Current policy (24 November 2026):** Azure deployment is manual-only and operationally disabled. GHCR publishing is separate and excludes documentation-only changes. Historical deployment instructions are not authorized for execution.
+
+- [Final project closure report](FINAL_PROJECT_CLOSURE_REPORT.md)

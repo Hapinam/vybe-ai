@@ -27,3 +27,5 @@ The retired `infra/azure/deploy-ghcr.sh` was a one-time app-creation script and 
 ## Security notes
 
 The API has application-level request size and rate limits, but those are not a substitute for edge controls or cloud spending limits. Never expose Foundry/Speech credentials to the browser. Review logs and operational costs after each release.
+
+**Current policy (24 November 2026):** Azure deployment is manual-only and operationally disabled. GHCR publishing is separate and excludes documentation-only changes. Historical deployment instructions are not authorized for execution.

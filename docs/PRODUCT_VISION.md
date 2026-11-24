@@ -2,6 +2,8 @@
 
 **Tagline:** Every Fan Belongs.
 
+This document preserves the original hackathon product vision and success criteria, not a certification of current capabilities. See the [current portfolio](../README.md) and [future roadmap](archive/PRODUCT_VISION_ROADMAP.md).
+
 ## Mission
 Make football understandable, engaging, and accessible to fans of different ages, abilities, languages, and levels of expertise.
 
@@ -25,7 +27,7 @@ One synthetic match event produces consistent, grounded narratives tailored to d
 - Personalization adapts style, not facts; avoid inferring emotions or disabilities.
 
 ## Demo story
-At minute 87 of a synthetic match, Team A equalizes 2–2. Switch between Young Fan, Accessible Commentary, and Analyst profiles while the underlying score and facts remain unchanged.
+At 87:24 of the implemented synthetic match, Aurora FC equalizes 2–2. Switch between Young Fan, Accessible Commentary, and Analyst profiles while the underlying score and facts remain unchanged.
 
 ## Success criteria
 - Synthetic event playback reliably updates score and match timeline.

@@ -30,7 +30,7 @@ The test checks: real API health, UI replay to fulltime, Studio evidence and ana
 
 ## Preflight: no paid resources
 
-1. Inspect existing resources using read-only commands in `docs/LAUNCH_READINESS_AUDIT.md`.
+1. Inspect existing resources using read-only commands in `docs/archive/LAUNCH_READINESS_AUDIT.md`.
 2. Choose a real Foundry-hosted Azure OpenAI deployment **only after** the owner approves its cost; record model name, region, API compatibility, per-token pricing and quota.
 3. Set a conservative spend plan for ACR Basic, Container Apps, Log Analytics, model tokens, build operations and applicable tax. Budget alerts are not hard caps.
 4. The current adapter supports **Azure OpenAI-compatible model tool calling**; it is not a managed Microsoft Foundry Agent Service agent. Do not mislabel it in the submission.

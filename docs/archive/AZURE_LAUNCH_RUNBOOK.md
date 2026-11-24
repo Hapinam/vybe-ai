@@ -6,7 +6,7 @@
 
 ## Judge-facing links
 
-- [Live application](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)
+- [Former live application (retired)](https://vybe-app.delightfulbay-c36e685e.germanynorth.azurecontainerapps.io)
 - [Final 75-second video](https://youtu.be/-pfgaeGjSN8)
 - [Judges' guide](JUDGES_TESTING_GUIDE.md)
 
@@ -25,3 +25,5 @@ The app does not consume live Premier League data. Its deterministic replay engi
 The existing production release uses GitHub Actions, private GHCR and Azure Container Apps. **A merge into `main` can deploy to production even when only documentation changes.** Leave the production release unchanged during judging unless the owner explicitly authorizes it.
 
 See [architecture](../ARCHITECTURE.md) and [production Foundry evidence](VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+
+**Current policy (24 November 2026):** Azure deployment is manual-only and operationally disabled. GHCR publishing is separate and excludes documentation-only changes. Historical deployment instructions are not authorized for execution.

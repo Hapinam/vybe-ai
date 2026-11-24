@@ -10,6 +10,8 @@ The public version is a **static React/TypeScript/Vite frontend** built with `VI
 
 There is **no live FastAPI backend, Ollama, Microsoft Foundry inference, Azure AI Speech service, or live sports feed** behind the public Pages site. Browser voice capabilities depend on installed browser/OS voices. This is a recorded demonstration, not a live AI service.
 
+![Static portfolio architecture](images/STATIC_ARCHITECTURE.svg)
+
 ## Local full-stack execution (optional)
 
 - **Frontend:** React, TypeScript, Vite; local Vite dev server normally on port 5173.
@@ -18,6 +20,10 @@ There is **no live FastAPI backend, Ollama, Microsoft Foundry inference, Azure A
 - **Source of truth:** deterministic synthetic event engine, never the language model.
 
 See [project setup](../README.md), [API README](../apps/api/README.md), and [web README](../apps/web/README.md).
+
+![Local full-stack architecture](images/LOCAL_ARCHITECTURE.svg)
+
+The Docker image serves the built frontend and API from one origin. See [local development](LOCAL_DEVELOPMENT.md) for setup and loopback restrictions.
 
 ## Historical hackathon deployment — retired
 

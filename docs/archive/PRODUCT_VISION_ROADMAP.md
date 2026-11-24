@@ -67,3 +67,5 @@ Future features should preserve verified match facts, accessible text alternativ
 - A production service-level guarantee.
 
 **Judge-facing principle:** Demonstrate the present honestly; describe the roadmap as a credible, phased future.
+
+**Archive note (24 November 2026):** Original phase numbering is retained; Phase 2 is not specified in this record. No missing phase is inferred.

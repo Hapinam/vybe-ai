@@ -2,6 +2,10 @@
 
 VYBE is a human-centered, synthetic-football AI hackathon project.
 
+## Maintenance status
+
+Active hackathon development is closed. Keep the public portfolio reproducible and review dependency, security and documentation changes through pull requests. Dependabot remains configured for weekly npm, pip and GitHub Actions updates. Eligible non-documentation merges may publish a GHCR image; web changes may rebuild Pages. Do not reactivate Azure without separate owner approval.
+
 ## Workflow
 1. Branch from `main` using `feat/`, `fix/`, or `docs/`.
 2. Keep changes focused and open a pull request.
