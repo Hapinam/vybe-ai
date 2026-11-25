@@ -73,3 +73,13 @@ The original release and historical evidence must remain
 distinguishable from subsequent maintenance.
 
 No new Azure deployment is authorized by this status record.
+
+
+## CI/CD maintenance policy
+
+See [CI/CD and Zero Cloud Cost Policy](CI_CD_COST_POLICY.md)
+for the consolidated maintenance design and dated
+administrative inventory.
+
+Existing GHCR package disposition and final post-merge
+verification remain separate closure tasks.

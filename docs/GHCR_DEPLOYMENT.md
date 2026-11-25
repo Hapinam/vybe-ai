@@ -1,21 +1,49 @@
-# GHCR image publication — retained, Azure deployment retired
+# GHCR publication and Azure deployment — retired
 
-**Current status (November 2026):** GHCR publishing remains configured. The original Azure Container Apps deployment is retired; publishing a container image does **not** make it publicly accessible as a running Azure service.
+## Current maintenance policy
 
-## Build and publish
+Automatic GHCR publication has been removed from the
+active CI/CD design. No manual publication workflow is
+provided.
 
-`.github/workflows/publish-ghcr.yml` runs after a successful `PR Quality Gate` workflow run for a push to `main`. It downloads and verifies the tested workflow's image-publication decision. **Documentation-only changes are excluded from image publication**. For qualifying changes, it verifies the tested SHA is still `main`, reruns backend tests, scans for secrets and vulnerabilities, and publishes `ghcr.io/hapinam/vybe-ai:<full-commit-sha>` to the GHCR package (historically intended to be private; current visibility must be checked separately).
+The previous publication workflow remains recoverable
+from Git history. Existing registry versions are not
+deleted by this repository change.
 
-The exclusion covers `docs/**`, root README and CONTRIBUTING, and the API, web, demo and Azure README files. Quality checks still run. Web README changes may also trigger a Pages rebuild. Gitleaks scans the working tree without Git history; Trivy gates HIGH/CRITICAL findings with fixes available (`--ignore-unfixed`). See [testing and security](TESTING_AND_SECURITY.md).
+The owner inventory on 25 November 2026 identified a
+private GHCR package with 147 versions: 49 tagged and
+98 untagged. These are registry records, not necessarily
+147 independent container images.
 
-## Azure deployment: historical workflow only
+Package deletion requires separate owner authorization.
 
-`.github/workflows/deploy-azure-containerapp.yml` uses **manual `workflow_dispatch` only**, requiring a full image SHA and explicit `DEPLOY` confirmation. It is **not** triggered by GHCR publication or merges.
+## Azure deployment
 
-The Azure app and related resources were deleted after the hackathon; the workflow was disabled operationally and its `azure-demo` environment and credentials removed. **Do not enable or run it** without a separately approved new infrastructure plan and restored safeguards. The retained workflow file does not mean Azure is available.
+The original Azure deployment has been retired.
 
-## Costs and evidence
+The historical deployment workflow is preserved at
+[deploy-azure-containerapp.yml](archive/ci-cd/deploy-azure-containerapp.yml).
+It is outside the active GitHub Actions workflow directory.
 
-GHCR image storage/publication is distinct from hosting. Provisioning new Azure Container Apps, AI model endpoints, Speech, monitoring, or network services may incur costs. Budgets are alerts, not hard caps.
+Do not restore or execute this workflow without a separately
+approved infrastructure plan, credentials and cost controls.
 
-Historical Azure deployment documentation is retained in [the archive](archive/infra/azure/README.md). For the active portfolio and local runtime see [architecture](ARCHITECTURE.md) and [root README](../README.md). No live Foundry inference is claimed for the current GitHub Pages portfolio.
+## Local container execution
+
+The application can still be built locally from the
+repository Dockerfile. See [local development](LOCAL_DEVELOPMENT.md).
+
+CI continues to build, scan and smoke-test the production
+container without publishing it.
+
+## Cost policy
+
+No paid hosting or new Azure resources are authorized.
+GitHub Pages and standard public-repository CI remain
+part of the portfolio maintenance design.
+
+Optional Azure integrations and historical research
+scripts may incur charges if explicitly configured and run.
+
+Zero cost is a maintenance target, not a guarantee
+against future pricing changes or external service usage.

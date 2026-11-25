@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // This suite runs with an actual FastAPI process, NOT Playwright route mocks.
-// Invoked separately by .github/workflows/fullstack-smoke.yml.
+// Invoked by the integration job in .github/workflows/pr-quality-gate.yml.
 test("real FastAPI serves replay, persona insights, evidence and grounded Ask", async ({ page, request }) => {
   const health = await request.get("/health");
   expect(health.ok()).toBeTruthy();
