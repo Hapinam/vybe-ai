@@ -1,6 +1,6 @@
 # VYBE — Project Closure Status
 
-**Status date:** 25 November 2026.
+**Status date:** 26 November 2026.
 
 The hackathon submission and active hackathon development
 are complete. Subsequent changes are reviewed portfolio,
@@ -63,11 +63,13 @@ remain pending.
 
 ## Remaining closure work
 
-- Complete research and documentation acceptance.
-- Review deferred engineering maintenance.
-- Verify CI/CD publication and cost exposure.
-- Complete final portfolio and release acceptance.
-- Remove the temporary maintenance workspace after approval.
+- Complete final documentation PR acceptance.
+- Review and authorize repository metadata changes.
+- Verify public portfolio interaction and final YouTube playback.
+- Complete fresh-clone local reproducibility acceptance.
+- Create the separately approved final portfolio release.
+- Complete authorized temporary workspace and Recycle Bin disposition.
+- Obtain final owner closure acceptance.
 
 The original release and historical evidence must remain
 distinguishable from subsequent maintenance.
@@ -81,5 +83,38 @@ See [CI/CD and Zero Cloud Cost Policy](CI_CD_COST_POLICY.md)
 for the consolidated maintenance design and dated
 administrative inventory.
 
-Existing GHCR package disposition and final post-merge
-verification remain separate closure tasks.
+GHCR package disposition and final post-merge verification have been completed under CI-18.
+
+
+## Maintenance stage acceptance
+
+| Stage | Status |
+| --- | --- |
+| Final Security Audit | Closed within documented scope |
+| Research and Documentation | Closed |
+| Engineering Hardening | Closed |
+| CI/CD and Cost Closure | Closed |
+| Final Acceptance and Release | In progress |
+
+The latest documented local engineering validation passed 360
+API tests per tested Python version (3.11 and 3.13).
+
+PR #137 consolidated CI/CD. Dependabot PRs #138 through #141
+were merged. Final post-merge CI after PR #141 passed 3/3 workflows.
+
+The owner-authorized CI-18 operation deleted private GHCR
+package ID 16021674, containing 147 version records. The
+owner-provided result confirmed active inventory absence,
+unchanged repository tree and release inventory, and subsequent
+removal of the temporary deletion permission.
+
+See [CI/CD policy](CI_CD_COST_POLICY.md) for evidence and limits.
+
+The original hackathon release must remain unchanged.
+The owner approved a separate planned portfolio release,
+v1.1.0-portfolio-final, subject to final acceptance.
+
+The repository will remain public and not archived, with
+reviewed security and dependency maintenance.
+
+Stage 5 and overall project closure are not yet accepted.

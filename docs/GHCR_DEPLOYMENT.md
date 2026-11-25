@@ -15,7 +15,7 @@ private GHCR package with 147 versions: 49 tagged and
 98 untagged. These are registry records, not necessarily
 147 independent container images.
 
-Package deletion requires separate owner authorization.
+Package deletion was subsequently authorized and completed under CI-18 Option A. See the closure evidence below.
 
 ## Azure deployment
 
@@ -47,3 +47,22 @@ scripts may incur charges if explicitly configured and run.
 
 Zero cost is a maintenance target, not a guarantee
 against future pricing changes or external service usage.
+
+
+## Final registry disposition
+
+The owner authorized deletion of the complete private VYBE
+container package (ID 16021674), accepting loss of its historical
+registry versions and confirming no external consumers.
+
+The owner-executed GitHub CLI verification confirmed deletion
+and absence from active inventory, with all 147 historical
+version records accounted for.
+
+Repository content and release inventory remained unchanged.
+The temporary package-deletion permission was removed.
+
+See [CI/CD closure evidence](CI_CD_COST_POLICY.md).
+
+No registry publication or paid deployment is authorized.
+Local container builds remain available from source.

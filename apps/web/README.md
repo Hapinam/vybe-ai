@@ -9,7 +9,10 @@ From the repository root, start FastAPI in one terminal:
 ```powershell
 cd apps/api
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements-test.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -m pip check
+$env:VYBE_DIRECTOR_PROVIDER = "deterministic"
 .\.venv\Scripts\python.exe -m uvicorn vybe.main:app --reload --port 8000
 ```
 
@@ -87,3 +90,17 @@ The normal Playwright configuration excludes `fullstack.spec.ts`; the separate f
 ## Important caveats
 
 The match is synthetic. Momentum is weighted event activity, not xG or possession. The original Azure Container Apps deployment has been retired; the current public portfolio is a frontend-only static GitHub Pages build. The owner supplied October 25 production responses reporting Foundry tool selection and Azure AI narration, and reported Evelyn Arabic speech acceptance. These observations are not independent Azure inference logs or a full accessibility certification. See [evidence](../../docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
+
+
+## Runtime and dependency policy
+
+Use Node.js 22 for the documented local setup, consistent
+with frontend CI and GitHub Pages. The production Docker
+frontend build stage uses digest-pinned Node.js 26.
+
+Use a clean environment without Azure model or speech credentials
+for entirely local execution. Deterministic Director selection
+alone does not disable separately configured cloud integrations.
+
+See [local development](../../docs/LOCAL_DEVELOPMENT.md) and
+[third-party licensing](../../docs/THIRD_PARTY_LICENSES.md).
