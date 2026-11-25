@@ -22,13 +22,18 @@ There is no guaranteed response or remediation SLA.
 Please avoid public disclosure of exploitable vulnerability
 details, credentials, personal data or sensitive logs.
 
-GitHub Private Vulnerability Reporting was confirmed disabled
-on 26 November 2026. A dedicated private reporting channel
-has not yet been established.
+GitHub Private Vulnerability Reporting is enabled.
 
-The repository owner must separately approve enabling a private
-reporting channel. Until one is available, do not submit
-sensitive vulnerability details through public issues.
+To report a vulnerability privately, open the repository's
+[Security tab](https://github.com/Hapinam/vybe-ai/security)
+and select **Report a vulnerability**.
+
+Include the affected version or commit, a description of the
+issue, its potential impact and safe reproduction steps.
+
+Do not include credentials, personal data or unrelated sensitive
+information. Do not submit exploitable vulnerability details
+through public issues.
 
 ## Security maintenance
 
