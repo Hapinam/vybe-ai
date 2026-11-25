@@ -8,6 +8,7 @@ from urllib.parse import urlsplit
 
 from .director_agent import DECLINE_TOOL, _TOOL_DESCRIPTIONS
 from .director_tools import TOOL_NAMES
+from .secure_http import build_secure_opener
 
 ALLOWED_TOOLS = frozenset((*TOOL_NAMES, DECLINE_TOOL))
 MAX_RESPONSE_BYTES = 32768
@@ -87,14 +88,7 @@ def _select_tool(question: str, config=None):
         method="POST",
     )
 
-    # Ignore proxy environment variables and reject HTTP redirects.
-    class NoRedirect(urllib.request.HTTPRedirectHandler):
-        def redirect_request(self, req, fp, code, msg, headers, newurl):
-            return None
-
-    opener = urllib.request.build_opener(
-        urllib.request.ProxyHandler({}), NoRedirect()
-    )
+    opener = build_secure_opener()
 
     with opener.open(request, timeout=30) as response:
         raw = response.read(MAX_RESPONSE_BYTES + 1)

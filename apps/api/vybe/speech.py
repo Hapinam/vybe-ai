@@ -5,10 +5,12 @@ The Speech resource key is server-only. No text or credentials are logged.
 import os
 import re
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import Request
 from xml.sax.saxutils import escape
 
 from fastapi import HTTPException
+
+from .secure_http import build_secure_opener
 
 VOICES = {
     "en": ("en-US", "en-US-GuyNeural"),
@@ -152,10 +154,10 @@ def synthesize(text: str, language: str, rate: float = 1.0) -> bytes:
         method="POST",
     )
     try:
-        with urlopen(request, timeout=12) as response:
+        with build_secure_opener().open(request, timeout=12) as response:
             audio = response.read(MAX_AUDIO + 1)
             if len(audio) > MAX_AUDIO:
                 raise HTTPException(502, "Speech response too large")
             return audio
-    except (HTTPError, URLError, TimeoutError) as exc:
-        raise HTTPException(502, "Speech service unavailable") from exc
+    except (HTTPError, URLError, TimeoutError):
+        raise HTTPException(502, "Speech service unavailable") from None

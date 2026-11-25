@@ -23,3 +23,71 @@ The reviewed baseline contains 22 API test modules and 10 browser test modules. 
 The replay bulk endpoint docstring incorrectly mentions kickoff inclusion (actual behavior is post-event snapshots only). Consider consistent `npm ci` in web-build, reducing duplicate CI work, and reviewing ignore patterns for sensitive/local artifacts in a separate engineering PR. No code or workflow changes are required for documentation closure.
 
 See [GHCR policy](GHCR_DEPLOYMENT.md) and [local development](LOCAL_DEVELOPMENT.md).
+
+## Outbound HTTP security hardening — 2026-11-25
+
+This maintenance change addresses FSEC-01, FSEC-02 and FSEC-04
+from the final repository security audit.
+
+### Transport controls
+
+Azure AI narration, Azure Speech and the local Ollama adapter
+use a shared HTTP opener that rejects redirects and disables
+implicit proxy configuration.
+
+Azure AI endpoints must use HTTPS with the default port or
+explicit port 443, in addition to existing hostname and URL
+validation requirements.
+
+Environments requiring an outbound HTTP proxy are not supported
+by these adapters without an explicitly reviewed transport change.
+
+### Response limits
+
+| Integration | Maximum response | Request timeout |
+| --- | ---: | ---: |
+| Azure AI narration | 65,536 bytes | 8 seconds |
+| Azure Speech | 2,000,000 bytes | 12 seconds |
+| Local Ollama director | 32,768 bytes | 30 seconds |
+
+Azure AI responses exceeding the byte limit are rejected before
+JSON parsing. Existing narration content validation and
+deterministic fallback behavior remain in place.
+
+The Azure AI byte limit is a defensive engineering threshold,
+not a limit derived from live provider measurements.
+
+### Sensitive error handling
+
+Azure AI failure logs retain fixed diagnostic messages and
+exception class names without raw exception messages or
+tracebacks.
+
+Azure Speech provider failures return a generic HTTP error
+without displaying the underlying exception chain.
+
+### Local verification
+
+Validation was performed using Python 3.11 in a temporary
+Docker image, with the API source mounted read-only and
+container networking disabled during test execution.
+
+| Test suite | Passed | Failed | Skipped |
+| --- | ---: | ---: | ---: |
+| Focused security and adapter tests | 134 | 0 | 0 |
+| Full API test suite | 335 | 0 | 0 |
+
+The focused suite is included in the full API suite; these
+counts are not additive.
+
+Regression coverage includes response-size boundaries,
+redirect rejection, proxy isolation, endpoint port validation,
+sensitive exception handling and deterministic fallback.
+
+No live Azure or Ollama requests were made. Live provider
+compatibility and production behavior were not independently
+validated by this test run.
+
+The temporary test image was removed after execution.
+Dependency versions were resolved from the existing project
+version ranges rather than a fully pinned dependency lockfile.

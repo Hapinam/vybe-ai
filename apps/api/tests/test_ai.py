@@ -155,7 +155,7 @@ def test_null_azure_content_uses_deterministic_fallback():
     response.__exit__.return_value = False
     response.read.return_value = b'{"choices":[{"message":{"content":null}}]}'
     with patch.dict("os.environ", ENV, clear=True), patch(
-        "urllib.request.urlopen", return_value=response
+        "urllib.request.OpenerDirector.open", return_value=response
     ):
         result = narrate_goal(match(), "goal-1")
     assert result["generation_mode"] == "deterministic"
@@ -180,7 +180,7 @@ def test_narration_request_contract_matches_configured_deployment():
     response.__exit__.return_value = False
     response.read.return_value = b'{"choices":[{"message":{"content":"ok"}}]}'
     with patch.dict("os.environ", ENV, clear=True), patch(
-        "urllib.request.urlopen", return_value=response
+        "urllib.request.OpenerDirector.open", return_value=response
     ) as urlopen:
         _generate("a grounded prompt")
     request = urlopen.call_args.args[0]
