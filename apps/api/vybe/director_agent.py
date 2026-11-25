@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 
 from .director_tools import TOOL_NAMES, call_director_tool
 from .models import MatchDefinition
+from .secure_http import build_secure_opener
 from .questions import (
     _has_explicit_historical_time,
     ask_match,
@@ -48,10 +49,15 @@ def _configuration():
     parsed = urlparse(endpoint)
     if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
             or parsed.path not in ("", "/") or parsed.query or parsed.fragment
+            or parsed.port not in (None, 443)
             or not parsed.hostname.endswith(".openai.azure.com")
             or not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", deployment)):
         raise ValueError("Invalid Foundry-hosted Azure OpenAI model configuration")
     return endpoint, key, deployment
+
+
+def _open_model_response(request, *, timeout):
+    return build_secure_opener().open(request, timeout=timeout)
 
 
 def _select_tool(question: str, config: tuple[str, str, str]) -> str:
@@ -80,7 +86,7 @@ def _select_tool(question: str, config: tuple[str, str, str]) -> str:
         url, data=json.dumps(payload).encode("utf-8"), method="POST",
         headers={"Content-Type": "application/json", "api-key": key},
     )
-    with urllib.request.urlopen(request, timeout=6) as response:
+    with _open_model_response(request, timeout=6) as response:
         # Limit response bytes independently of the server's Content-Length.
         raw = response.read(8193)
     if len(raw) > 8192:
@@ -180,9 +186,8 @@ def director_ask(match: MatchDefinition, question: str, persona: str = "analyst"
             "synthetic": True,
         }
     except ValueError as exc:
-        # These validation errors are generated locally; do not log provider
-        # response bodies, URLs or credentials.
-        log.warning("Match Director rejected model selection: %s; using deterministic fallback", exc)
+        # Validation errors may include provider-controlled content.
+        log.warning("Match Director rejected model selection (%s); using deterministic fallback", type(exc).__name__)
         return fallback
     except Exception as exc:
         # Network/provider exception text and tracebacks can contain request

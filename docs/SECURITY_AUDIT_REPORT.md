@@ -85,3 +85,16 @@ implementation details and local verification limits.
 All 12 scoped findings have documented dispositions.
 This is not a security certification or guarantee that
 the repository contains no vulnerabilities.
+
+## Subsequent engineering maintenance
+
+The Foundry Director adapter was identified as an
+additional outbound HTTP hardening target during the
+engineering review.
+
+The final engineering maintenance change extends the
+shared transport controls and sanitized exception logging
+to this adapter without changing its provider defaults,
+tool contract, timeout or response-size limit.
+
+The original scoped audit evidence above remains historical.

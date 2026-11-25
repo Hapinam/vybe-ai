@@ -22,7 +22,7 @@ def reply(name, args="{}"):
 
 def ask(question, model_reply):
     with patch("vybe.director_agent._configuration", return_value=CONFIG), \
-            patch("vybe.director_agent.urllib.request.urlopen", return_value=model_reply) as urlopen, \
+            patch("vybe.director_agent._open_model_response", return_value=model_reply) as urlopen, \
             patch("vybe.director_agent.call_director_tool") as run_tool:
         result = director_ask(MATCH, question)
     return result, urlopen, run_tool
@@ -55,7 +55,7 @@ def test_decline_with_arguments_is_rejected_like_any_other_tool():
 
 def test_real_tools_still_work_and_are_marked_as_model_selected():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), \
-            patch("vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")):
+            patch("vybe.director_agent._open_model_response", return_value=reply("get_match_state")):
         result = director_ask(MATCH, "What's the final score?")
     assert result["supported"] is True
     assert result["selected_tool"] == "get_match_state"
@@ -69,5 +69,5 @@ def test_model_declined_flag_is_absent_when_the_model_was_not_consulted(monkeypa
 
 def test_model_declined_flag_is_absent_when_the_model_picks_a_data_tool():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), \
-            patch("vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")):
+            patch("vybe.director_agent._open_model_response", return_value=reply("get_match_state")):
         assert "model_declined" not in director_ask(MATCH, "What's the final score?")

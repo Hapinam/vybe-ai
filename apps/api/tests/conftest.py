@@ -9,5 +9,6 @@ def reset_test_rate_limit():
     while node is not None:
         if node.__class__.__name__ == "MatchRequestGuard":
             node._hits.clear()
+            node._model_hits.clear()
             break
         node = getattr(node, "app", None)

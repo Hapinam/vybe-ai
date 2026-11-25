@@ -37,7 +37,7 @@ def test_no_configuration_preserves_deterministic_fallback(monkeypatch):
 
 def test_real_tool_call_envelope_mocked():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_key_moments")
+        "vybe.director_agent._open_model_response", return_value=reply("get_key_moments")
     ) as urlopen:
         result = director_ask(MATCH, "What were the turning points?")
     assert result["generation_mode"] == "foundry_model_tool_call"
@@ -53,7 +53,7 @@ def test_real_tool_call_envelope_mocked():
 
 def test_unknown_tool_refused_and_fallback():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=reply("run_shell")
+        "vybe.director_agent._open_model_response", return_value=reply("run_shell")
     ):
         result = director_ask(MATCH, "Who scored?")
     assert result["generation_mode"] == "deterministic"
@@ -62,21 +62,21 @@ def test_unknown_tool_refused_and_fallback():
 
 def test_arguments_rejected():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state", '{"command":"rm"}')
+        "vybe.director_agent._open_model_response", return_value=reply("get_match_state", '{"command":"rm"}')
     ):
         assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
 
 
 def test_timeout_falls_back():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", side_effect=TimeoutError("timeout")
+        "vybe.director_agent._open_model_response", side_effect=TimeoutError("timeout")
     ):
         assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
 
 
 def test_malformed_response_falls_back():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=io.BytesIO(b'{"choices": []}')
+        "vybe.director_agent._open_model_response", return_value=io.BytesIO(b'{"choices": []}')
     ):
         assert director_ask(MATCH, "Who scored?")["generation_mode"] == "deterministic"
 
@@ -92,7 +92,7 @@ def test_http_contract_and_validation():
 
 def test_foundry_request_contract_is_explicit_and_secret_stays_in_header():
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+        "vybe.director_agent._open_model_response", return_value=reply("get_match_state")
     ) as urlopen:
         result = director_ask(MATCH, "What is the score?")
     assert result["generation_mode"] == "foundry_model_tool_call"
@@ -124,7 +124,7 @@ def test_unsupported_causal_variants_declined_before_model_call():
         "Was it a causal effect?", "What caused the defeat?",
     )
     with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-        "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+        "vybe.director_agent._open_model_response", return_value=reply("get_match_state")
     ) as urlopen:
         for question in variants:
             result = director_ask(MATCH, question)
@@ -138,7 +138,7 @@ def test_unrelated_substrings_do_not_trigger_causal_decline():
     from unittest.mock import patch
     for question in ("Who is Whyte?", "What information is recorded?", "Because of whom?"):
         with patch("vybe.director_agent._configuration", return_value=CONFIG), patch(
-            "vybe.director_agent.urllib.request.urlopen", return_value=reply("get_match_state")
+            "vybe.director_agent._open_model_response", return_value=reply("get_match_state")
         ) as urlopen:
             result = director_ask(MATCH, question)
             assert result["generation_mode"] == "foundry_model_tool_call", question
