@@ -9,11 +9,14 @@ from collections import defaultdict, deque
 
 
 class MatchRequestGuard:
-    def __init__(self, app, max_bytes=262144, requests_per_minute=240, model_requests_per_minute=30):
+    def __init__(self, app, max_bytes=262144, requests_per_minute=240, model_requests_per_minute=30, max_peers=1024):
         self.app = app
         self.max_bytes = max_bytes
         self.requests_per_minute = requests_per_minute
         self.model_requests_per_minute = model_requests_per_minute
+        if max_peers < 1:
+            raise ValueError("max_peers must be positive")
+        self.max_peers = max_peers
         self._hits = defaultdict(deque)
         self._model_hits = defaultdict(deque)
         self._lock = asyncio.Lock()
@@ -35,26 +38,50 @@ class MatchRequestGuard:
         # Only these endpoints can invoke a paid model. Keep a separate,
         # shared per-peer bucket in addition to the overall API limit.
         model_route = path == "/v1/matches/director/ask" or path.startswith("/v1/matches/narrate/") or path == "/v1/matches/speech"
+        rejection = None
         async with self._lock:
-            hits = self._hits[ip]
-            while hits and hits[0] <= now - 60:
-                hits.popleft()
-            if len(hits) >= self.requests_per_minute:
-                return await reject(429, "rate limit exceeded", [(b"retry-after", b"60")])
-            if model_route:
-                model_hits = self._model_hits[ip]
-                while model_hits and model_hits[0] <= now - 60:
-                    model_hits.popleft()
-                if len(model_hits) >= self.model_requests_per_minute:
-                    return await reject(429, "model request rate limit exceeded", [(b"retry-after", b"60")])
-                model_hits.append(now)
-            hits.append(now)
-            # Remove inactive peers to avoid unbounded map growth.
-            for buckets in (self._hits, self._model_hits):
-                if len(buckets) > 1024:
+            now = time.monotonic()
+
+            def reserve_peer(buckets):
+                if ip in buckets:
+                    return True
+                if len(buckets) >= self.max_peers:
                     for key in list(buckets):
-                        if key != ip and (not buckets[key] or buckets[key][-1] <= now - 60):
+                        if not buckets[key] or buckets[key][-1] <= now - 60:
                             del buckets[key]
+                return len(buckets) < self.max_peers
+
+            if not reserve_peer(self._hits):
+                rejection = "rate limiter capacity exceeded"
+            else:
+                hits = self._hits.get(ip, deque())
+                while hits and hits[0] <= now - 60:
+                    hits.popleft()
+
+                if len(hits) >= self.requests_per_minute:
+                    rejection = "rate limit exceeded"
+                elif model_route:
+                    if not reserve_peer(self._model_hits):
+                        rejection = "rate limiter capacity exceeded"
+                    else:
+                        model_hits = self._model_hits.get(ip, deque())
+                        while model_hits and model_hits[0] <= now - 60:
+                            model_hits.popleft()
+
+                        if len(model_hits) >= self.model_requests_per_minute:
+                            rejection = "model request rate limit exceeded"
+                        else:
+                            model_hits.append(now)
+                            self._model_hits[ip] = model_hits
+
+                if rejection is None:
+                    hits.append(now)
+                    self._hits[ip] = hits
+
+        if rejection is not None:
+            return await reject(
+                429, rejection, [(b"retry-after", b"60")]
+            )
 
         headers = dict(scope.get("headers", []))
         content_length = headers.get(b"content-length")
