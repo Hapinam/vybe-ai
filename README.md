@@ -1,16 +1,47 @@
-# VYBE — Every Fan Belongs
+# VYBE - Every Fan Belongs
 
-**One synthetic football match. Three ways to experience it.**
+**Accessibility-first, AI-assisted football replay.**
 
-VYBE turns a **fictional football match** into three personalized fan experiences: **Young Fan**, **Accessible Fan**, and **Analyst Fan**. The current public portfolio is a static replay with recorded deterministic content. Local full-stack execution supports optional Ollama tool selection. The retired Azure hackathon integration and its owner-observed evidence are preserved separately.
+One fictional football match. Three personalized fan experiences:
+Young Fan, Accessible Fan and Analyst Fan.
 
-**[Watch the final 75-second demo (uploaded to YouTube)](https://youtu.be/-pfgaeGjSN8)** · **[Archived judges' testing guide](docs/archive/JUDGES_TESTING_GUIDE.md)** · **[Static portfolio demo](https://hapinam.github.io/vybe-ai/)** (historical Azure deployment evidence: [production Foundry observations](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md))
+Built for the Microsoft + Premier League Inside the Game Hackathon 2026.
 
-> **Synthetic data only:** Aurora FC, Harbor United, players and events are fictional. No official Premier League feed or real-time match coverage. Browser speech is not AI translation.
+**[Explore the interactive portfolio](https://hapinam.github.io/vybe-ai/)** |
+**[Watch the final 75-second demo](https://youtu.be/-pfgaeGjSN8)** |
+**[Original hackathon release](https://github.com/Hapinam/vybe-ai/releases/tag/v1.0.0-hackathon-final)**
+
+React | TypeScript | FastAPI | Docker | Ollama | MIT
+
+The public portfolio uses recorded deterministic content.
+Optional local Ollama tool selection is available in the full-stack
+application. The original Azure deployment has been retired.
+
+All match data is synthetic. VYBE is not an official Premier League
+product, a live football-data service or a certified production system.
+
+## Engineering highlights
+
+- 360 API tests passed on each of Python 3.11 and 3.13 in the
+  latest documented local engineering validation.
+- 20 models evaluated across 240 HTTP benchmark executions.
+- 72 additional executions in a three-model robustness evaluation.
+- 79 historical research artifacts preserved.
+- Deterministic match facts, bounded read-only AI tool selection
+  and safe provider fallback.
+- Hash-locked Python dependencies, pinned GitHub Actions and
+  digest-pinned Docker base images.
+- Secure outbound HTTP, bounded request-rate state and
+  automated dependency and container security checks.
+- Three active repository-defined workflows: Quality Gate,
+  CodeQL and GitHub Pages.
+
+These are scoped engineering results, not a security certification,
+general-purpose model ranking or accessibility certification.
 
 ## Project status and execution modes
 
-Active hackathon development ended on 24 November 2026. The public portfolio remains available; maintenance is subject to owner review.
+Active hackathon development ended on 24 November 2026. Subsequent work is reviewed portfolio, security and dependency maintenance. The public portfolio remains available; maintenance is subject to owner review.
 
 | Mode | Runtime | AI |
 | --- | --- | --- |
@@ -64,9 +95,29 @@ The three execution modes are distinct. See [technical architecture](docs/ARCHIT
 
 **Data boundaries:** No official or live Premier League feeds are used. Match statistics derive from fictional events; browser fallback speech uses installed OS/browser voices. The adapter's existence alone is not evidence of Azure model execution or managed Foundry Agent Service. The Azure Container Apps deployment has been retired; the recorded static portfolio is the intended public demonstration. Owner-supplied production network responses reported `foundry_model_tool_call` and `azure_ai`; these do not independently prove Azure-side token usage or a managed agent. See [live evidence and its limits](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md).
 
+## Research and engineering evidence
+
+VYBE preserves 79 historical research artifacts covering
+model evaluation, security robustness and speech research.
+
+The HTTP application contract benchmark evaluated 20 models
+across 240 recorded executions. Qwen3 Coder and Gemma 4 12B
+passed all 12 cases in that benchmark.
+
+The separate three-model robustness evaluation contains
+72 recorded executions. No finalist passed every case.
+
+These are application-specific historical results, not
+general-purpose LLM rankings or security certification.
+
+- [Research findings](research_evaluation/FINDINGS.md)
+- [Research archive and preservation policy](research_evaluation/README.md)
+- [Final security audit](docs/SECURITY_AUDIT_REPORT.md)
+- [Project closure status](docs/PROJECT_CLOSURE_STATUS.md)
+
 ## Run locally (Windows PowerShell)
 
-**Prerequisites:** Python 3.11+ (CI tests 3.11 and 3.13), Node.js 22 and npm. No Azure keys are needed for deterministic replay. Foundry model selection, Azure AI goal narration and Azure Speech require separate server-side configuration; without compatible credentials the app uses safe fallbacks. Do not place keys in `VITE_` variables.
+**Prerequisites:** Python 3.11+ (CI tests 3.11 and 3.13), Node.js 22 and npm (CI and Pages use Node 22; the Docker frontend build stage uses pinned Node 26). No Azure keys are needed for deterministic replay. Foundry model selection, Azure AI goal narration and Azure Speech require separate server-side configuration; without compatible credentials the app uses safe fallbacks. Do not place keys in `VITE_` variables.
 
 For optional cloud-enabled testing (not required for local operation), configure `VYBE_FOUNDRY_MODEL_ENDPOINT`, `VYBE_FOUNDRY_MODEL_DEPLOYMENT`, `VYBE_FOUNDRY_MODEL_KEY` (Ask the Match), and separately `VYBE_AZURE_OPENAI_ENDPOINT`, `VYBE_AZURE_OPENAI_DEPLOYMENT`, `VYBE_AZURE_OPENAI_KEY` (goal narration). For speech see [Azure Speech rollout](docs/archive/AZURE_SPEECH_ROLLOUT.md). Never commit secrets.
 
@@ -95,25 +146,24 @@ npm.cmd run dev
 
 Open **http://localhost:5173** (or the port Vite prints if 5173 is occupied).
 
-## Existing implementation evidence
+## Dependency lockfile compatibility
 
-The project includes development checks and historical validation results. Production Foundry and speech observations are documented in the [October 25 evidence summary](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These are records of completed work, not extra submission requirements.
+The runtime and test lockfiles were generated on Linux
+with Python 3.11. Hash-enforced installation and API tests
+were validated in Linux containers using Python 3.11 and
+3.13.
 
-## New fan experiences
+Native Windows installation has not been independently
+validated with these lockfiles.
 
-- **Multilingual commentary:** English, Arabic and Czech event captions, summaries and browser speech narration in Accessible mode. These are deterministic translations of synthetic events, **not Azure AI translations**. Browser voices for Arabic and Czech may not be installed.
-- **Live captions:** optional text for the current match event, updated as playback progresses. Captions are event-synchronized rather than word-by-word speech transcription.
-- **Match story recap:** evolving event-grounded score and goal narrative for all personas.
-- **Timeline views:** Highlights, Goals-only, and All events; the Goals view shows goal events without changing the underlying match statistics.
-- **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
-- **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage when permitted; the app continues without persistence when storage is blocked. No account or cloud sync.
-- **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
+If installation fails on Windows, use a compatible Linux
+environment or the documented Docker setup. Do not
+silently bypass package hash verification.
 
-## Accessible controls
-
-In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to pause automatic event progression and move between events with **Previous event** and **Next event**. This allows an external screen reader to finish reading captions before the next event; the app cannot detect when Narrator finishes speaking. The setting persists in the current browser.
-
-In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
+For entirely local execution, use a clean environment
+without Azure model or speech credentials. Setting the
+Director provider to deterministic does not independently
+disable cloud narration or speech.
 
 ## Local Ollama Director
 
@@ -150,6 +200,22 @@ The static build uses `/vybe-ai/` as its GitHub Pages base path.
 
 This is a recorded portfolio demonstration, not live AI inference or a real-time football-data service. GitHub Pages is the current public static portfolio, published through a dedicated workflow.
 
+## New fan experiences
+
+- **Multilingual commentary:** English, Arabic and Czech event captions, summaries and browser speech narration in Accessible mode. These are deterministic translations of synthetic events, **not Azure AI translations**. Browser voices for Arabic and Czech may not be installed.
+- **Live captions:** optional text for the current match event, updated as playback progresses. Captions are event-synchronized rather than word-by-word speech transcription.
+- **Match story recap:** evolving event-grounded score and goal narrative for all personas.
+- **Timeline views:** Highlights, Goals-only, and All events; the Goals view shows goal events without changing the underlying match statistics.
+- **Interactive match insights:** select a 15-minute Analyst momentum bucket to filter timeline events; select again or clear to reset.
+- **Fan preferences:** language, persona, high contrast, large text, captions, timeline display, expanded narration and voice speed saved in the current browser using localStorage when permitted; the app continues without persistence when storage is blocked. No account or cloud sync.
+- **Guided demo:** short automated tour of Young, Accessible and Analyst using selected synthetic events; no Azure resources needed.
+
+## Accessible controls
+
+In Accessible mode, enable **Step-by-step playback (screen reader friendly)** to pause automatic event progression and move between events with **Previous event** and **Next event**. This allows an external screen reader to finish reading captions before the next event; the app cannot detect when Narrator finishes speaking. The setting persists in the current browser.
+
+In Accessible mode, **Tab** navigates controls. When focus is not inside an interactive control, **Space** toggles playback and **Left/Right arrows** step through events. Spoken commentary is optional and depends on the installed browser and operating-system voices. Voice-speed changes apply to the next utterance, not the current one.
+
 ## Deployment status
 
 The original hackathon deployment used Azure Container Apps, Microsoft Foundry and Azure AI Speech. The Azure resources have since been deleted, and the former live application URL is no longer active.
@@ -162,6 +228,10 @@ The historical deployment architecture and implementation evidence remain docume
 
 The historical hackathon submission used Microsoft Foundry-hosted model integration and Azure AI Speech; these cloud services are not running behind the current public portfolio. See [Foundry implementation](docs/archive/FOUNDRY_REQUIRED_LAUNCH.md) and [production evidence](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). The deterministic engine remains the source of match facts.
 
+## Existing implementation evidence
+
+The project includes development checks and historical validation results. Production Foundry and speech observations are documented in the [October 25 evidence summary](docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). These are records of completed work, not extra submission requirements.
+
 ## Limitations and responsible use
 
 - Not real football match data, real-time video or an official Premier League product.
@@ -169,10 +239,6 @@ The historical hackathon submission used Microsoft Foundry-hosted model integrat
 - Browser speech voices vary, and expanded narration needs manual timing/accessibility validation.
 - Goal-based turning points are illustrative, not causal tactical analysis.
 - This is a hackathon prototype, not a certified production football-data service.
-
-## Documentation
-
-See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentation and preserved historical records.
 
 ## Project layout
 
@@ -190,41 +256,25 @@ See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentat
 
 **Every fan belongs. Every moment matters.**
 
-## Dependency lockfile compatibility
+## Documentation
 
-The runtime and test lockfiles were generated on Linux
-with Python 3.11. Hash-enforced installation and API tests
-were validated in Linux containers using Python 3.11 and
-3.13.
+See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentation and preserved historical records.
 
-Native Windows installation has not been independently
-validated with these lockfiles.
+## Maintenance, license and security
 
-If installation fails on Windows, use a compatible Linux
-environment or the documented Docker setup. Do not
-silently bypass package hash verification.
+The public repository remains available for reviewed maintenance.
 
-For entirely local execution, use a clean environment
-without Azure model or speech credentials. Setting the
-Director provider to deterministic does not independently
-disable cloud narration or speech.
+Automatic GHCR publication has been retired. The historical
+private registry package was deleted with owner authorization
+after successful CI and inventory verification.
 
-## Research and engineering evidence
+No new paid cloud infrastructure is authorized.
 
-VYBE preserves 79 historical research artifacts covering
-model evaluation, security robustness and speech research.
+- [CI/CD and cost policy](docs/CI_CD_COST_POLICY.md)
+- [Current closure status](docs/PROJECT_CLOSURE_STATUS.md)
+- [Security reporting policy](SECURITY.md)
+- [Third-party licensing review](docs/THIRD_PARTY_LICENSES.md)
+- [MIT License](LICENSE)
 
-The HTTP application contract benchmark evaluated 20 models
-across 240 recorded executions. Qwen3 Coder and Gemma 4 12B
-passed all 12 cases in that benchmark.
-
-The separate three-model robustness evaluation contains
-72 recorded executions. No finalist passed every case.
-
-These are application-specific historical results, not
-general-purpose LLM rankings or security certification.
-
-- [Research findings](research_evaluation/FINDINGS.md)
-- [Research archive and preservation policy](research_evaluation/README.md)
-- [Final security audit](docs/SECURITY_AUDIT_REPORT.md)
-- [Project closure status](docs/PROJECT_CLOSURE_STATUS.md)
+The original hackathon release remains preserved. A separate
+final portfolio release is planned, pending final acceptance.

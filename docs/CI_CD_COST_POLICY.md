@@ -66,8 +66,7 @@ The historical Azure workflow is archived outside the
 active workflow directory.
 
 No new Azure deployment or paid infrastructure is authorized.
-Existing registry packages are retained pending a separate
-owner decision.
+The historical private VYBE registry package has been deleted under separately authorized CI-18 Option A.
 
 ## Administrative baseline
 
@@ -96,3 +95,31 @@ remain unchanged.
 
 Historical research artifacts and application source
 are outside the scope of this consolidation.
+
+
+## CI-18 closure evidence
+
+The owner-authorized GitHub CLI operation verified and deleted
+container package ID 16021674, owned by Hapinam and named vybe-ai.
+
+The pre-deletion inventory contained 147 registry version records:
+49 tagged and 98 untagged. No new publication was identified
+after PR #137.
+
+The owner-provided execution result confirmed:
+
+- Final post-merge CI after PR #141: 3/3 passed.
+- Package identity and inventory checks passed.
+- Package deletion accepted by GitHub.
+- Package absent from the active registry inventory.
+- Repository tree and release inventory unchanged.
+- GitHub Pages remained enabled.
+- No other package was targeted.
+- Temporary delete:packages permission was subsequently removed.
+
+Registry record counts do not necessarily represent independent
+container images. Active inventory removal does not establish
+immediate physical erasure from GitHub storage.
+
+Stage 4 is closed within the approved scope. Historical billing
+observations remain dated snapshots, not guarantees of future cost.

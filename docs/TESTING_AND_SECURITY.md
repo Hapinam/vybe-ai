@@ -20,7 +20,7 @@ The reviewed baseline contains 22 API test modules and 10 browser test modules. 
 
 ## Deferred maintenance
 
-The replay bulk endpoint documentation and web-build dependency installation have been corrected in the final engineering maintenance change. Ignore hardening was implemented in PR #134. Reducing duplicate CI work remains deferred to the CI/CD review.
+The replay bulk endpoint documentation and web-build dependency installation have been corrected in the final engineering maintenance change. Ignore hardening was implemented in PR #134. Duplicate CI workflow consolidation was completed in PR #137.
 
 See [GHCR policy](GHCR_DEPLOYMENT.md) and [local development](LOCAL_DEVELOPMENT.md).
 
@@ -165,9 +165,7 @@ Local validation on 2026-11-25:
 The API tests ran without network access. No Azure resources
 were created or used.
 
-The GHCR publication test step also uses the test lockfile.
-That workflow integration and the final audit workflow
-adjustments require GitHub CI validation.
+At that historical stage, the GHCR publication test step also used the test lockfile. GHCR publication was subsequently retired in PR #137.
 
 The vulnerability audit is point-in-time evidence, not
 a guarantee of the absence of vulnerabilities.
@@ -235,7 +233,7 @@ historical verification evidence and accepted limitations.
 
 The earlier test inventory and closure observations in
 this document are historical. The latest local API suite
-recorded here contains 344 passing tests per Python version.
+recorded here contains 360 passing tests per Python version.
 
 ## Final engineering hardening
 
@@ -276,3 +274,32 @@ API tests and production smoke checks ran with container
 networking disabled. No live Azure or Ollama inference
 was performed. Browser rendering and live cloud provider
 compatibility were not independently verified.
+
+
+## Current CI/CD and acceptance status
+
+PR #137 consolidated repository-defined workflows into Quality Gate,
+CodeQL and GitHub Pages. The Quality Gate retains API, frontend,
+browser, integration, dependency audit and container security checks.
+
+The container is built, scanned and smoke-tested without publication.
+
+All four subsequent Dependabot PRs (#138 through #141) were merged.
+Final post-merge CI after PR #141 passed all three workflows.
+
+CI and Pages use Node.js 22. The Docker frontend build stage uses
+digest-pinned Node.js 26.
+
+The latest documented local engineering suite passed 360 API tests
+on each of Python 3.11 and 3.13. Earlier 335-test and 344-test
+results remain historical evidence.
+
+The full-history Gitleaks review reported no detected leaks within
+its scanned reachable history. This is not proof of absence of
+secrets in unreachable objects, external logs or other systems.
+
+Final fresh-clone acceptance and live portfolio checks remain pending.
+
+See [CI/CD policy](CI_CD_COST_POLICY.md),
+[security reporting](../SECURITY.md) and
+[third-party licensing](THIRD_PARTY_LICENSES.md).

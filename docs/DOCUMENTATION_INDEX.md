@@ -4,7 +4,7 @@
 
 - [Project README](../README.md) — public portfolio and local setup
 - [Technical architecture](ARCHITECTURE.md) — current static portfolio and historical full-stack architecture
-- [GHCR publishing status](GHCR_DEPLOYMENT.md) — retained image publishing; Azure deployment retired
+- [GHCR publishing status](GHCR_DEPLOYMENT.md) — GHCR publication and Azure deployment retired; historical package deleted
 - [Frontend development](../apps/web/README.md)
 - [Backend development](../apps/api/README.md)
 
@@ -40,3 +40,11 @@ not duplicate copies.
 
 Both are preserved as historical owner-observed evidence.
 Neither is an independent request-level Azure trace.
+
+
+## Maintenance policies
+
+- [CI/CD and zero cloud cost policy](CI_CD_COST_POLICY.md)
+- [Security reporting policy](../SECURITY.md)
+- [Third-party licensing review](THIRD_PARTY_LICENSES.md)
+- [Current closure status](PROJECT_CLOSURE_STATUS.md)

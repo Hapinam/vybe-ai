@@ -1,6 +1,6 @@
 # Local development
 
-Use Python 3.11+ (CI: 3.11 and 3.13), Node.js 22 and npm. No Azure account is required. Run from the repository root in separate PowerShell terminals.
+Use Python 3.11+ (CI: 3.11 and 3.13), Node.js 22 and npm. CI and Pages use Node 22; the Docker frontend build stage uses digest-pinned Node 26. No Azure account is required. Run from the repository root in separate PowerShell terminals.
 
 ## Deterministic full-stack
 
@@ -48,7 +48,7 @@ docker build -t vybe:local .
 docker run --rm -p 127.0.0.1:8000:8000 -e VYBE_DIRECTOR_PROVIDER=deterministic vybe:local
 ```
 
-Open http://127.0.0.1:8000. The image serves React and FastAPI from one origin using `vybe.deployed:app`. Container loopback is not host loopback: host Ollama is not supported by this default container setup. Do not weaken the endpoint guard. These commands are source-derived; not rerun during closure.
+Open http://127.0.0.1:8000. The image serves React and FastAPI from one origin using `vybe.deployed:app`. Container loopback is not host loopback: host Ollama is not supported by this default container setup. Do not weaken the endpoint guard. Production Docker builds and deterministic smoke tests passed during subsequent engineering maintenance. Final fresh-clone acceptance remains pending.
 
 ## Static preview
 
