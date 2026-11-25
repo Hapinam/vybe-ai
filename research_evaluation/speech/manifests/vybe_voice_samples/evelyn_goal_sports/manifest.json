@@ -1,0 +1,37 @@
+[
+  {
+    "name": "01_goal_baseline",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "text": "أورورا إف سي يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هَدَف! يا سلام! هدف رائع في شباك هاربور يونايتد!",
+    "rate_percent": 0,
+    "status": "ok"
+  },
+  {
+    "name": "02_goal_faster",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "text": "أورورا إف سي يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هَدَف! يا سلام! هدف رائع في شباك هاربور يونايتد!",
+    "rate_percent": 12,
+    "status": "ok"
+  },
+  {
+    "name": "03_goal_short_phrases",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "text": "فرصة خطيرة لأورورا! الكرة داخل منطقة الجزاء! تسديدة قوية! هَدَف! هدف رائع! الجمهور يحتفل!",
+    "rate_percent": 6,
+    "status": "ok"
+  },
+  {
+    "name": "04_goal_dramatic",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "text": "يا لها من فرصة! المهاجم ينفرد بالمرمى! يسدد الآن! هَدَف! يا له من هدف مذهل! أورورا يتقدم!",
+    "rate_percent": 8,
+    "status": "ok"
+  },
+  {
+    "name": "05_full_transition",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "text": "أهلًا بيكم في Vibe! اليوم يواجه أورورا إف سي فريق هاربور يونايتد. انطلقت المباراة، والجمهور متحمس. أورورا يهاجم الآن! تمريرة داخل منطقة الجزاء! تسديدة! هَدَف! هدف رائع! أورورا يتقدم بهدف مقابل لا شيء!",
+    "rate_percent": 6,
+    "status": "ok"
+  }
+]

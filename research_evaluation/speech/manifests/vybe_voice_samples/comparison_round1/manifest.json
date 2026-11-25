@@ -1,0 +1,194 @@
+[
+  {
+    "file": "01_ar-EG-SalmaNeural_welcome.mp3",
+    "voice": "ar-EG-SalmaNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "01_ar-EG-SalmaNeural_goal.mp3",
+    "voice": "ar-EG-SalmaNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "02_ar-EG-ShakirNeural_welcome.mp3",
+    "voice": "ar-EG-ShakirNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "02_ar-EG-ShakirNeural_goal.mp3",
+    "voice": "ar-EG-ShakirNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "03_ar-LB-LaylaNeural_welcome.mp3",
+    "voice": "ar-LB-LaylaNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "03_ar-LB-LaylaNeural_goal.mp3",
+    "voice": "ar-LB-LaylaNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "04_ar-JO-SanaNeural_welcome.mp3",
+    "voice": "ar-JO-SanaNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "04_ar-JO-SanaNeural_goal.mp3",
+    "voice": "ar-JO-SanaNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "05_ar-SA-ZariyahNeural_welcome.mp3",
+    "voice": "ar-SA-ZariyahNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "05_ar-SA-ZariyahNeural_goal.mp3",
+    "voice": "ar-SA-ZariyahNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "فايب",
+    "status": "ok"
+  },
+  {
+    "file": "06_en-US-NancyMultilingualNeural_welcome.mp3",
+    "voice": "en-US-NancyMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "06_en-US-NancyMultilingualNeural_goal.mp3",
+    "voice": "en-US-NancyMultilingualNeural",
+    "scenario": "goal",
+    "style": "excited",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "07_en-US-SerenaMultilingualNeural_welcome.mp3",
+    "voice": "en-US-SerenaMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "07_en-US-SerenaMultilingualNeural_goal.mp3",
+    "voice": "en-US-SerenaMultilingualNeural",
+    "scenario": "goal",
+    "style": "excited",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "08_zh-CN-XiaoxiaoMultilingualNeural_welcome.mp3",
+    "voice": "zh-CN-XiaoxiaoMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "08_zh-CN-XiaoxiaoMultilingualNeural_goal.mp3",
+    "voice": "zh-CN-XiaoxiaoMultilingualNeural",
+    "scenario": "goal",
+    "style": "excited",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "09_en-US-AvaMultilingualNeural_welcome.mp3",
+    "voice": "en-US-AvaMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "09_en-US-AvaMultilingualNeural_goal.mp3",
+    "voice": "en-US-AvaMultilingualNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "10_en-US-EmmaMultilingualNeural_welcome.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "10_en-US-EmmaMultilingualNeural_goal.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "11_en-US-AmandaMultilingualNeural_welcome.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "11_en-US-AmandaMultilingualNeural_goal.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "12_en-US-EvelynMultilingualNeural_welcome.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "scenario": "welcome",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  },
+  {
+    "file": "12_en-US-EvelynMultilingualNeural_goal.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "scenario": "goal",
+    "style": "default",
+    "brand_spoken": "Vibe",
+    "status": "ok"
+  }
+]

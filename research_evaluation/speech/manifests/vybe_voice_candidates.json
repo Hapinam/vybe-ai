@@ -1,0 +1,673 @@
+[
+  {
+    "voice": "ar-EG-SalmaNeural",
+    "locale": "ar-EG",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "ar-EG-ShakirNeural",
+    "locale": "ar-EG",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "ar-AE-FatimaNeural",
+    "locale": "ar-AE",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-AE-HamdanNeural",
+    "locale": "ar-AE",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-BH-AliNeural",
+    "locale": "ar-BH",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-BH-LailaNeural",
+    "locale": "ar-BH",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-DZ-AminaNeural",
+    "locale": "ar-DZ",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-DZ-IsmaelNeural",
+    "locale": "ar-DZ",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-IQ-BasselNeural",
+    "locale": "ar-IQ",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-IQ-RanaNeural",
+    "locale": "ar-IQ",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-JO-SanaNeural",
+    "locale": "ar-JO",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-JO-TaimNeural",
+    "locale": "ar-JO",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-KW-FahedNeural",
+    "locale": "ar-KW",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-KW-NouraNeural",
+    "locale": "ar-KW",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-LB-LaylaNeural",
+    "locale": "ar-LB",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-LB-RamiNeural",
+    "locale": "ar-LB",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-LY-ImanNeural",
+    "locale": "ar-LY",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-LY-OmarNeural",
+    "locale": "ar-LY",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-MA-JamalNeural",
+    "locale": "ar-MA",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-MA-MounaNeural",
+    "locale": "ar-MA",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-OM-AbdullahNeural",
+    "locale": "ar-OM",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-OM-AyshaNeural",
+    "locale": "ar-OM",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-QA-AmalNeural",
+    "locale": "ar-QA",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-QA-MoazNeural",
+    "locale": "ar-QA",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-SA-HamedNeural",
+    "locale": "ar-SA",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-SA-ZariyahNeural",
+    "locale": "ar-SA",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-SY-AmanyNeural",
+    "locale": "ar-SY",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-SY-LaithNeural",
+    "locale": "ar-SY",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-TN-HediNeural",
+    "locale": "ar-TN",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-TN-ReemNeural",
+    "locale": "ar-TN",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-YE-MaryamNeural",
+    "locale": "ar-YE",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "ar-YE-SalehNeural",
+    "locale": "ar-YE",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": false
+  },
+  {
+    "voice": "de-DE-FlorianMultilingualNeural",
+    "locale": "de-DE",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "de-DE-SeraphinaMultilingualNeural",
+    "locale": "de-DE",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-AU-WilliamMultilingualNeural",
+    "locale": "en-AU",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-GB-AdaMultilingualNeural",
+    "locale": "en-GB",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-GB-OllieMultilingualNeural",
+    "locale": "en-GB",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-AdamMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-AlloyTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-AmandaMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-AndrewMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [
+      "empathetic",
+      "relieved"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-AvaMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-BrandonMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-BrianMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-ChristopherMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-CoraMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-DavisMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [
+      "empathetic",
+      "funny",
+      "relieved"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-DerekMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [
+      "empathetic",
+      "excited",
+      "relieved",
+      "shy"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-DustinMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-EchoTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-EmmaMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-EvelynMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-FableTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Neutral",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-JennyMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-LewisMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-LolaMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-NancyMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [
+      "excited",
+      "friendly",
+      "funny",
+      "relieved",
+      "shy"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-NovaTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-OnyxTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-PhoebeMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [
+      "empathetic",
+      "sad",
+      "serious"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-RyanMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-SamuelMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-SerenaMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [
+      "empathetic",
+      "excited",
+      "friendly",
+      "shy",
+      "serious",
+      "relieved",
+      "sad"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-ShimmerTurboMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "en-US-SteffanMultilingualNeural",
+    "locale": "en-US",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-ES-ArabellaMultilingualNeural",
+    "locale": "es-ES",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-ES-IsidoraMultilingualNeural",
+    "locale": "es-ES",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-ES-TristanMultilingualNeural",
+    "locale": "es-ES",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-ES-XimenaMultilingualNeural",
+    "locale": "es-ES",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-MX-DaliaMultilingualNeural",
+    "locale": "es-MX",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "es-MX-JorgeMultilingualNeural",
+    "locale": "es-MX",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "fr-FR-LucienMultilingualNeural",
+    "locale": "fr-FR",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "fr-FR-RemyMultilingualNeural",
+    "locale": "fr-FR",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "fr-FR-VivienneMultilingualNeural",
+    "locale": "fr-FR",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "it-IT-AlessioMultilingualNeural",
+    "locale": "it-IT",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "it-IT-GiuseppeMultilingualNeural",
+    "locale": "it-IT",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "it-IT-IsabellaMultilingualNeural",
+    "locale": "it-IT",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "it-IT-MarcelloMultilingualNeural",
+    "locale": "it-IT",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "ko-KR-HyunsuMultilingualNeural",
+    "locale": "ko-KR",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "pt-BR-MacerioMultilingualNeural",
+    "locale": "pt-BR",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "pt-BR-ThalitaMultilingualNeural",
+    "locale": "pt-BR",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-XiaochenMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-XiaoshuangMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Female",
+    "style": [
+      "chat"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-XiaoxiaoMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Female",
+    "style": [
+      "affectionate",
+      "cheerful",
+      "empathetic",
+      "excited",
+      "poetry-reading",
+      "sorry",
+      "story"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-XiaoyouMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Female",
+    "style": [
+      "chat",
+      "angry",
+      "cheerful",
+      "poetry-reading",
+      "sad",
+      "story",
+      "cute"
+    ],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-XiaoyuMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Female",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-YunfanMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-YunxiaoMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  },
+  {
+    "voice": "zh-CN-YunyiMultilingualNeural",
+    "locale": "zh-CN",
+    "gender": "Male",
+    "style": [],
+    "supports_ar_EG": true
+  }
+]

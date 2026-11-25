@@ -1,0 +1,50 @@
+[
+  {
+    "voice": "en-US-EvelynMultilingualNeural",
+    "scene": "01_kickoff",
+    "file": "en-US-EvelynMultilingualNeural_01_kickoff.mp3",
+    "rate_percent": 0,
+    "text": "أهلًا بيكم في Vibe! النهارده أورورا إف سي بيواجه هاربور يونايتد. المُبَارَاة بدأت، والجمهور متحمس. يلا نشوف مين هيفوز!",
+    "status": "ok"
+  },
+  {
+    "voice": "en-US-EvelynMultilingualNeural",
+    "scene": "02_attack_goal",
+    "file": "en-US-EvelynMultilingualNeural_02_attack_goal.mp3",
+    "rate_percent": 8,
+    "text": "أورورا بيضغط بقوة. تمريرة سريعة في العمق! المهاجم داخل منطقة الجزاء. بيسدد! هَدَف! يا سلام! هدف عالمي! تسديدة صاروخية في الشباك! أورورا إف سي بيتقدم بهدف مقابل لا شيء!",
+    "status": "ok"
+  },
+  {
+    "voice": "en-US-EvelynMultilingualNeural",
+    "scene": "03_score_finish",
+    "file": "en-US-EvelynMultilingualNeural_03_score_finish.mp3",
+    "rate_percent": 0,
+    "text": "وصلنا للدقيقة خمسة وأربعين. هاربور يونايتد رجع في النتيجة، وبقت واحد لواحد. المُبَارَاة لسه فيها فرص كتير. فرصة أخيرة لأورورا! تسديدة! الحارس يتصدى! يا لها من نهاية مثيرة!",
+    "status": "ok"
+  },
+  {
+    "voice": "en-US-AmandaMultilingualNeural",
+    "scene": "01_kickoff",
+    "file": "en-US-AmandaMultilingualNeural_01_kickoff.mp3",
+    "rate_percent": 0,
+    "text": "أهلًا بيكم في Vibe! النهارده أورورا إف سي بيواجه هاربور يونايتد. المُبَارَاة بدأت، والجمهور متحمس. يلا نشوف مين هيفوز!",
+    "status": "ok"
+  },
+  {
+    "voice": "en-US-AmandaMultilingualNeural",
+    "scene": "02_attack_goal",
+    "file": "en-US-AmandaMultilingualNeural_02_attack_goal.mp3",
+    "rate_percent": 8,
+    "text": "أورورا بيضغط بقوة. تمريرة سريعة في العمق! المهاجم داخل منطقة الجزاء. بيسدد! هَدَف! يا سلام! هدف عالمي! تسديدة صاروخية في الشباك! أورورا إف سي بيتقدم بهدف مقابل لا شيء!",
+    "status": "ok"
+  },
+  {
+    "voice": "en-US-AmandaMultilingualNeural",
+    "scene": "03_score_finish",
+    "file": "en-US-AmandaMultilingualNeural_03_score_finish.mp3",
+    "rate_percent": 0,
+    "text": "وصلنا للدقيقة خمسة وأربعين. هاربور يونايتد رجع في النتيجة، وبقت واحد لواحد. المُبَارَاة لسه فيها فرص كتير. فرصة أخيرة لأورورا! تسديدة! الحارس يتصدى! يا لها من نهاية مثيرة!",
+    "status": "ok"
+  }
+]

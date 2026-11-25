@@ -1,0 +1,4 @@
+﻿model,pass,total,model_pass,model_total,prefilter_pass,prefilter_total,wrong_tool,contract_fail,median_model_latency_s
+gemma4:12b-it-q4_K_M,19,24,17,22,2,2,3,2,7.843
+qwen3-coder:30b,20,24,18,22,2,2,3,1,1.548
+granite4.2:8b-q4_K_M,20,24,18,22,2,2,4,0,3.992
