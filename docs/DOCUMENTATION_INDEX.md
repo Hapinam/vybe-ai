@@ -22,3 +22,21 @@
 The original Azure deployment has been retired. GitHub Pages uses recorded synthetic match data, not live Foundry inference.
 
 - [Final project closure report](archive/FINAL_PROJECT_CLOSURE_REPORT.md)
+
+## Research and final maintenance evidence
+
+- [Research archive](../research_evaluation/README.md)
+- [Research findings](../research_evaluation/FINDINGS.md)
+- [Final security audit](SECURITY_AUDIT_REPORT.md)
+- [Current project closure status](PROJECT_CLOSURE_STATUS.md)
+
+## Historical Foundry evidence
+
+The two October 25 evidence documents are complementary,
+not duplicate copies.
+
+- [Detailed production API responses](../research_evaluation/model/results/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md)
+- [Production evidence summary](archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md)
+
+Both are preserved as historical owner-observed evidence.
+Neither is an independent request-level Azure trace.

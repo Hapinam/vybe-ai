@@ -7,8 +7,11 @@ Python **3.11+** and FastAPI. This service reconstructs scores and event counts 
 ```powershell
 cd apps/api
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements-test.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -m pip check
 .\.venv\Scripts\python.exe -m pytest tests -q
+$env:VYBE_DIRECTOR_PROVIDER = "deterministic"
 .\.venv\Scripts\python.exe -m uvicorn vybe.main:app --reload --port 8000
 ```
 
@@ -56,3 +59,27 @@ The Director has three read-only data tools: `get_match_state`, `get_key_moments
 See [local development](../../docs/LOCAL_DEVELOPMENT.md) and [testing and security](../../docs/TESTING_AND_SECURITY.md). Do not use real match claims or disclose Azure secrets in code. The deterministic event engine remains the source of truth for scores and counts.
 
 For optional model configuration see [Foundry launch notes](../../docs/archive/FOUNDRY_REQUIRED_LAUNCH.md); for owner-observed production evidence see [October 25 evidence pack](../../docs/archive/VYBE_FOUNDRY_LIVE_EVIDENCE_2026-10-25.md). See [project README](../../README.md) for frontend setup, personas and known limitations.
+
+## Dependency lockfile compatibility
+
+The runtime and test lockfiles were generated on Linux
+with Python 3.11. Hash-enforced installation and API tests
+were validated in Linux containers using Python 3.11 and
+3.13.
+
+Native Windows installation has not been independently
+validated with these lockfiles.
+
+If installation fails on Windows, use a compatible Linux
+environment or the documented Docker setup. Do not
+silently bypass package hash verification.
+
+For entirely local execution, use a clean environment
+without Azure model or speech credentials. Setting the
+Director provider to deterministic does not independently
+disable cloud narration or speech.
+
+The local request guard tracks at most 1024 peers per
+rate limiter dictionary by default. New peers may receive
+HTTP 429 when capacity is exhausted. This is not a
+distributed quota or measured production capacity.

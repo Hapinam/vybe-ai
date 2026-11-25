@@ -77,7 +77,9 @@ Use two terminals from the repository root.
 ```powershell
 cd apps/api
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements-test.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -m pip check
 $env:VYBE_DIRECTOR_PROVIDER = "deterministic"
 .\.venv\Scripts\python.exe -m uvicorn vybe.main:app --reload --port 8000
 ```
@@ -187,3 +189,42 @@ See the [documentation index](docs/DOCUMENTATION_INDEX.md) for active documentat
 5. Show Ask the Match's evidence IDs and explain bounded Foundry model tool selection versus deterministic fallback; see the documented owner-observed production responses, and do not claim independently verified Azure inference logs.
 
 **Every fan belongs. Every moment matters.**
+
+## Dependency lockfile compatibility
+
+The runtime and test lockfiles were generated on Linux
+with Python 3.11. Hash-enforced installation and API tests
+were validated in Linux containers using Python 3.11 and
+3.13.
+
+Native Windows installation has not been independently
+validated with these lockfiles.
+
+If installation fails on Windows, use a compatible Linux
+environment or the documented Docker setup. Do not
+silently bypass package hash verification.
+
+For entirely local execution, use a clean environment
+without Azure model or speech credentials. Setting the
+Director provider to deterministic does not independently
+disable cloud narration or speech.
+
+## Research and engineering evidence
+
+VYBE preserves 79 historical research artifacts covering
+model evaluation, security robustness and speech research.
+
+The HTTP application contract benchmark evaluated 20 models
+across 240 recorded executions. Qwen3 Coder and Gemma 4 12B
+passed all 12 cases in that benchmark.
+
+The separate three-model robustness evaluation contains
+72 recorded executions. No finalist passed every case.
+
+These are application-specific historical results, not
+general-purpose LLM rankings or security certification.
+
+- [Research findings](research_evaluation/FINDINGS.md)
+- [Research archive and preservation policy](research_evaluation/README.md)
+- [Final security audit](docs/SECURITY_AUDIT_REPORT.md)
+- [Project closure status](docs/PROJECT_CLOSURE_STATUS.md)
