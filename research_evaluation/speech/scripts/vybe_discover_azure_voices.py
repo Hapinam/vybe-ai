@@ -1,5 +1,5 @@
 """Discover Azure Speech voices in your resource/region; no audio synthesis.
-Prints Arabic voices and multilingual voices advertising ar-EG support.
+Saves Arabic voices and multilingual voices advertising ar-EG support.
 Do not share Azure keys. Only one GET request; no resources are modified.
 """
 import json
@@ -48,6 +48,4 @@ rows.sort(key=lambda x: (not x["locale"].startswith("ar-EG"), x["locale"], x["vo
 out = Path("vybe_voice_candidates.json")
 out.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
 print(f"Available relevant voices: {len(rows)}. Saved: {out}")
-for row in rows:
-    print(f'{row["voice"]} | {row["locale"]} | {row["gender"]} | styles={",".join(row["style"]) or "-"} | ar-EG={row["supports_ar_EG"]}')
 print("No TTS audio generated. No repository or Azure resource changes.")
