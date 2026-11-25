@@ -35,3 +35,37 @@ crash.log
 
 # Local development and generated test artifacts
 /.local/
+
+# Private keys and credential files
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_ed25519
+.ssh/
+credentials.json
+service-account*.json
+secrets.json
+.netrc
+.npmrc
+.pypirc
+.azure/
+.aws/
+
+# Local databases and temporary artifacts
+*.log
+*.tmp
+*.swp
+*.sqlite
+*.sqlite3
+*.db
+
+# Generated testing and analysis artifacts
+playwright-report/
+test-results/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/

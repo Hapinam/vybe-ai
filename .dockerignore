@@ -18,3 +18,44 @@ docs/
 **/tests/
 apps/web/demo/
 **/playwright*.config.ts
+
+# Historical research artifacts
+research_evaluation/
+
+# Local development and credentials
+.local/
+**/.local/
+**/.git
+**/.ssh
+**/.azure
+**/.aws
+**/.vscode
+**/.idea
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/id_rsa
+**/id_ed25519
+**/credentials.json
+**/service-account*.json
+**/secrets.json
+**/.netrc
+**/.npmrc
+**/.pypirc
+
+# Generated artifacts
+**/*.log
+**/*.bak
+**/*.tmp
+**/*.swp
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/playwright-report
+**/test-results
+**/.coverage
+**/htmlcov
+**/.ruff_cache
+**/.mypy_cache

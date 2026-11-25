@@ -171,3 +171,58 @@ adjustments require GitHub CI validation.
 
 The vulnerability audit is point-in-time evidence, not
 a guarantee of the absence of vulnerabilities.
+
+## Repository and runtime hardening
+
+FSEC-03, FSEC-08 and FSEC-10 address bounded local rate
+limiter state and defensive repository exclusions.
+
+Each rate limiter dictionary tracks at most 1024 peers
+by default. Expired peer entries are reclaimed when
+capacity is needed. New peers receive HTTP 429 when
+capacity is exhausted and no expired entries are available.
+
+Existing request and model-route limits remain unchanged.
+Rejection responses are sent outside the rate limiter lock.
+
+The peer capacity is a defensive engineering threshold,
+not a measured production capacity.
+
+Distributed rate limiting is intentionally deferred for
+the current portfolio and local demonstration scope.
+It must be reconsidered before public multi-instance
+deployment. The local limiter is not a global cost cap.
+
+Git and Docker ignore rules exclude additional sensitive
+and generated files. Historical research artifacts remain
+in Git but are excluded from the Docker build context.
+
+Ignore rules are defense in depth. They do not remove
+previously committed secrets or replace secret scanning.
+
+### Repository and runtime validation evidence
+
+Local validation on 2026-11-25:
+
+- Python 3.11: 344 API tests passed in 2.03 seconds.
+- Python 3.13: 344 API tests passed in 2.69 seconds.
+- Nine new regression test cases passed.
+- Git ignore checks passed for selected sensitive and
+  generated paths.
+- No tracked files matched the effective Git ignore rules.
+- Docker context verification confirmed exclusion of
+  research_evaluation and .git while retaining required
+  application source and dependency lockfiles.
+- Production Docker build passed.
+- Production pip check reported no broken requirements.
+- All four temporary validation images were removed.
+
+Tests used locked dependencies and digest-pinned Python
+images. API tests ran without network access.
+
+These results do not establish production load capacity,
+distributed quota enforcement or comprehensive coverage
+of every sensitive-file naming convention.
+
+No research artifacts were modified and no Azure resources
+were created or used.
