@@ -13,8 +13,13 @@ artifacts created during the development of VYBE.
 
 ## Preservation Policy
 
-The 78 original research artifacts are preserved without
-content modifications to maintain historical integrity.
+The 78 original research artifacts are preserved byte-for-byte in
+[the original archival commit](https://github.com/Hapinam/vybe-ai/tree/dd8ffe61131963646486aacca418c8cac8f69164/research_evaluation).
+The current tree retains 77 unchanged originals and one security-hardened
+script (`speech/scripts/vybe_discover_azure_voices.py`), which no longer
+prints individual authenticated service response fields to the console.
+Its JSON output is unchanged in structure. The original remains available
+in Git history for historical integrity.
 
 These artifacts represent historical experiments and
 should not be interpreted as current production benchmarks,
