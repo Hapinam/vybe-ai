@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8000
 WORKDIR /app
 COPY apps/api/ /app/api/
 RUN apt-get update && \
-    apt-get install --only-upgrade -y zlib1g && \
+    apt-get install --only-upgrade -y zlib1g libzstd1 && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir /app/api && \
     pip uninstall -y setuptools wheel && \

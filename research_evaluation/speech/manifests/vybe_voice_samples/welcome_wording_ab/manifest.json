@@ -1,0 +1,44 @@
+[
+  {
+    "voice": "Evelyn",
+    "case": "A_sports_arabic",
+    "file": "Evelyn_A_sports_arabic.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! اليوم، يواجه أورورا إف سي فريق هاربور يونايتد. انطلقت المباراة، والجمهور متحمس. خلّونا نشوف مين هيحقق الفوز!",
+    "status": "ok"
+  },
+  {
+    "voice": "Evelyn",
+    "case": "B_natural_arabic",
+    "file": "Evelyn_B_natural_arabic.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! أورورا إف سي في مواجهة هاربور يونايتد النهارده. المباراة بدأت، والجمهور متحمس!",
+    "status": "ok"
+  },
+  {
+    "voice": "Evelyn",
+    "case": "C_short_direct",
+    "file": "Evelyn_C_short_direct.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! أورورا إف سي ضد هاربور يونايتد. المباراة بدأت! مين هيكسب النهارده؟",
+    "status": "ok"
+  },
+  {
+    "voice": "Amanda",
+    "case": "A_sports_arabic",
+    "file": "Amanda_A_sports_arabic.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! اليوم، يواجه أورورا إف سي فريق هاربور يونايتد. انطلقت المباراة، والجمهور متحمس. خلّونا نشوف مين هيحقق الفوز!",
+    "status": "ok"
+  },
+  {
+    "voice": "Amanda",
+    "case": "B_natural_arabic",
+    "file": "Amanda_B_natural_arabic.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! أورورا إف سي في مواجهة هاربور يونايتد النهارده. المباراة بدأت، والجمهور متحمس!",
+    "status": "ok"
+  },
+  {
+    "voice": "Amanda",
+    "case": "C_short_direct",
+    "file": "Amanda_C_short_direct.mp3",
+    "spoken_text": "أهلًا بيكم في Vibe! أورورا إف سي ضد هاربور يونايتد. المباراة بدأت! مين هيكسب النهارده؟",
+    "status": "ok"
+  }
+]

@@ -1,0 +1,272 @@
+[
+  {
+    "file": "en-US-EvelynMultilingualNeural_01_match_mubara.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "01_match_mubara",
+    "text": "المباراة لسه فيها كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Default pronunciation of مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_02_match_diacritics.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "02_match_diacritics",
+    "text": "المُبَارَاة لِسَّه فِيهَا كْتِير، والنَّتِيجَة وَاحِد لِوَاحِد.",
+    "rate_percent": 0,
+    "objective": "Diacritics to guide مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_03_match_almatch.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "03_match_almatch",
+    "text": "الماتش لسه فيه كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Egyptian alternative الماتش",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_04_goal_jool.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "04_goal_jool",
+    "text": "جوووول! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Extended جول baseline",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_05_goal_gol.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "05_goal_gol",
+    "text": "جول! جول! يا سلام على الهدف!",
+    "rate_percent": 0,
+    "objective": "Short جول",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_06_goal_goon.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "06_goal_goon",
+    "text": "جووون! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Egyptian جوون",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_07_goal_hadaf.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "07_goal_hadaf",
+    "text": "هدف! يا سلام! هدف عالمي! تسديدة صاروخية في الشباك!",
+    "rate_percent": 0,
+    "objective": "Arabic هدف",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_08_excited_fast.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "08_excited_fast",
+    "text": "يا نهار أبيض! إيه التسديدة دي! هدف عالمي! أورورا إف سي يتقدم!",
+    "rate_percent": 12,
+    "objective": "Higher pace, no unsupported expressive style",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_09_excited_punct.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "09_excited_punct",
+    "text": "يا سلام!!! يا سلام على الهدف!!! أورورا سجل! الجمهور مولّع الدنيا!",
+    "rate_percent": 0,
+    "objective": "Expressive punctuation",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EvelynMultilingualNeural_10_full_brand.mp3",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "case": "10_full_brand",
+    "text": "أهلًا بيكم في Vibe! الماتش مولّع! فرصة خطيرة، تسديدة، هدف! يا سلام على الجمال!",
+    "rate_percent": 6,
+    "objective": "Realistic one-voice sample, V sound and energy",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_01_match_mubara.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "01_match_mubara",
+    "text": "المباراة لسه فيها كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Default pronunciation of مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_02_match_diacritics.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "02_match_diacritics",
+    "text": "المُبَارَاة لِسَّه فِيهَا كْتِير، والنَّتِيجَة وَاحِد لِوَاحِد.",
+    "rate_percent": 0,
+    "objective": "Diacritics to guide مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_03_match_almatch.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "03_match_almatch",
+    "text": "الماتش لسه فيه كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Egyptian alternative الماتش",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_04_goal_jool.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "04_goal_jool",
+    "text": "جوووول! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Extended جول baseline",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_05_goal_gol.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "05_goal_gol",
+    "text": "جول! جول! يا سلام على الهدف!",
+    "rate_percent": 0,
+    "objective": "Short جول",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_06_goal_goon.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "06_goal_goon",
+    "text": "جووون! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Egyptian جوون",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_07_goal_hadaf.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "07_goal_hadaf",
+    "text": "هدف! يا سلام! هدف عالمي! تسديدة صاروخية في الشباك!",
+    "rate_percent": 0,
+    "objective": "Arabic هدف",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_08_excited_fast.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "08_excited_fast",
+    "text": "يا نهار أبيض! إيه التسديدة دي! هدف عالمي! أورورا إف سي يتقدم!",
+    "rate_percent": 12,
+    "objective": "Higher pace, no unsupported expressive style",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_09_excited_punct.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "09_excited_punct",
+    "text": "يا سلام!!! يا سلام على الهدف!!! أورورا سجل! الجمهور مولّع الدنيا!",
+    "rate_percent": 0,
+    "objective": "Expressive punctuation",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-AmandaMultilingualNeural_10_full_brand.mp3",
+    "voice": "en-US-AmandaMultilingualNeural",
+    "case": "10_full_brand",
+    "text": "أهلًا بيكم في Vibe! الماتش مولّع! فرصة خطيرة، تسديدة، هدف! يا سلام على الجمال!",
+    "rate_percent": 6,
+    "objective": "Realistic one-voice sample, V sound and energy",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_01_match_mubara.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "01_match_mubara",
+    "text": "المباراة لسه فيها كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Default pronunciation of مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_02_match_diacritics.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "02_match_diacritics",
+    "text": "المُبَارَاة لِسَّه فِيهَا كْتِير، والنَّتِيجَة وَاحِد لِوَاحِد.",
+    "rate_percent": 0,
+    "objective": "Diacritics to guide مباراة",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_03_match_almatch.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "03_match_almatch",
+    "text": "الماتش لسه فيه كتير، والنتيجة واحد لواحد.",
+    "rate_percent": 0,
+    "objective": "Egyptian alternative الماتش",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_04_goal_jool.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "04_goal_jool",
+    "text": "جوووول! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Extended جول baseline",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_05_goal_gol.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "05_goal_gol",
+    "text": "جول! جول! يا سلام على الهدف!",
+    "rate_percent": 0,
+    "objective": "Short جول",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_06_goal_goon.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "06_goal_goon",
+    "text": "جووون! يا سلام على الهدف! تسديدة في الشباك!",
+    "rate_percent": 0,
+    "objective": "Egyptian جوون",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_07_goal_hadaf.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "07_goal_hadaf",
+    "text": "هدف! يا سلام! هدف عالمي! تسديدة صاروخية في الشباك!",
+    "rate_percent": 0,
+    "objective": "Arabic هدف",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_08_excited_fast.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "08_excited_fast",
+    "text": "يا نهار أبيض! إيه التسديدة دي! هدف عالمي! أورورا إف سي يتقدم!",
+    "rate_percent": 12,
+    "objective": "Higher pace, no unsupported expressive style",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_09_excited_punct.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "09_excited_punct",
+    "text": "يا سلام!!! يا سلام على الهدف!!! أورورا سجل! الجمهور مولّع الدنيا!",
+    "rate_percent": 0,
+    "objective": "Expressive punctuation",
+    "status": "ok"
+  },
+  {
+    "file": "en-US-EmmaMultilingualNeural_10_full_brand.mp3",
+    "voice": "en-US-EmmaMultilingualNeural",
+    "case": "10_full_brand",
+    "text": "أهلًا بيكم في Vibe! الماتش مولّع! فرصة خطيرة، تسديدة، هدف! يا سلام على الجمال!",
+    "rate_percent": 6,
+    "objective": "Realistic one-voice sample, V sound and energy",
+    "status": "ok"
+  }
+]

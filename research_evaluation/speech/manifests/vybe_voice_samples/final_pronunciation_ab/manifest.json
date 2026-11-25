@@ -1,0 +1,37 @@
+[
+  {
+    "scenario": "01_fc_plain",
+    "spoken_text": "أورورا إف سي يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هدف! يا سلام! هدف رائع في مرمى هاربور يونايتد!",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "status": "ok",
+    "file": "01_fc_plain.mp3"
+  },
+  {
+    "scenario": "02_fc_full_diacritics",
+    "spoken_text": "أورورا إِفْ سِي يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هدف! يا سلام! هدف رائع في مرمى هاربور يونايتد!",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "status": "ok",
+    "file": "02_fc_full_diacritics.mp3"
+  },
+  {
+    "scenario": "03_fc_light_diacritics",
+    "spoken_text": "أورورا إفْ سي يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هدف! يا سلام! هدف رائع في مرمى هاربور يونايتد!",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "status": "ok",
+    "file": "03_fc_light_diacritics.mp3"
+  },
+  {
+    "scenario": "04_fc_english_letters",
+    "spoken_text": "أورورا F C يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هدف! يا سلام! هدف رائع في مرمى هاربور يونايتد!",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "status": "ok",
+    "file": "04_fc_english_letters.mp3"
+  },
+  {
+    "scenario": "05_full_context",
+    "spoken_text": "أهلًا بيكم في Vibe! اليوم يواجه أورورا إِفْ سِي فريق هاربور يونايتد. انطلقت المباراة! أورورا يتقدم نحو المرمى. تمريرة رائعة داخل منطقة الجزاء. تسديدة! هدف! يا سلام! هدف رائع في مرمى هاربور يونايتد!",
+    "voice": "en-US-EvelynMultilingualNeural",
+    "status": "ok",
+    "file": "05_full_context.mp3"
+  }
+]
