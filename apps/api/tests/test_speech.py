@@ -44,7 +44,7 @@ def test_speech_request_uses_ssml_and_returns_mp3(monkeypatch):
         def __exit__(self, *args): pass
         def read(self, size): return b"fake-mp3"
 
-    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+    with patch("urllib.request.OpenerDirector.open", return_value=FakeResponse()) as mocked:
         result = synthesize("GOAL!", "en")
     assert result == b"fake-mp3"
     request = mocked.call_args.args[0]
@@ -93,7 +93,7 @@ def test_czech_speech_rate_is_reduced(monkeypatch):
         def __exit__(self, *args): pass
         def read(self, size): return b"fake-mp3"
 
-    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+    with patch("urllib.request.OpenerDirector.open", return_value=FakeResponse()) as mocked:
         synthesize("VYBE", "cs")
     assert b'rate="-10%"' in mocked.call_args.args[0].data
 
@@ -126,7 +126,7 @@ def test_xml_escape_and_english_clock(monkeypatch):
         def __enter__(self): return self
         def __exit__(self, *args): pass
         def read(self, size): return b"fake-mp3"
-    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+    with patch("urllib.request.OpenerDirector.open", return_value=FakeResponse()) as mocked:
         synthesize("VYBE & Goal at 24:35.", "en")
     body = mocked.call_args.args[0].data.decode("utf-8")
     assert "Vibe &amp; Goal at twenty-four minutes and thirty-five seconds" in body
@@ -157,7 +157,7 @@ def test_arabic_single_voice_and_escaping(monkeypatch):
         def __enter__(self): return self
         def __exit__(self, *args): pass
         def read(self, size): return b"fake-mp3"
-    with patch("vybe.speech.urlopen", return_value=FakeResponse()) as mocked:
+    with patch("urllib.request.OpenerDirector.open", return_value=FakeResponse()) as mocked:
         assert synthesize("VYBE < & > فايب", "ar", 1.5) == b"fake-mp3"
     body = mocked.call_args.args[0].data.decode("utf-8")
     assert body.count("<voice ") == 1

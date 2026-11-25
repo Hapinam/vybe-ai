@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 
 from .engine import explain_goal
 from .models import MatchDefinition
+from .secure_http import build_secure_opener
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,8 @@ class AzureConfigurationError(ValueError):
 class ModelResponseError(ValueError):
     """Azure response cannot be used safely."""
 
+
+MAX_RESPONSE_BYTES = 65_536
 
 PERSONAS = {"young", "accessible", "analyst"}
 
@@ -48,6 +51,7 @@ def _generate(prompt: str) -> str:
     if (
         parsed.scheme != "https"
         or not parsed.hostname
+        or parsed.port not in (None, 443)
         or parsed.username
         or parsed.password
         or parsed.path not in ("", "/")
@@ -80,9 +84,11 @@ def _generate(prompt: str) -> str:
         headers={"Content-Type": "application/json", "api-key": os.environ["VYBE_AZURE_OPENAI_KEY"]},
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=8) as response:
-        data = json.load(response)
-    return _extract_content(data)
+    with build_secure_opener().open(request, timeout=8) as response:
+        raw = response.read(MAX_RESPONSE_BYTES + 1)
+    if len(raw) > MAX_RESPONSE_BYTES:
+        raise ModelResponseError("Oversized Azure response")
+    return _extract_content(json.loads(raw))
 
 
 def _extract_content(data: object) -> str:
@@ -160,20 +166,20 @@ def _validate_segments(response: str, facts: dict, persona: str | None = None) -
 
 
 def _azure_narration(persona: str, facts: dict) -> tuple[str, list[str]] | None:
-    """Azure-side failures degrade gracefully; unexpected bugs retain a traceback."""
+    """Azure-side failures degrade gracefully without raw exception logging."""
     prompt = json.dumps({"persona": persona, "synthetic": True, "facts": facts,
                          "allowed_framing": PERSONA_FRAMING[persona]})
     try:
         return _validate_segments(_generate(prompt), facts, persona)
     except AzureConfigurationError as exc:
-        logger.error("Azure narration disabled by invalid configuration (%s): %s", type(exc).__name__, exc)
+        logger.error("Azure narration disabled by invalid configuration (%s)", type(exc).__name__)
     except (OSError, http.client.HTTPException) as exc:
         # Avoid logging provider-supplied messages, which may contain request metadata.
         logger.warning("Azure narration request failed (%s); using fallback", type(exc).__name__)
     except ValueError as exc:
-        logger.warning("Azure narration rejected (%s): %s; using fallback", type(exc).__name__, exc)
-    except Exception:
-        logger.exception("Unexpected Azure narration error; using deterministic fallback")
+        logger.warning("Azure narration rejected (%s); using fallback", type(exc).__name__)
+    except Exception as exc:
+        logger.error("Unexpected Azure narration error (%s); using deterministic fallback", type(exc).__name__)
     return None
 
 

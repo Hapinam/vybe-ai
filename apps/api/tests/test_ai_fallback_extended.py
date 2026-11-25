@@ -19,7 +19,7 @@ MATCH={"match_id":"t","home_team":"Aurora","away_team":"Harbor",
 def match(): return MatchDefinition.model_validate(MATCH)
 def completion(content): return {"choices":[{"message":{"content":content}}]}
 def azure_replies(payload):
-    return patch("vybe.ai.urllib.request.urlopen",return_value=io.BytesIO(json.dumps(payload).encode()))
+    return patch("urllib.request.OpenerDirector.open",return_value=io.BytesIO(json.dumps(payload).encode()))
 def assert_fallback(result):
     assert result["generation_mode"]=="deterministic"
     assert result["score"]=={"home":1,"away":0}
@@ -38,7 +38,7 @@ def test_bad_completion_falls_back(payload,caplog):
     TimeoutError("timeout"),ConnectionResetError("reset"),
     http.client.IncompleteRead(b"partial"),http.client.RemoteDisconnected("closed")])
 def test_network_failure_falls_back_without_logging_secrets(failure,caplog):
-    with patch.dict("os.environ",ENV,clear=True),patch("vybe.ai.urllib.request.urlopen",side_effect=failure):
+    with patch.dict("os.environ",ENV,clear=True),patch("urllib.request.OpenerDirector.open",side_effect=failure):
         assert_fallback(narrate_goal(match(),"goal-1"))
     assert SECRET not in caplog.text
 
@@ -48,13 +48,14 @@ def test_null_completion_http_api_responds_200():
     assert response.status_code==200
     assert_fallback(response.json())
 
-def test_unexpected_bug_has_traceback_and_fallback(caplog):
-    with patch.dict("os.environ",ENV,clear=True),patch("vybe.ai._generate",return_value="{}"),patch("vybe.ai._validate_segments",side_effect=AttributeError("bug")):
+def test_unexpected_bug_has_sanitized_log_and_fallback(caplog):
+    with patch.dict("os.environ",ENV,clear=True),patch("vybe.ai._generate",return_value="{}"),patch("vybe.ai._validate_segments",side_effect=AttributeError(SECRET)):
         assert_fallback(narrate_goal(match(),"goal-1"))
-    assert any(r.levelno==logging.ERROR and r.exc_info for r in caplog.records)
+    assert any(r.levelno==logging.ERROR and not r.exc_info for r in caplog.records)
+    assert SECRET not in caplog.text
 
 def test_invalid_configuration_never_sends_request(caplog):
-    with patch.dict("os.environ",{**ENV,"VYBE_AZURE_OPENAI_ENDPOINT":"http://bad.example"},clear=True),patch("vybe.ai.urllib.request.urlopen") as send:
+    with patch.dict("os.environ",{**ENV,"VYBE_AZURE_OPENAI_ENDPOINT":"http://bad.example"},clear=True),patch("urllib.request.OpenerDirector.open") as send:
         assert_fallback(narrate_goal(match(),"goal-1"))
     send.assert_not_called()
     assert any(r.levelno==logging.ERROR for r in caplog.records)
@@ -69,7 +70,7 @@ def test_framing_must_be_string(field,value):
         _validate_segments(json.dumps(payload),facts,"young")
 
 def test_invalid_caller_input_still_raises():
-    with patch.dict("os.environ",ENV,clear=True),patch("vybe.ai.urllib.request.urlopen") as send:
+    with patch.dict("os.environ",ENV,clear=True),patch("urllib.request.OpenerDirector.open") as send:
         with pytest.raises(ValueError):
             narrate_goal(match(),"missing")
         with pytest.raises(ValueError):
