@@ -91,3 +91,83 @@ validated by this test run.
 The temporary test image was removed after execution.
 Dependency versions were resolved from the existing project
 version ranges rather than a fully pinned dependency lockfile.
+
+## Supply Chain Security
+
+GitHub Actions are pinned to full commit SHAs, with the
+original version tags retained in comments.
+
+Production Docker base images are pinned to registry
+SHA256 digests.
+
+Python application dependencies are recorded in:
+
+- `apps/api/requirements.lock`: runtime dependencies.
+- `apps/api/requirements-test.lock`: runtime and test dependencies.
+
+Both files include direct and transitive package versions
+and SHA256 distribution hashes. Runtime package versions
+must match between the two lockfiles.
+
+Docker and API CI installation enforce package hashes
+using `pip install --require-hashes`. The local application
+package is installed separately using `--no-deps`.
+
+Dependency auditing includes the test lockfile, which
+also contains the runtime dependency set.
+
+### Dependency maintenance
+
+- Keep pyproject.toml as the dependency declaration source.
+- Regenerate both lockfiles using pip-tools 7.5.2 on
+  Linux with Python 3.11.
+- Resolve the test lockfile against the runtime lockfile.
+- Review package version and hash changes.
+- Run API tests on Python 3.11 and 3.13.
+- Run dependency auditing and production container builds.
+- Review Dependabot proposals before merging.
+
+For a Linux development environment, install from
+requirements-test.lock using --require-hashes, then
+install the application using --no-deps.
+
+### Reproducibility limitations
+
+Lockfiles were generated on Linux with Python 3.11.
+Other platforms and Python versions require validation.
+
+Build-system dependencies, audit tooling, operating
+system packages and transitive GitHub Action internals
+are not comprehensively pinned by this change.
+
+Dependabot recognition and automatic regeneration of
+the new lockfiles require separate verification.
+
+These controls improve supply chain integrity but do
+not guarantee bit-for-bit reproducible builds.
+
+### Supply chain validation evidence
+
+Local validation on 2026-11-25:
+
+- 16 unique GitHub Action version references pinned.
+- 12 workflow files updated.
+- Two production Docker base images pinned.
+- 14 runtime and 25 combined runtime/test packages locked.
+- Python 3.11: 335 API tests passed in 2.21 seconds.
+- Python 3.13: 335 API tests passed in 2.74 seconds.
+- Hash-enforced dependency installation passed.
+- Locked dependency audit reported no known vulnerabilities.
+- Production Docker build passed.
+- Production pip check reported no broken requirements.
+- All four temporary validation images were removed.
+
+The API tests ran without network access. No Azure resources
+were created or used.
+
+The GHCR publication test step also uses the test lockfile.
+That workflow integration and the final audit workflow
+adjustments require GitHub CI validation.
+
+The vulnerability audit is point-in-time evidence, not
+a guarantee of the absence of vulnerabilities.
