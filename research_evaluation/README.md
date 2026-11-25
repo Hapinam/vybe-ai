@@ -5,9 +5,9 @@ artifacts created during the development of VYBE.
 
 ## Directory Structure
 
-| Directory | Purpose | Original files |
+| Directory | Purpose | Preserved artifacts |
 |---|---|---:|
-| model/ | Model benchmarking and contract evaluation | 37 |
+| model/ | Model benchmarking, contract evaluation and Foundry evidence | 38 |
 | security/ | Security and robustness evaluation | 12 |
 | speech/ | Speech generation and voice evaluation | 29 |
 
@@ -71,3 +71,35 @@ These materials are retained for research traceability,
 reproducibility, and historical reference.
 
 They are not maintained production components.
+
+## Current research inventory
+
+The current archive contains 79 historical artifacts:
+77 unchanged original artifacts, one security-hardened
+original script and one subsequently preserved Foundry
+evidence file.
+
+The detailed Foundry evidence was added through
+[PR #131](https://github.com/Hapinam/vybe-ai/pull/131).
+
+Documentation and .gitattributes are excluded from
+the historical artifact count.
+
+See [Research Findings](FINDINGS.md) for methodology,
+results, limitations and links to the original evidence.
+
+## Additional execution precautions
+
+VYBE_generate_new_voice.py uses Azure CLI authentication
+to obtain service credentials and may incur Azure costs.
+
+Some historical model scripts accept configurable
+base URLs. Do not assume that every experiment is
+restricted to loopback or operates without network access.
+
+Review endpoints, authentication, subprocess behavior
+and file-writing behavior before execution.
+
+The historical Azure resources have been retired.
+Their preservation in research documentation does not
+authorize recreating or using those services.

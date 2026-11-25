@@ -9,7 +9,9 @@ API:
 ```powershell
 cd apps/api
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements-test.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -m pip check
 $env:VYBE_DIRECTOR_PROVIDER = "deterministic"
 .\.venv\Scripts\python.exe -m uvicorn vybe.main:app --host 127.0.0.1 --port 8000
 ```
@@ -62,3 +64,22 @@ npm.cmd run preview
 Use the printed URL with `/vybe-ai/` base path. Clear `VITE_DEMO_MODE` before returning to full-stack mode. No live inference occurs.
 
 See [API](../apps/api/README.md), [frontend](../apps/web/README.md), [architecture](ARCHITECTURE.md) and [testing](TESTING_AND_SECURITY.md).
+
+## Dependency lockfile compatibility
+
+The runtime and test lockfiles were generated on Linux
+with Python 3.11. Hash-enforced installation and API tests
+were validated in Linux containers using Python 3.11 and
+3.13.
+
+Native Windows installation has not been independently
+validated with these lockfiles.
+
+If installation fails on Windows, use a compatible Linux
+environment or the documented Docker setup. Do not
+silently bypass package hash verification.
+
+For entirely local execution, use a clean environment
+without Azure model or speech credentials. Setting the
+Director provider to deterministic does not independently
+disable cloud narration or speech.

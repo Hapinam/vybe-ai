@@ -2,7 +2,7 @@
 
 ## Local checks
 
-From `apps/api`, after installing the test extras: `python -m pytest -q` using the project virtual environment. CI tests Python 3.11 and 3.13.
+From `apps/api`, after installing requirements-test.lock with --require-hashes and the application with --no-deps: `python -m pytest -q` using the project virtual environment. CI tests Python 3.11 and 3.13.
 
 From `apps/web`, use Node.js 22, `npm.cmd ci`, `npm.cmd run build`, `npx.cmd playwright install chromium` and `npx.cmd playwright test`. The normal configuration excludes the real API smoke test. With FastAPI running on port 8000, run `npx.cmd playwright test --config=playwright.fullstack.config.ts` separately. Clear static mode and use a clean deterministic environment. Browser speech tests mock speech; they do not verify audible output.
 
@@ -20,7 +20,7 @@ The reviewed baseline contains 22 API test modules and 10 browser test modules. 
 
 ## Deferred maintenance
 
-The replay bulk endpoint docstring incorrectly mentions kickoff inclusion (actual behavior is post-event snapshots only). Consider consistent `npm ci` in web-build, reducing duplicate CI work, and reviewing ignore patterns for sensitive/local artifacts in a separate engineering PR. No code or workflow changes are required for documentation closure.
+The replay bulk endpoint docstring incorrectly mentions kickoff inclusion (actual behavior is post-event snapshots only). Consider consistent `npm ci` in web-build and reducing duplicate CI work. Ignore hardening was subsequently implemented in PR #134. No code or workflow changes are required for documentation closure.
 
 See [GHCR policy](GHCR_DEPLOYMENT.md) and [local development](LOCAL_DEVELOPMENT.md).
 
@@ -226,3 +226,13 @@ of every sensitive-file naming convention.
 
 No research artifacts were modified and no Azure resources
 were created or used.
+
+## Consolidated audit status
+
+See the [final security audit](SECURITY_AUDIT_REPORT.md)
+for all 12 scoped findings, merged implementation PRs,
+historical verification evidence and accepted limitations.
+
+The earlier test inventory and closure observations in
+this document are historical. The latest local API suite
+recorded here contains 344 passing tests per Python version.
