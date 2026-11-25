@@ -27,7 +27,7 @@ def replay_match(match: MatchDefinition, through_event: int | None = Query(defau
 
 @app.post("/v1/matches/replay/states")
 def replay_all_states(match: MatchDefinition):
-    """Return all replay snapshots in one bounded request, including kickoff."""
+    """Return all post-event replay snapshots in one bounded request, excluding the initial pre-event state."""
     return {"synthetic": True, "states": [
         state_dict(state) for state in replay_timeline(match)[1:]
     ]}

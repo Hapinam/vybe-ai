@@ -142,3 +142,39 @@ def test_concurrent_peer_capacity():
         assert len(guard._hits) == 4
 
     asyncio.run(scenario())
+
+def test_full_model_bucket_rejects_without_growing():
+    async def scenario():
+        guard = MatchRequestGuard(application, max_peers=2)
+        path = "/v1/matches/director/ask"
+
+        # Exercise the model capacity branch independently
+        # of the general bucket using controlled state.
+        with patch("vybe.security.time.monotonic", return_value=100):
+            assert await request(guard, "a", path) == 200
+            assert await request(guard, "b", path) == 200
+            guard._hits.clear()
+
+            assert await request(guard, "c", path) == 429
+            assert set(guard._model_hits) == {"a", "b"}
+            assert "c" not in guard._hits
+
+        with patch("vybe.security.time.monotonic", return_value=160):
+            assert await request(guard, "c", path) == 200
+
+        assert set(guard._model_hits) == {"c"}
+        assert len(guard._hits) <= 2
+
+    asyncio.run(scenario())
+
+
+def test_general_requests_do_not_allocate_model_peers():
+    async def scenario():
+        guard = MatchRequestGuard(application, max_peers=2)
+
+        assert await request(guard, "a") == 200
+        assert await request(guard, "b") == 200
+        assert len(guard._hits) == 2
+        assert len(guard._model_hits) == 0
+
+    asyncio.run(scenario())

@@ -33,7 +33,6 @@ class MatchRequestGuard:
 
         peer = scope.get("client")
         ip = peer[0] if peer else "unknown"
-        now = time.monotonic()
         path = scope.get("path", "")
         # Only these endpoints can invoke a paid model. Keep a separate,
         # shared per-peer bucket in addition to the overall API limit.

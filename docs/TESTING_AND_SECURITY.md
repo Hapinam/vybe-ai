@@ -20,7 +20,7 @@ The reviewed baseline contains 22 API test modules and 10 browser test modules. 
 
 ## Deferred maintenance
 
-The replay bulk endpoint docstring incorrectly mentions kickoff inclusion (actual behavior is post-event snapshots only). Consider consistent `npm ci` in web-build and reducing duplicate CI work. Ignore hardening was subsequently implemented in PR #134. No code or workflow changes are required for documentation closure.
+The replay bulk endpoint documentation and web-build dependency installation have been corrected in the final engineering maintenance change. Ignore hardening was implemented in PR #134. Reducing duplicate CI work remains deferred to the CI/CD review.
 
 See [GHCR policy](GHCR_DEPLOYMENT.md) and [local development](LOCAL_DEVELOPMENT.md).
 
@@ -236,3 +236,43 @@ historical verification evidence and accepted limitations.
 The earlier test inventory and closure observations in
 this document are historical. The latest local API suite
 recorded here contains 344 passing tests per Python version.
+
+## Final engineering hardening
+
+The Foundry Director now uses the shared secure HTTP
+opener, rejects nonstandard HTTPS ports and logs only
+exception class names on provider validation failures.
+
+The existing six-second request timeout and 8192-byte
+response limit remain unchanged.
+
+Replay endpoint behavior, provider selection defaults,
+tool allowlists and deterministic fallback are preserved.
+
+The API test fixture resets both rate limiter dictionaries.
+Additional regression tests exercise model bucket capacity
+and recovery independently of the general bucket.
+
+The web-build workflow installs dependencies using npm ci.
+Dependency declarations and lockfiles remain unchanged.
+
+Live cloud provider compatibility is not established by
+offline regression testing.
+
+### Engineering validation evidence
+
+- Python 3.11: 360 API tests passed in 1.75 seconds.
+- Python 3.13: 360 API tests passed in 2.24 seconds.
+- Sixteen new regression cases passed.
+- Production container build and pip check passed.
+- Frontend build reused cached npm ci and build layers.
+- Ten offline production smoke checks passed.
+- Supported and unsupported deterministic question behavior preserved.
+- All 102 protected historical files remained unchanged.
+- All five dependency declaration and lock files remained unchanged.
+- Temporary validation containers and image tags were removed.
+
+API tests and production smoke checks ran with container
+networking disabled. No live Azure or Ollama inference
+was performed. Browser rendering and live cloud provider
+compatibility were not independently verified.
