@@ -126,5 +126,28 @@ preserved. No official football-data affiliation is implied.
 No application dependency or project license change is
 proposed solely on the basis of this metadata inventory.
 
-Final frontend distribution notice verification remains
-pending and must not be represented as completed.
+## Final frontend distribution verification
+
+Production and static JavaScript source-map inspection
+identified four third-party packages:
+
+- react 19.3.1 (MIT)
+- react-dom 19.3.1 (MIT)
+- scheduler 0.28.0 (MIT)
+- lucide-react 1.77.0 (ISC, including Feather MIT attribution)
+
+Installed package versions matched the npm lockfile.
+Complete upstream license texts are preserved in
+[THIRD_PARTY_NOTICES.txt](../apps/web/public/THIRD_PARTY_NOTICES.txt).
+
+The notice file was verified byte-for-byte in both frontend
+build modes and in the final production Docker image.
+
+Temporary audit source maps are not published.
+
+This completes the scoped frontend distribution notice
+verification. It is not a comprehensive legal certification.
+The previously documented scope exclusions remain applicable.
+
+Future dependency changes require review and, where necessary,
+regeneration of the distributed notice file.
