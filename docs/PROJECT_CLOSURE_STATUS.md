@@ -118,3 +118,35 @@ The repository will remain public and not archived, with
 reviewed security and dependency maintenance.
 
 Stage 5 and overall project closure are not yet accepted.
+
+
+## Final acceptance verification
+
+The owner completed FR-01 through FR-11 using a fresh clone
+of baseline 787dcf55fea42aac72667946ffc7ad07ab628a45.
+
+- Fresh clone, Git integrity and research recovery: PASS.
+- Python 3.11.18: 360/360 tests passed.
+- Python 3.13.18: 360/360 tests passed.
+- Frontend build: PASS.
+- Playwright: 16/16 tests passed.
+- Full-stack integration: 1/1 test passed.
+- Production Docker build: PASS.
+- Offline production smoke checks: 12/12 passed.
+- Static portfolio build: PASS.
+
+Total: 749 successful test and smoke-check executions,
+with no reported failures, errors or skipped tests.
+
+FR-12 frontend distribution notice verification was
+completed in the subsequent documentation and notice
+change. The upstream license texts were verified in
+both frontend build modes and the production image.
+
+These are scoped owner-executed acceptance results.
+They do not establish comprehensive legal compliance,
+live cloud validation or independent third-party certification.
+
+Final acceptance remains subject to required GitHub checks
+and merge approval. Final release publication and local
+cleanup are separate pending operations.
